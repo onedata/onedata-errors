@@ -1,0 +1,33 @@
+%%%-------------------------------------------------------------------
+%%% This file has been automatically generated - DO NOT EDIT!!!
+%%%
+%%% @copyright (C) 2024 ACK CYFRONET AGH
+%%% This software is released under the MIT license
+%%% cited in 'LICENSE.txt'.
+%%% @end
+%%%-------------------------------------------------------------------
+%%% @doc
+%%% Error definitions to be used across all APIs in Onedata products.
+%%% @end
+%%%-------------------------------------------------------------------
+
+-ifndef(ERRORS_HRL).
+-define(ERRORS_HRL, 1).
+
+-include("global_definitions.hrl").
+-include("posix/errno.hrl").
+
+
+-record(od_error, {{
+    type :: module(),
+    args :: term()
+}}).
+
+-define(ERROR(__TYPE), #od_error{{type = __TYPE}}).
+-define(ERROR(__TYPE, __ARGS), #od_error{{type = __TYPE, args = __ARGS}}).
+
+
+{macros}
+
+
+-endif.
