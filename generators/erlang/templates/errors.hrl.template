@@ -20,9 +20,10 @@
 
 -record(od_error, {{
     type :: module(),
-    args :: term()
+    args = undefined :: term()
 }}).
 
+-define(ERROR, #od_error{{}}).
 -define(ERROR(__TYPE), #od_error{{type = __TYPE}}).
 -define(ERROR(__TYPE, __ARGS), #od_error{{type = __TYPE, args = __ARGS}}).
 

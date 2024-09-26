@@ -140,10 +140,60 @@ def generate_od_errors(error_groups: List[ErrorGroup]) -> None:
 
 def generate_od_error(output_dir: str, error_def: ErrorDefinition) -> None:
     output_file_path = os.path.join(output_dir, f"{error_def.type}.erl")
-    module_code = OD_ERROR_MODULE_TEMPLATE.format(**error_def._asdict())
+
+    module_code = OD_ERROR_MODULE_TEMPLATE.format(
+        type=error_def.type,
+        to_json=generate_to_json_callback(error_def),
+        errno=error_def.errno,
+        http_code=error_def.http_code
+    )
 
     with open(output_file_path, "w") as f:
         f.write(module_code)
+
+
+TO_JSON_NO_ARGS_TEMPLATE: Final[str] = """
+to_json(#od_error{{type = {type}}}) ->
+    #{{
+        <<"id">> => <<"{id}">>,
+        <<"description">> => <<"{description}">>
+    }}."""
+
+INDENT: Final[str] = 4 * ' '
+
+TO_JSON_WITH_ARGS_TEMPLATE: Final[str] = """
+to_json(#od_error{{type = {type}, args = {{{args}}}}}) ->
+    #{{
+        <<"id">> => <<"{id}">>,
+        <<"details">> => #{{
+{details}
+        }},
+        <<"description">> => <<"{description}">>
+    }}."""
+
+
+def generate_to_json_callback(error_def: ErrorDefinition) -> str:
+    if not error_def.args:
+        return TO_JSON_NO_ARGS_TEMPLATE.format(type=error_def.type, id=error_def.id, description=error_def.description)
+
+    return generate_to_json_with_args_callback(error_def)
+
+
+def generate_to_json_with_args_callback(error_def: ErrorDefinition) -> str:
+    erlang_vars = [arg.capitalize() for arg in error_def.args]
+
+    details = []
+    for arg, erlang_var in zip(error_def.args, erlang_vars):
+        details.append(f"{INDENT*3}<<\"{arg}\">> => {erlang_var}")
+
+    return TO_JSON_WITH_ARGS_TEMPLATE.format(
+        type=error_def.type, 
+        id=error_def.id, 
+        args=", ".join(erlang_vars),
+        details=",\n".join(details),
+        description=error_def.description
+    )
+
 
 
 if __name__ == "__main__":
