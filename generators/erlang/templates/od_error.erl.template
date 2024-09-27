@@ -28,6 +28,9 @@
 {to_json}
 
 
+{from_json}
+
+
 errno() -> 
     {errno}.
 
