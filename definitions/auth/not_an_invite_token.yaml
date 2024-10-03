@@ -1,0 +1,4 @@
+id: notAnInviteToken
+args:
+  - expectedInviteType
+  - received

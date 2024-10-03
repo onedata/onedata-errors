@@ -1,0 +1,3 @@
+id: badConsumerToken
+args:
+  - tokenError

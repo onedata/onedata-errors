@@ -1,0 +1,3 @@
+id: tokenTimeCaveatRequired
+args:
+  - maxTtl
