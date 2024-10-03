@@ -1,0 +1,6 @@
+id: badValueTimeSeriesCollectionConflictingMetricConfig
+args:
+  - timeSeriesName
+  - metricName
+  - existingMetricConfig
+  - conflictingMetricConfig
