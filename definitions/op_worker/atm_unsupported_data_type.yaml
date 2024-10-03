@@ -1,0 +1,4 @@
+id: atmUnsupportedDataType
+args:
+  - type
+  - allowed

@@ -1,0 +1,4 @@
+id: atmStoreTypeDisallowed
+args:
+  - atmStoreSchemaId
+  - allowed

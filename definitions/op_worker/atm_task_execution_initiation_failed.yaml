@@ -1,0 +1,4 @@
+id: atmTaskExecutionInitiationFailed
+args:
+  - atmTaskSchemaId
+  - specificError

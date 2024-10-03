@@ -1,0 +1,4 @@
+id: atmTaskArgMappingFailed
+args:
+  - argument
+  - specificError

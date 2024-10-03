@@ -1,0 +1,4 @@
+id: atmStoreCreationFailed
+args:
+  - atmStoreSchemaId
+  - specificError

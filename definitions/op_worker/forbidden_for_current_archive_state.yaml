@@ -1,0 +1,4 @@
+id: forbiddenForCurrentArchiveState
+args:
+  - allowedStates
+  - currentState

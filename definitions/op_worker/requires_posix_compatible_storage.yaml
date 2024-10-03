@@ -1,0 +1,4 @@
+id: requiresPosixCompatibleStorage
+args:
+  - storageId
+  - posixCompatibleStorages

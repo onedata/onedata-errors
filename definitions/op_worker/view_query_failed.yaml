@@ -1,0 +1,4 @@
+id: viewQueryFailed
+args:
+  - category
+  - description

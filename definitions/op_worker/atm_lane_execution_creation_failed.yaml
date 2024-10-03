@@ -1,0 +1,4 @@
+id: atmLaneExecutionCreationFailed
+args:
+  - atmLaneSchemaId
+  - specificError

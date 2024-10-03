@@ -1,0 +1,3 @@
+id: nestedArchiveDeletionForbidden
+args:
+  - parentArchiveId

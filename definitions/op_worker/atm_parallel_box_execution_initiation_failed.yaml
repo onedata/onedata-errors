@@ -1,0 +1,4 @@
+id: atmParallelBoxExecutionInitiationFailed
+args:
+  - atmParallelBoxSchemaId
+  - specificError

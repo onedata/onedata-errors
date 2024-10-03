@@ -1,0 +1,5 @@
+id: autoStorageImportNotSupported
+args:
+  - storageId
+  - supportedStorages
+  - supportedObjectStorages

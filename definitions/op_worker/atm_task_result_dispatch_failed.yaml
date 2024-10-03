@@ -1,0 +1,4 @@
+id: atmTaskResultDispatchFailed
+args:
+  - atmStoreSchemaId
+  - specificError
