@@ -1,0 +1,3 @@
+id: posix
+args:
+  - errno
