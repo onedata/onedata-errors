@@ -1,0 +1,4 @@
+id: letsEncryptResponse
+args:
+  - problemDocument
+  - errorMessage

@@ -1,0 +1,4 @@
+id: errorOnNodes
+args:
+  - error
+  - hostnames

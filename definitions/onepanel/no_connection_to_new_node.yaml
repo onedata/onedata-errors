@@ -1,0 +1,3 @@
+id: noConnectionToNewNode
+args:
+  - hostname
