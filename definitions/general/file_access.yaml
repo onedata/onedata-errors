@@ -1,0 +1,4 @@
+id: fileAccess
+args:
+  - path
+  - errno

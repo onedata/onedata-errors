@@ -1,4 +1,1 @@
 id: noConnectionToClusterNode
-errno: eagain
-http_code: 503_service_unavailable
-description: No connection to cluster node.

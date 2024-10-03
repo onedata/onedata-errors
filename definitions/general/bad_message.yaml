@@ -1,6 +1,3 @@
 id: badMessage
 args:
   - message
-errno: ebadmsg
-http_code: 400_bad_request
-description: This message could not be understood by the server.

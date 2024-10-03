@@ -1,4 +1,1 @@
 id: noConnectionToOnezone
-errno: eagain
-http_code: 503_service_unavailable
-description: No connection to Onezone.

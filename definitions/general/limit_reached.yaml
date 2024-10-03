@@ -1,0 +1,4 @@
+id: limitReached
+args:
+  - limit
+  - errnoresourceDescription
