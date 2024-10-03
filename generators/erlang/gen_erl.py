@@ -23,26 +23,27 @@ def read_template(template_name: str) -> str:
 ERRORS_HRL_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "errors.hrl")
 ERRORS_HRL_TEMPLATE: Final[str] = read_template("errors.hrl.template")
 
-OD_ERRORS_ROOT_DIR: Final[str] = os.path.join(OUTPUT_DIR, "types")
-OD_ERROR_MODULE_TEMPLATE: Final[str] = read_template("od_error.erl.template")
+ERRORS_ERL_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "errors.erl")
+ERRORS_ERL_TEMPLATE: Final[str] = read_template("errors.erl.template")
+
+OD_ERROR_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "od_error.erl")
+OD_ERROR_TEMPLATE: Final[str] = read_template("od_error.erl.template")
 
 
+INDENT: Final[str] = 4 * " "
 HORIZONTAL_COMMENT_LINE: Final[str] = "%%" + 68 * "-"
 
 
-class ErrorDefinition(NamedTuple):
+class OdError(NamedTuple):
     name: str
     type: str
     id: str
     args: List[str]
-    errno: str
-    http_code: str
-    description: str
 
 
-class ErrorGroup(NamedTuple):
+class OdErrorGroup(NamedTuple):
     name: str
-    error_definitions: List[ErrorDefinition]
+    errors: List[OdError]
 
 
 def main():
@@ -50,7 +51,7 @@ def main():
 
     error_groups = gather_error_groups()
     generate_errors_hrl(error_groups)
-    generate_od_errors(error_groups)
+    generate_od_error()
 
 
 def clean_output_dir() -> None:
@@ -60,7 +61,7 @@ def clean_output_dir() -> None:
     os.makedirs(OUTPUT_DIR)
 
 
-def gather_error_groups() -> List[ErrorGroup]:
+def gather_error_groups() -> List[OdErrorGroup]:
     error_groups = []
 
     for parent_dir_path, _, file_names in os.walk(ERROR_DEFINITIONS_ROOT_DIR):
@@ -70,33 +71,30 @@ def gather_error_groups() -> List[ErrorGroup]:
                 for file_name in file_names
             ]
             error_groups.append(
-                ErrorGroup(
+                OdErrorGroup(
                     name=os.path.relpath(parent_dir_path, ERROR_DEFINITIONS_ROOT_DIR),
-                    error_definitions=error_defs,
+                    errors=error_defs,
                 )
             )
 
     return error_groups
 
 
-def read_error_definition(yaml_definition_path: str) -> ErrorDefinition:
+def read_error_definition(yaml_definition_path: str) -> OdError:
     with open(yaml_definition_path, "r") as f:
         yaml_data = yaml.safe_load(f)
 
     error_name = os.path.splitext(os.path.basename(yaml_definition_path))[0]
 
-    return ErrorDefinition(
+    return OdError(
         name=error_name,
         type=f"od_error_{error_name}",
         id=yaml_data["id"],
         args=yaml_data.get("args", []),
-        errno=f"?{yaml_data['errno'].upper()}",
-        http_code=f"?HTTP_{yaml_data['http_code'].upper()}",
-        description=yaml_data["description"],
     )
 
 
-def generate_errors_hrl(error_groups: List[ErrorGroup]) -> None:
+def generate_errors_hrl(error_groups: List[OdErrorGroup]) -> None:
     lines = []
 
     for error_group in error_groups:
@@ -104,7 +102,7 @@ def generate_errors_hrl(error_groups: List[ErrorGroup]) -> None:
         lines.append(f"%% {error_group.name} errors")
         lines.append(HORIZONTAL_COMMENT_LINE)
 
-        for error_def in error_group.error_definitions:
+        for error_def in error_group.errors:
             lines.append(build_error_type_macro(error_def))
             lines.append(build_error_pattern_macro(error_def))
             lines.append("")
@@ -115,131 +113,23 @@ def generate_errors_hrl(error_groups: List[ErrorGroup]) -> None:
         f.write(hrl_content)
 
 
-def build_error_type_macro(error_def: ErrorDefinition) -> str:
-    return f"-define(ERROR_{error_def.name.upper()}_TYPE, {error_def.type})."
+def build_error_type_macro(od_error: OdError) -> str:
+    return f"-define(ERROR_{od_error.name.upper()}_TYPE, {od_error.type})."
 
 
-def build_error_pattern_macro(error_def: ErrorDefinition) -> str:
-    error_type_macro = f"?ERROR_{error_def.name.upper()}_TYPE"
+def build_error_pattern_macro(od_error: OdError) -> str:
+    error_type_macro = f"?ERROR_{od_error.name.upper()}_TYPE"
 
-    if not error_def.args:
-        return f"-define(ERROR_{error_def.name.upper()}, ?ERROR({error_type_macro}))."
+    if not od_error.args:
+        return f"-define(ERROR_{od_error.name.upper()}, ?ERROR({error_type_macro}))."
 
-    args = ", ".join(f"__{arg.upper()}" for arg in error_def.args)
-    return f"-define(ERROR_{error_def.name.upper()}({args}), ?ERROR({error_type_macro}, {{{args}}}))."
-
-
-def generate_od_errors(error_groups: List[ErrorGroup]) -> None:
-    for error_group in error_groups:
-        output_dir = os.path.join(OUTPUT_DIR, error_group.name)
-        os.makedirs(output_dir)
-
-        for error_def in error_group.error_definitions:
-            generate_od_error(output_dir, error_def)
+    args = ", ".join(f"__{arg.upper()}" for arg in od_error.args)
+    return f"-define(ERROR_{od_error.name.upper()}({args}), ?ERROR({error_type_macro}, {{{args}}}))."
 
 
-def generate_od_error(output_dir: str, error_def: ErrorDefinition) -> None:
-    output_file_path = os.path.join(output_dir, f"{error_def.type}.erl")
-
-    module_code = OD_ERROR_MODULE_TEMPLATE.format(
-        type=error_def.type,
-        to_json=generate_to_json_callback(error_def),
-        from_json=generate_from_json_callback(error_def),
-        errno=error_def.errno,
-        http_code=error_def.http_code,
-    )
-
-    with open(output_file_path, "w") as f:
-        f.write(module_code)
-
-
-TO_JSON_NO_ARGS_TEMPLATE: Final[
-    str
-] = """
-to_json(#od_error{{type = {type}}}) ->
-    #{{
-        <<"id">> => <<"{id}">>,
-        <<"description">> => <<"{description}">>
-    }}."""
-
-INDENT: Final[str] = 4 * " "
-
-TO_JSON_WITH_ARGS_TEMPLATE: Final[
-    str
-] = """
-to_json(#od_error{{type = {type}, args = {{{args}}}}}) ->
-    #{{
-        <<"id">> => <<"{id}">>,
-        <<"details">> => #{{
-{details}
-        }},
-        <<"description">> => <<"{description}">>
-    }}."""
-
-
-def generate_to_json_callback(error_def: ErrorDefinition) -> str:
-    if not error_def.args:
-        return TO_JSON_NO_ARGS_TEMPLATE.format(
-            type=error_def.type, id=error_def.id, description=error_def.description
-        )
-
-    return generate_to_json_with_args_callback(error_def)
-
-
-def generate_to_json_with_args_callback(error_def: ErrorDefinition) -> str:
-    erlang_vars = [arg.capitalize() for arg in error_def.args]
-
-    details = []
-    for arg, erlang_var in zip(error_def.args, erlang_vars):
-        details.append(f'{INDENT*3}<<"{arg}">> => {erlang_var}')
-
-    return TO_JSON_WITH_ARGS_TEMPLATE.format(
-        type=error_def.type,
-        id=error_def.id,
-        args=", ".join(erlang_vars),
-        details=",\n".join(details),
-        description=error_def.description,
-    )
-
-
-FROM_JSON_NO_ARGS_TEMPLATE: Final[
-    str
-] = """
-from_json(#{{<<"id">> := <<"{id}">>}}) ->
-    #od_error{{type = {type}}}."""
-
-
-FROM_JSON_WITH_ARGS_TEMPLATE: Final[
-    str
-] = """
-from_json(#{{<<"id">> := <<"{id}">>, <<"details">> := #{{
-{details}
-}}}}) ->
-    #od_error{{type = {type}, args = {{{args}}}}}."""
-
-
-def generate_from_json_callback(error_def: ErrorDefinition) -> str:
-    if not error_def.args:
-        return FROM_JSON_NO_ARGS_TEMPLATE.format(
-            type=error_def.type, id=error_def.id
-        )
-
-    return generate_from_json_with_args_callback(error_def)
-
-
-def generate_from_json_with_args_callback(error_def: ErrorDefinition) -> str:
-    erlang_vars = [arg.capitalize() for arg in error_def.args]
-
-    details = []
-    for arg, erlang_var in zip(error_def.args, erlang_vars):
-        details.append(f'{INDENT}<<"{arg}">> := {erlang_var}')
-
-    return FROM_JSON_WITH_ARGS_TEMPLATE.format(
-        type=error_def.type,
-        id=error_def.id,
-        args=", ".join(erlang_vars),
-        details=",\n".join(details)
-    )
+def generate_od_error() -> None:
+    with open(OD_ERROR_FILE_PATH, "w") as f:
+        f.write(OD_ERROR_TEMPLATE)
 
 
 if __name__ == "__main__":
