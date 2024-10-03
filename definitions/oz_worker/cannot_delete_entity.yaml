@@ -1,0 +1,4 @@
+id: unregisteredOneprovider
+args:
+  - entityType
+  - entityId

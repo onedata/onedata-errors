@@ -1,0 +1,6 @@
+id: unregisteredOneprovider
+args:
+  - childType
+  - childId
+  - parentType
+  - parentId
