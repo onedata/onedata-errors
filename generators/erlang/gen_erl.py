@@ -49,7 +49,7 @@ class OdErrorGroup(NamedTuple):
 def main():
     clean_output_dir()
 
-    error_groups = gather_error_groups()
+    error_groups = load_error_groups()
     generate_errors_hrl(error_groups)
     generate_od_error()
 
@@ -61,13 +61,13 @@ def clean_output_dir() -> None:
     os.makedirs(OUTPUT_DIR)
 
 
-def gather_error_groups() -> List[OdErrorGroup]:
+def load_error_groups() -> List[OdErrorGroup]:
     error_groups = []
 
     for parent_dir_path, _, file_names in os.walk(ERROR_DEFINITIONS_ROOT_DIR):
         if file_names:
             error_defs = [
-                read_error_definition(os.path.join(parent_dir_path, file_name))
+                load_error_definition(os.path.join(parent_dir_path, file_name))
                 for file_name in file_names
             ]
             error_groups.append(
@@ -77,10 +77,11 @@ def gather_error_groups() -> List[OdErrorGroup]:
                 )
             )
 
+    error_groups.sort(key=lambda x: x.name)
     return error_groups
 
 
-def read_error_definition(yaml_definition_path: str) -> OdError:
+def load_error_definition(yaml_definition_path: str) -> OdError:
     with open(yaml_definition_path, "r") as f:
         yaml_data = yaml.safe_load(f)
 
@@ -106,6 +107,8 @@ def generate_errors_hrl(error_groups: List[OdErrorGroup]) -> None:
             lines.append(build_error_type_macro(error_def))
             lines.append(build_error_pattern_macro(error_def))
             lines.append("")
+
+        lines.append("")
 
     hrl_content = ERRORS_HRL_TEMPLATE.format(macros="\n".join(lines))
 
