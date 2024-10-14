@@ -1,4 +1,4 @@
-id: unregisteredOneprovider
+id: cannotDeleteEntity
 args:
   - entityType
   - entityId
