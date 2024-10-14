@@ -63,7 +63,7 @@
 %% Returns errno to be returned to POSIX client.
 %% @end
 %%--------------------------------------------------------------------
--callback errno() -> errno().
+-callback errno(t()) -> errno().
 
 
 %%--------------------------------------------------------------------
@@ -71,4 +71,4 @@
 %% Returns HTTP code to be returned in REST response.
 %% @end
 %%--------------------------------------------------------------------
--callback http_code() -> 400 | 401 | 403 | 404 | 409 | 500 | 501 | 503.
+-callback http_code(t()) -> 400 | 401 | 403 | 404 | 409 | 500 | 501 | 503.

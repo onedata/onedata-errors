@@ -18,14 +18,31 @@
 -include("posix/errno.hrl").
 
 
+% TODO mv to util modue? od_error_utils?
+-define(fmt(Format, Args), str_utils:ensure_suffix(str_utils:format_bin(Format, Args), <<".">>)).
+-define(fmt_csv(Values), str_utils:join_as_binaries(Values, <<", ">>)).
+
+
 -record(od_error, {{
     type :: module(),
     args = undefined :: term()
 }}).
 
 -define(ERROR, #od_error{{}}).
--define(ERROR(__TYPE), #od_error{{type = __TYPE}}).
--define(ERROR(__TYPE, __ARGS), #od_error{{type = __TYPE, args = __ARGS}}).
+-define(ERROR(Type), #od_error{{type = Type}}).
+-define(ERROR(Type, Args), #od_error{{type = Type, args = Args}}).
+
+
+%%--------------------------------------------------------------------
+%% Unknown / unexpected error
+%%--------------------------------------------------------------------
+% Used to carry errors that have the proper JSON error format, but do not match
+% any error specified in this software version. This can happen if a newer
+% server responds with an error to an older client, which does not know the
+% error Id. The original JSON representing the error is retained and returned
+% upon encoding.
+-define(ERROR_UNRECOGNIZED_ERROR_TYPE, od_error_unrecognized_error).
+-define(ERROR_UNRECOGNIZED_ERROR(ErrorAsJson), ?ERROR(?ERROR_UNRECOGNIZED_ERROR_TYPE, {ErrorAsJson})).
 
 
 {macros}

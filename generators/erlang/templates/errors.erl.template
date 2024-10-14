@@ -1,0 +1,111 @@
+%%%-------------------------------------------------------------------
+%%% This file has been automatically generated - DO NOT EDIT!!!
+%%%
+%%% @copyright (C) 2024 ACK CYFRONET AGH
+%%% This software is released under the MIT license
+%%% cited in 'LICENSE.txt'.
+%%% @end
+%%%-------------------------------------------------------------------
+%%% @doc
+%%% Errors to be used across all Onedata products.
+%%% @end
+%%%-------------------------------------------------------------------
+-module(errors).
+
+-include("errors.hrl").
+-include("http/codes.hrl").
+-include("logging.hrl").
+
+-type errno() :: od_error:errno().
+
+-type t() ::
+{types} |
+    od_error_unrecognized_error:t().
+
+-export_type([errno/0, t/0]).
+
+%% API
+-export([
+    is_known_error/1,
+    is_posix_code/1,
+
+    to_json/1,
+    from_json/1,
+    to_http_code/1,
+    to_errno/1
+]).
+
+
+-define(ERROR_ID_TO_TYPE_MAPPING, #{{
+{id_to_type_mapping}
+}}).
+
+
+%%%===================================================================
+%%% API
+%%%===================================================================
+
+
+-spec is_known_error(term()) -> boolean().
+is_known_error(?ERROR) -> true;
+is_known_error(_) -> false.
+
+
+-spec is_posix_code(term()) -> boolean().
+is_posix_code(ErrorCode) ->
+    ordsets:is_element(ErrorCode, ?ERROR_CODES).
+
+
+-spec to_json
+    (undefined) -> null;
+    (t()) -> json_utils:json_map().
+to_json(undefined) ->
+    null;
+
+to_json(?ERROR_UNRECOGNIZED_ERROR(ErrorAsJson)) ->
+    % Carries errors that have not been recognized upon decoding.
+    case maps:is_key(<<"description">>, ErrorAsJson) of
+        true ->
+            ErrorAsJson;
+        false ->
+            ErrorAsJson#{<<"description">> => <<"No description (unknown error).">>}
+    end;
+
+to_json(Error = #od_error{{type = Type}}) ->
+    Type:to_json(Error);
+
+to_json(OtherError) ->
+    % Wildcard to catch all errors that might be returned by the application logic, but does
+    % not match any error defined in this module. Inability to translate is treated as an
+    % unexpected exception (an ?ERROR_INTERNAL_SERVER_ERROR(ErrorRef) is returned).
+    ReturnedError = ?catch_exceptions(error({{cannot_translate_error, OtherError}})),
+    to_json(ReturnedError).
+
+
+-spec from_json
+    (null) -> undefined;
+    (json_utils:json_map()) -> t().
+from_json(null) ->
+    undefined;
+
+from_json(ErrorJson) ->
+    try
+        ErrorId = maps:get(<<"id">>, ErrorJson),
+        ErrorType = maps:get(ErrorId, ?ERROR_ID_TO_TYPE_MAPPING),
+        ErrorType:from_json(ErrorJson)
+    catch _:_ ->
+        ?ERROR_UNRECOGNIZED_ERROR(ErrorJson)
+    end.
+
+
+-spec to_http_code(t()) -> 400 | 401 | 403 | 404 | 409 | 500 | 501 | 503.
+to_http_code(?ERROR_UNRECOGNIZED_ERROR(_)) -> 
+    ?HTTP_500_INTERNAL_SERVER_ERROR;
+
+to_http_code(Error = #od_error{{type = Type}}) ->
+    Type:to_http_code(Error).
+
+
+-spec to_errno(t()) -> errno().
+to_errno(Error = #od_error{{type = Type}}) ->
+    Type:to_errno(Error).
