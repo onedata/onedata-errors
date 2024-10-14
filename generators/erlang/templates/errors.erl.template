@@ -20,7 +20,8 @@
 
 -type t() ::
 {types} |
-    od_error_unrecognized_error:t().
+    % unrecognized is a special error and as such does not have its own module
+    #od_error{{type :: od_error_unrecognized_error}}.
 
 -export_type([errno/0, t/0]).
 
@@ -68,7 +69,7 @@ to_json(?ERROR_UNRECOGNIZED_ERROR(ErrorAsJson)) ->
         true ->
             ErrorAsJson;
         false ->
-            ErrorAsJson#{<<"description">> => <<"No description (unknown error).">>}
+            ErrorAsJson#{{<<"description">> => <<"No description (unknown error).">>}}
     end;
 
 to_json(Error = #od_error{{type = Type}}) ->

@@ -40,6 +40,22 @@ class OdError(NamedTuple):
     id: str
     args: List[str]
 
+    def get_id_macro(self) -> str:
+        return f"ERROR_{self.name.upper()}_ID"
+
+    def get_type_macro(self) -> str:
+        return f"ERROR_{self.name.upper()}_TYPE"
+
+    def get_args_as_erlang_variable_names(self) -> List[str]:
+        return [arg[0].upper() + arg[1:] for arg in self.args]
+
+    def get_error_macro(self) -> str:
+        if not self.args:
+            return f"ERROR_{self.name.upper()}"
+
+        args = ", ".join(self.get_args_as_erlang_variable_names())
+        return f"ERROR_{self.name.upper()}({args})"
+
 
 class OdErrorGroup(NamedTuple):
     name: str
@@ -52,13 +68,12 @@ def main():
     error_groups = load_error_groups()
     generate_errors_hrl(error_groups)
     generate_od_error()
+    generate_errors_erl(error_groups)
 
 
 def clean_output_dir() -> None:
-    if os.path.exists(OUTPUT_DIR):
-        shutil.rmtree(OUTPUT_DIR)
-
-    os.makedirs(OUTPUT_DIR)
+    shutil.rmtree(OUTPUT_DIR, ignore_errors=True)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def load_error_groups() -> List[OdErrorGroup]:
@@ -66,73 +81,139 @@ def load_error_groups() -> List[OdErrorGroup]:
 
     for parent_dir_path, _, file_names in os.walk(ERROR_DEFINITIONS_ROOT_DIR):
         if file_names:
-            error_defs = [
-                load_error_definition(os.path.join(parent_dir_path, file_name))
-                for file_name in file_names
-            ]
-            error_groups.append(
-                OdErrorGroup(
-                    name=os.path.relpath(parent_dir_path, ERROR_DEFINITIONS_ROOT_DIR),
-                    errors=error_defs,
-                )
-            )
+            file_names.sort()
+            error_groups.append(create_error_group(parent_dir_path, file_names))
 
-    error_groups.sort(key=lambda x: x.name)
-    return error_groups
+    return sorted(error_groups, key=lambda x: x.name)
+
+
+def create_error_group(parent_dir_path: str, file_names: List[str]) -> OdErrorGroup:
+    od_errors = [load_error_definition(os.path.join(parent_dir_path, file_name))
+                 for file_name in file_names]
+    return OdErrorGroup(
+        name=os.path.relpath(parent_dir_path, ERROR_DEFINITIONS_ROOT_DIR),
+        errors=od_errors
+    )
 
 
 def load_error_definition(yaml_definition_path: str) -> OdError:
-    with open(yaml_definition_path, "r") as f:
-        yaml_data = yaml.safe_load(f)
+    yaml_data = read_yaml_file(yaml_definition_path)
+    error_name = extract_error_name(yaml_definition_path)
+    return create_od_error(error_name, yaml_data)
 
-    error_name = os.path.splitext(os.path.basename(yaml_definition_path))[0]
 
+def read_yaml_file(file_path: str) -> dict:
+    with open(file_path, "r") as f:
+        return yaml.safe_load(f)
+
+
+def extract_error_name(file_path: str) -> str:
+    return os.path.splitext(os.path.basename(file_path))[0]
+
+
+def create_od_error(error_name: str, yaml_data: dict) -> OdError:
     return OdError(
         name=error_name,
         type=f"od_error_{error_name}",
         id=yaml_data["id"],
-        args=yaml_data.get("args", []),
+        args=yaml_data.get("args", [])
     )
 
 
 def generate_errors_hrl(error_groups: List[OdErrorGroup]) -> None:
+    lines = generate_errors_hrl_group_lines(error_groups)
+    hrl_content = ERRORS_HRL_TEMPLATE.format(macros="\n".join(lines))
+    write_to_file(ERRORS_HRL_FILE_PATH, hrl_content)
+
+
+def generate_errors_hrl_group_lines(error_groups: List[OdErrorGroup]) -> List[str]:
     lines = []
-
     for error_group in error_groups:
-        lines.append(HORIZONTAL_COMMENT_LINE)
-        lines.append(f"%% {error_group.name} errors")
-        lines.append(HORIZONTAL_COMMENT_LINE)
-
-        for error_def in error_group.errors:
-            lines.append(build_error_type_macro(error_def))
-            lines.append(build_error_pattern_macro(error_def))
-            lines.append("")
-
+        lines.extend(generate_errors_hrl_group_header(error_group))
+        lines.extend(generate_errors_hrl_definitions(error_group.errors))
         lines.append("")
 
-    hrl_content = ERRORS_HRL_TEMPLATE.format(macros="\n".join(lines))
+    # delete last empty line
+    del lines[-1]
 
-    with open(ERRORS_HRL_FILE_PATH, "w") as f:
-        f.write(hrl_content)
-
-
-def build_error_type_macro(od_error: OdError) -> str:
-    return f"-define(ERROR_{od_error.name.upper()}_TYPE, {od_error.type})."
+    return lines
 
 
-def build_error_pattern_macro(od_error: OdError) -> str:
-    error_type_macro = f"?ERROR_{od_error.name.upper()}_TYPE"
+def generate_errors_hrl_group_header(error_group: OdErrorGroup) -> List[str]:
+    return [
+        HORIZONTAL_COMMENT_LINE,
+        f"%% {error_group.name} errors",
+        HORIZONTAL_COMMENT_LINE
+    ]
 
-    if not od_error.args:
-        return f"-define(ERROR_{od_error.name.upper()}, ?ERROR({error_type_macro}))."
 
-    args = ", ".join(f"__{arg.upper()}" for arg in od_error.args)
-    return f"-define(ERROR_{od_error.name.upper()}({args}), ?ERROR({error_type_macro}, {{{args}}}))."
+def generate_errors_hrl_definitions(od_errors: List[OdError]) -> List[str]:
+    lines = []
+    for od_error in od_errors:
+        lines.extend([
+            build_error_id_macro_definition(od_error),
+            build_error_type_macro_definition(od_error),
+            build_error_macro_definition(od_error),
+            ""
+        ])
+
+    return lines
+
+
+def build_error_id_macro_definition(od_error: OdError) -> str:
+    return f"-define({od_error.get_id_macro()}, <<\"{od_error.id}\">>)."
+
+
+def build_error_type_macro_definition(od_error: OdError) -> str:
+    return f"-define({od_error.get_type_macro()}, {od_error.type})."
+
+
+def build_error_macro_definition(od_error: OdError) -> str:
+    error_type_macro = f"?{od_error.get_type_macro()}"
+    error_macro = od_error.get_error_macro()
+    
+    if od_error.args:
+        args = ", ".join(od_error.get_args_as_erlang_variable_names())
+        error_expansion = f"?ERROR({error_type_macro}, {{{args}}})"
+    else:
+        error_expansion = f"?ERROR({error_type_macro})"
+    
+    return f"-define({error_macro}, {error_expansion})."
 
 
 def generate_od_error() -> None:
     with open(OD_ERROR_FILE_PATH, "w") as f:
         f.write(OD_ERROR_TEMPLATE)
+
+
+def generate_errors_erl(error_groups: List[OdErrorGroup]) -> None:
+    types = [generate_error_dialyzer_type(od_error)
+             for group in error_groups
+             for od_error in group.errors]
+
+    id_to_type_mapping = [generate_error_id_to_type_mapping(od_error)
+                          for group in error_groups
+                          for od_error in group.errors]
+
+    erl_content = ERRORS_ERL_TEMPLATE.format(
+        types=" |\n".join(types),
+        id_to_type_mapping=",\n".join(id_to_type_mapping)
+    )
+
+    write_to_file(ERRORS_ERL_FILE_PATH, erl_content)
+
+
+def generate_error_dialyzer_type(od_error: OdError) -> str:
+    return f"{INDENT}{od_error.type}:t()"
+
+
+def generate_error_id_to_type_mapping(od_error: OdError) -> str:
+    return f"{INDENT}?{od_error.get_id_macro()} => ?{od_error.get_type_macro()}"
+
+
+def write_to_file(file_path: str, content: str) -> None:
+    with open(file_path, "w") as f:
+        f.write(content)
 
 
 if __name__ == "__main__":

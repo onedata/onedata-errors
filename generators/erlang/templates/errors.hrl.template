@@ -42,7 +42,7 @@
 % error Id. The original JSON representing the error is retained and returned
 % upon encoding.
 -define(ERROR_UNRECOGNIZED_ERROR_TYPE, od_error_unrecognized_error).
--define(ERROR_UNRECOGNIZED_ERROR(ErrorAsJson), ?ERROR(?ERROR_UNRECOGNIZED_ERROR_TYPE, {ErrorAsJson})).
+-define(ERROR_UNRECOGNIZED_ERROR(ErrorAsJson), ?ERROR(?ERROR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}})).
 
 
 {macros}
