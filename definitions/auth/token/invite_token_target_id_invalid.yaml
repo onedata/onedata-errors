@@ -1,3 +1,6 @@
 id: inviteTokenTargetIdInvalid
+description: "The target id '{id}' is invalid for this type of invite token."
+http_code: 400
 args:
-  - id
+  - name: id
+    type: binary

@@ -1,1 +1,4 @@
 id: atmOpenfaasUnreachable
+description: "Cannot connect to OpenFaaS service."
+http_code: 400
+

@@ -1,1 +1,3 @@
 id: alreadyExists
+description: "The resource already exists."
+http_code: 409

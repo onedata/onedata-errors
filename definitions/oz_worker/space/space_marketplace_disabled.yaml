@@ -1,1 +1,3 @@
 id: spaceMarketplaceDisabled
+description: "Space marketplace is disabled for this Onezone."
+http_code: 400

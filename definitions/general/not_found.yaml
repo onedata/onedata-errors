@@ -1,1 +1,3 @@
 id: notFound
+description: "The resource could not be found."
+http_code: 404

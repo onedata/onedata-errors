@@ -1,1 +1,3 @@
 id: basicAuthNotSupported
+description: "Basic auth is not supported by this Onezone."
+http_code: 400

@@ -1,3 +1,7 @@
 id: unauthorized
+description: "You must authenticate yourself to perform this operation."
+http_code: 401
 args:
-  - authError
+  - name: authError
+    type: error
+    nullable: true

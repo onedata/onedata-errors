@@ -1,3 +1,5 @@
 id: atmLaneEmpty
+description: "Bad automation lane: lane (id: \"{atmLaneSchemaId}\") must not be empty."
+http_code: 400
 args:
-  - atmLaneSchemaId
+  - name: atmLaneSchemaId

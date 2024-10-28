@@ -1,1 +1,3 @@
 id: noConnectionToOnezone
+description: "No connection to Onezone."
+http_code: 503

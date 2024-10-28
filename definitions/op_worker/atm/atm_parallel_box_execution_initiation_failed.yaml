@@ -1,4 +1,7 @@
 id: atmParallelBoxExecutionInitiationFailed
+description: "Failed to initiate automation parallel box execution (id: \"{atmParallelBoxSchemaId}\") (see details)."
+http_code: 400
 args:
-  - atmParallelBoxSchemaId
-  - specificError
+  - name: atmParallelBoxSchemaId
+  - name: specificError
+    type: error

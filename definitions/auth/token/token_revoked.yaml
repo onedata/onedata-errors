@@ -1,1 +1,3 @@
 id: tokenRevoked
+description: "Provided token has been revoked."
+http_code: 400

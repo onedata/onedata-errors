@@ -1,4 +1,7 @@
 id: nodeNotCompatible
+description: "Cannot add \"{hostname}\", it is a {clusterType} node."
+http_code: 400
 args:
-  - hostname
-  - clusterType
+  - name: hostname
+  - name: clusterType
+    type: atom

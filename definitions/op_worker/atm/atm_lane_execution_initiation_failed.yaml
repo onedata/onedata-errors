@@ -1,4 +1,7 @@
 id: atmLaneExecutionInitiationFailed
+description: "Failed to initiate automation lane execution (id: \"{atmLaneSchemaId}\") (see details)."
+http_code: 400
 args:
-  - atmLaneSchemaId
-  - specificError
+  - name: atmLaneSchemaId
+  - name: specificError
+    type: error

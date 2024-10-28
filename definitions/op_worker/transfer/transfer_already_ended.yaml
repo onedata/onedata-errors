@@ -1,1 +1,3 @@
 id: transferAlreadyEnded
+description: "Specified transfer has already ended."
+http_code: 400

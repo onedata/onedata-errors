@@ -1,1 +1,3 @@
 id: temporaryFailure
+description: "Temporary failure - please try again later."
+http_code: 503

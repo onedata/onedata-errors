@@ -1,3 +1,7 @@
 id: forbidden
+description: "You are not authorized to perform this operation: {hint}"
+http_code: 403
 args:
-  - hint
+  - name: hint
+    type: binary
+    nullable: true

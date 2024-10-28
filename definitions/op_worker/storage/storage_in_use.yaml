@@ -1,1 +1,4 @@
 id: storageInUse
+description: "Specified storage supports a space."
+http_code: 400
+

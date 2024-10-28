@@ -1,5 +1,9 @@
 id: autoStorageImportNotSupported
+description: "Cannot configure auto storage import on storage {storageId} - this operation requires storage with canonical path type and on object storages (any of: {supportedObjectStorages}) it requires blockSize = 0. Supported storages: {supportedStorages}."
+http_code: 400
 args:
-  - storageId
-  - supportedStorages
-  - supportedObjectStorages
+  - name: storageId
+  - name: supportedObjectStorages
+    type: list
+  - name: supportedStorages
+    type: list

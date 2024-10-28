@@ -1,1 +1,4 @@
 id: noConnectionToClusterNode
+description: "No connection to cluster node."
+http_code: 503
+

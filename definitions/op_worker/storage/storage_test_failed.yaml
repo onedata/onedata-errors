@@ -1,3 +1,6 @@
 id: storageTestFailed
+description: "Failed to {operation} test file on storage."
+http_code: 400
 args:
-  - operation
+  - name: operation
+    type: atom

@@ -1,3 +1,6 @@
 id: tokenServiceForbidden
+description: "The service {service} is forbidden for this subject."
+http_code: 400
 args:
-  - service
+  - name: service
+    type: service

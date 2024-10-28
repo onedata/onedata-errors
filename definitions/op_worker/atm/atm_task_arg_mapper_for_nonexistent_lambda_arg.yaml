@@ -1,3 +1,5 @@
 id: atmTaskArgMapperForNonexistentLambdaArg
+description: "Found excessive argument mapper for nonexistent lambda argument: {argument}."
+http_code: 400
 args:
-  - argument
+  - name: argument

@@ -1,4 +1,7 @@
 id: requiresPosixCompatibleStorage
+description: "Cannot apply for storage {storageId} - this operation requires a POSIX-compatible storage (any of: {posixCompatibleStorages})."
+http_code: 400
 args:
-  - storageId
-  - posixCompatibleStorages
+  - name: storageId
+  - name: posixCompatibleStorages
+    type: list

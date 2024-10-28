@@ -1,4 +1,8 @@
 id: cannotRemoveLastOwner
+description: "Cannot remove the last owner - another owner must be assigned first. Ownership can be granted to any direct or effective member."
+http_code: 400
 args:
-  - entityType
-  - entityId
+  - name: entityType
+    type: atom
+  - name: entityId
+    type: binary

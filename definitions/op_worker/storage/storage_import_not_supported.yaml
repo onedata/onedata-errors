@@ -1,4 +1,7 @@
 id: storageImportNotSupported
+description: "Cannot configure storage import on storage {storageId} - this operation requires storage with canonical path type and on object storages (any of: {objectStorages}) it requires blockSize = 0."
+http_code: 400
 args:
-  - storageId
-  - objectStorages
+  - name: storageId
+  - name: objectStorages
+    type: list

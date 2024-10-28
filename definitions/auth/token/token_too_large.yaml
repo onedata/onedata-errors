@@ -1,3 +1,6 @@
 id: tokenTooLarge
+description: "Provided token exceeds the allowed size ({limit} characters)."
+http_code: 400
 args:
-  - limit
+  - name: limit
+    type: integer

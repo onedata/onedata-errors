@@ -1,3 +1,6 @@
 id: dnsServersUnreachable
+description: "Error fetching DNS records. Used servers: {servers}."
+http_code: 503
 args:
-  - servers
+  - name: servers
+    type: list

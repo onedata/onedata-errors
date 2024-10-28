@@ -1,1 +1,4 @@
 id: userBlocked
+description: "This user account has been blocked by the administrator and cannot be used unless it is unblocked again."
+http_code: 400
+

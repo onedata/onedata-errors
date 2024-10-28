@@ -1,4 +1,7 @@
 id: limitReached
+description: "The limit for {resourceDescription} has been reached: {limit}."
+http_code: 400
 args:
-  - limit
-  - errnoresourceDescription
+  - name: limit
+    type: integer
+  - name: resourceDescription

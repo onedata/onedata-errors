@@ -1,1 +1,3 @@
 id: handshakeAlreadyDone
+description: "Handshake has already been done."
+http_code: 400

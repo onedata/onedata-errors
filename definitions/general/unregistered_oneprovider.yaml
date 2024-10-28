@@ -1,1 +1,3 @@
 id: unregisteredOneprovider
+description: "This Oneprovider is not registered."
+http_code: 503

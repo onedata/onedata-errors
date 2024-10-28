@@ -1,4 +1,8 @@
 id: fileAllocation
+description: "File allocation error. Allocated {actualSize} out of {targetSize}."
+http_code: 400
 args:
-  - actualSize
-  - targetSize
+  - name: actualSize
+    type: integer
+  - name: targetSize
+    type: integer

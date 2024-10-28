@@ -1,3 +1,5 @@
 id: atmStoreNotFound
+description: "Bad automation store: store (schema id: \"{atmStoreSchemaId}\") does not exist."
+http_code: 400
 args:
-  - atmStoreSchemaId
+  - name: atmStoreSchemaId

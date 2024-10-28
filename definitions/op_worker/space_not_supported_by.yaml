@@ -1,4 +1,6 @@
 id: spaceNotSupportedBy
+description: "Specified space: {spaceId} is not supported by provider {providerId}."
+http_code: 400
 args:
-  - spaceId
-  - providerId
+  - name: spaceId
+  - name: providerId

@@ -1,3 +1,6 @@
 id: notAnIdentityToken
+description: "Expected an identity token, but received a(n) {received}."
+http_code: 400
 args:
-  - received
+  - name: received
+    type: token_type

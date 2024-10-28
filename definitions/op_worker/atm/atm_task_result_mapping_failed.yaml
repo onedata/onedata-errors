@@ -1,4 +1,7 @@
 id: atmTaskResultMappingFailed
+description: "Failed to map automation task execution result \"{result}\" (see details)."
+http_code: 400
 args:
-  - result
-  - specificError
+  - name: result
+  - name: specificError
+    type: error

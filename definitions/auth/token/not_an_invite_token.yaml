@@ -1,4 +1,8 @@
 id: notAnInviteToken
+description: "Expected an invitation token of type '{expectedInviteType}', but received a(n) {received}."
+http_code: 400
 args:
-  - expectedInviteType
-  - received
+  - name: expectedInviteType
+    type: atom
+  - name: received
+    type: token_type

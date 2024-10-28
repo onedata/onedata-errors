@@ -1,1 +1,3 @@
 id: atmWorkflowExecutionNotStopped
+description: "Specified automation workflow execution has not stopped yet."
+http_code: 400

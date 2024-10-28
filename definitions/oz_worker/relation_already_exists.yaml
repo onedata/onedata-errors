@@ -1,6 +1,12 @@
 id: relationAlreadyExists
+description: "Bad value: {childType}:{childId} is already a member of {parentType}:{parentId}."
+http_code: 409
 args:
-  - childType
-  - childId
-  - parentType
-  - parentId
+  - name: childType
+    type: atom
+  - name: childId
+    type: binary
+  - name: parentType
+    type: atom
+  - name: parentId
+    type: binary

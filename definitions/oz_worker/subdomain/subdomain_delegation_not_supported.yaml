@@ -1,1 +1,3 @@
 id: subdomainDelegationNotSupported
+description: "Subdomain delegation is not supported by this Onezone."
+http_code: 400

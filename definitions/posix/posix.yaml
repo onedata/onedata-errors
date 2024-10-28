@@ -1,3 +1,6 @@
 id: posix
+description: "Operation failed with POSIX error: {errno}."
+http_code: 400
 args:
-  - errno
+  - name: errno
+    type: atom

@@ -1,1 +1,3 @@
 id: basicAuthDisabled
+description: "Basic auth is disabled for this user."
+http_code: 400

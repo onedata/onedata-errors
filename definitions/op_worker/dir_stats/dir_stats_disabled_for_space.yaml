@@ -1,1 +1,3 @@
 id: dirStatsDisabledForSpace
+description: "Directory statistics collection is disabled for this space."
+http_code: 400

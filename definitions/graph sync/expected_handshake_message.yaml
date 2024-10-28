@@ -1,1 +1,3 @@
 id: expectedHandshakeMessage
+description: "Handshake must be performed prior to any requests."
+http_code: 400

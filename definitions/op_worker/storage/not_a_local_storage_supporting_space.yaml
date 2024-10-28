@@ -1,5 +1,7 @@
 id: notALocalStorageSupportingSpace
+description: "Storage {storageId} does not belong to this Oneprovider ({providerId}) and/or does not support the space {spaceId}."
+http_code: 400
 args:
-  - providerId
-  - storageId
-  - spaceId
+  - name: providerId
+  - name: storageId
+  - name: spaceId

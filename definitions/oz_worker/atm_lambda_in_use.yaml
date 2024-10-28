@@ -1,3 +1,6 @@
 id: atmLambdaInUse
+description: "This lambda cannot be removed because it is used by the following workflow schemas: {atmWorkflowSchemas}."
+http_code: 403
 args:
-  - atmWorkflowSchemas
+  - name: atmWorkflowSchemas
+    type: list

@@ -1,5 +1,9 @@
 id: atmDataValueConstraintUnverified
+description: "Provided value doesn't meet the constraints (see details)."
+http_code: 400
 args:
-  - value
-  - type
-  - valueConstraints 
+  - name: value
+  - name: type
+    type: atm_data_type
+  - name: valueConstraints
+    type: json

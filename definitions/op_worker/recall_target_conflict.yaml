@@ -1,1 +1,3 @@
 id: recallTargetConflict
+description: "Conflict - recall target cannot be within a directory that is being recalled."
+http_code: 400
