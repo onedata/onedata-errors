@@ -4,4 +4,4 @@ http_code: 400
 args:
   - name: missingResultName
   - name: receivedResultNames
-    type: list
+    type: binaries

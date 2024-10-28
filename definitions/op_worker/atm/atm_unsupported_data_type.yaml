@@ -5,4 +5,4 @@ args:
   - name: type
     type: atm_data_type
   - name: allowed
-    type: list
+    type: atm_data_types

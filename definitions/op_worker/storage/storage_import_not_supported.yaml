@@ -4,4 +4,4 @@ http_code: 400
 args:
   - name: storageId
   - name: objectStorages
-    type: list
+    type: binaries

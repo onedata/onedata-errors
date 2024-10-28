@@ -426,6 +426,17 @@ class Binary(ErrorArg):
     fmt_control_sequence: str = "~ts"
 
 
+class Binaries(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"?fmt_csv({erl_var})"]
+
+
 class Atom(ErrorArg):
     fmt_control_sequence: str = "~ts"
 
@@ -443,6 +454,19 @@ class Integer(ErrorArg):
     fmt_control_sequence: str = "~B"
 
 
+class OnedataError(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"errors:to_json({erl_var})"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"errors:from_json({json_var})"]
+
+
 class AtmDataType(ErrorArg):
     fmt_control_sequence: str = "~ts"
 
@@ -456,17 +480,23 @@ class AtmDataType(ErrorArg):
         return [f"atm_data_type:type_from_json({json_var})"]
 
 
-class OnedataError(ErrorArg):
+class AtmDataTypes(ErrorArg):
     fmt_control_sequence: str = "~ts"
 
     json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
     json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
 
     def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
-        return [f"errors:to_json({erl_var})"]
+        return [f"lists:map(fun atm_data_type:type_to_json/1, {erl_var})"]
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"?fmt_csv({json_var})"]
 
     def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
-        return [f"errors:from_json({json_var})"]
+        return [f"lists:map(fun atm_data_type:type_from_json/1, {json_var})"]
 
 
 class AtmWorkflowSchemas(ErrorArg):
@@ -626,10 +656,12 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
 
     arg_classes = {
         "binary": Binary,
+        "binaries": Binaries,
         "atom": Atom,
         "integer": Integer,
-        "atm_data_type": AtmDataType,
         "error": OnedataError,
+        "atm_data_type": AtmDataType,
+        "atm_data_types": AtmDataTypes,
         "atm_workflow_schemas": AtmWorkflowSchemas,
         "atm_store_schema_ids": AtmStoreSchemaIds,
         "atm_task_argument_value_builder_type": AtmTaskArgumentValueBuilderType,
@@ -637,8 +669,6 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "aai_service": AaiService,
         "aai_consumer": AaiConsumer,
         "token_type": TokenType,
-
-
 
 
         "caveat": CaveatArg,
