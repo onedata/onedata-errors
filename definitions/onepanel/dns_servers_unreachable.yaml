@@ -3,4 +3,4 @@ description: "Error fetching DNS records. Used servers: {servers}."
 http_code: 503
 args:
   - name: servers
-    type: list
+    type: dns_servers

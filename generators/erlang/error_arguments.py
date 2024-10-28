@@ -642,12 +642,40 @@ class CaveatUnverified(ErrorArg):
         return [f"caveats:from_json({json_var})"]
 
 
-class ListArg(ErrorArg):
-    def map_to_details(self):
-        return f'str_utils:join_as_binaries({self.name}, <<", ">>)'
+class DnsServers(ErrorArg):
+    fmt_control_sequence: str = "~ts"
 
-    def map_to_format(self):
-        return self.map_to_details()
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    DNS_DEFAULTS = '<<"system defaults">>'
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [
+            "lists:map(fun\n",
+            f"{INDENT}(defaults) -> {self.DNS_DEFAULTS};\n",
+            f"{INDENT}(Ip) -> element(2, {{ok, _}} = ip_utils:to_binary(Ip))\n",
+            f"end, {erl_var})"
+        ]
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"?fmt_csv({json_var})"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [
+            "lists:map(fun\n",
+            f"{INDENT}({self.DNS_DEFAULTS}) -> default;\n",
+            f"{INDENT}(Ip) -> element(2, {{ok, _}} = ip_utils:to_ip4_address(Ip))\n",
+            f"end, {json_var})"
+        ]
+
+
+class ListArg(ErrorArg):
+    # TODO rm list
+    pass
 
 
 # TODO handle all types
@@ -672,6 +700,7 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "aai_consumer": AaiConsumer,
         "token_type": TokenType,
         "caveat_unverified": CaveatUnverified,
+        "dns_servers": DnsServers,
         "list": ListArg,
     }
     return arg_classes.get(arg_type, Binary)(name, nullable)
