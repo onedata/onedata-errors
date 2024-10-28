@@ -469,6 +469,24 @@ class OnedataError(ErrorArg):
         return [f"errors:from_json({json_var})"]
 
 
+class AtmWorkflowSchemas(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"?fmt_csv({erl_var})"]
+
+
+
+
+
+
+
+
+
 
 
 
@@ -570,6 +588,7 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "integer": Integer,
         "atm_data_type": AtmDataType,
         "error": OnedataError,
+        "atm_workflow_schemas": AtmWorkflowSchemas,
 
 
 
