@@ -570,6 +570,23 @@ class AaiConsumer(ErrorArg):
         return [f"aai:subject_from_json({json_var})"]
 
 
+class TokenType(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"token_type:to_json({erl_var})"]
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"token_type:to_printable({erl_var})"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"token_type:from_json({json_var})"]
 
 
 
@@ -579,21 +596,6 @@ class AaiConsumer(ErrorArg):
 
 
 
-
-
-
-
-
-
-
-
-
-class TokenTypeArg(ErrorArg):
-    def map_to_details(self):
-        return f"token_type:to_json({self.name})"
-
-    def map_to_format(self):
-        return f"token_type:to_printable({self.name})"
 
 
 class CaveatArg(ErrorArg):
@@ -634,11 +636,11 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "atm_task_argument_value_builder_types": AtmTaskArgumentValueBuilderTypes,
         "aai_service": AaiService,
         "aai_consumer": AaiConsumer,
+        "token_type": TokenType,
 
 
 
 
-        "token_type": TokenTypeArg,
         "caveat": CaveatArg,
         "list": ListArg,
         "json": JsonArg,
