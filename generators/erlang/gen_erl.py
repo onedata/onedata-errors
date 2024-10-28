@@ -275,7 +275,7 @@ def generate_to_json_callback(od_error: OdError) -> str:
         details_tokens[-1] = f"\n{2*INDENT}}},\n"
 
         if fmt_placeholders:
-            fmt_str = od_error.description.format(**fmt_placeholder_to_control_sequence)
+            fmt_str = od_error.description.format(**fmt_placeholder_to_control_sequence).replace('"', '\\"')
             print_vars = [
                 fmt_placeholder_to_print_var[placeholder]
                 for placeholder in fmt_placeholders

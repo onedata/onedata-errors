@@ -456,6 +456,35 @@ class AtmDataType(ErrorArg):
         return [f"atm_data_type:type_from_json({json_var})"]
 
 
+class OnedataError(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"errors:to_json({erl_var})"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"errors:from_json({json_var})"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class ConsumerArg(ErrorArg):
     fmt_control_sequence: str = "~ts"
 
@@ -491,13 +520,6 @@ class ConsumerArg(ErrorArg):
 
 
 
-
-# class ErrorArg(ErrorArg):
-#     def map_to_details(self):
-#         return f"errors:to_json({self.name})"
-
-#     def map_to_format(self):
-#         return f"errors:to_printable({self.name})"
 
 
 class TokenTypeArg(ErrorArg):
@@ -547,7 +569,11 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "atom": Atom,
         "integer": Integer,
         "atm_data_type": AtmDataType,
-        "error": ErrorArg,
+        "error": OnedataError,
+
+
+
+
         "consumer": ConsumerArg,
         "token_type": TokenTypeArg,
         "caveat": CaveatArg,
