@@ -304,11 +304,7 @@ def generate_to_json_callback(od_error: OdError) -> str:
 
 
 def generate_from_json_callback(od_error: OdError) -> str:
-    tokens = [
-        "from_json(",
-        f'#{{<<"id">> := ?{od_error.get_id_macro()}}}',
-        ") ->\n"
-    ]
+    tokens = ["from_json(", f'#{{<<"id">> := ?{od_error.get_id_macro()}}}', ") ->\n"]
 
     if od_error.args:
         tokens.insert(1, "ErrorJson = ")
