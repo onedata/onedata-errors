@@ -232,13 +232,11 @@ def generate_error_modules(error_groups: List[OdErrorGroup]) -> None:
 
 
 def generate_error_module(od_error: OdError, output_dir: str) -> None:
-    to_http_code = f"to_http_code(_) -> {od_error.http_code}."
-
     erl_content = ERROR_TEMPLATE.format(
         error_type=od_error.type,
         to_json=generate_to_json_callback(od_error),
         from_json=generate_from_json_callback(od_error),
-        to_http_code=to_http_code,
+        http_code=od_error.http_code,
     )
 
     file_path = os.path.join(output_dir, f"{od_error.type}.erl")
@@ -276,19 +274,20 @@ def generate_to_json_callback(od_error: OdError) -> str:
         # replace last comma with closing bracket
         details_tokens[-1] = f"\n{2*INDENT}}},\n"
 
-        fmt_str = od_error.description.format(**fmt_placeholder_to_control_sequence)
-        print_vars = [
-            fmt_placeholder_to_print_var[placeholder]
-            for placeholder in fmt_placeholders
-        ]
-        description_tokens = [
-            "?fmt(\n",
-            f'{3*INDENT}"{fmt_str}",\n',
-            f"{3*INDENT}[",
-            ", ".join(print_vars),
-            "]\n",
-            f"{2*INDENT})\n",
-        ]
+        if fmt_placeholders:
+            fmt_str = od_error.description.format(**fmt_placeholder_to_control_sequence)
+            print_vars = [
+                fmt_placeholder_to_print_var[placeholder]
+                for placeholder in fmt_placeholders
+            ]
+            description_tokens = [
+                "?fmt(\n",
+                f'{3*INDENT}"{fmt_str}",\n',
+                f"{3*INDENT}[",
+                ", ".join(print_vars),
+                "]\n",
+                f"{2*INDENT})\n",
+            ]
 
     tokens = [
         f"to_json(?{od_error.get_error_macro()}) ->\n",
@@ -305,23 +304,29 @@ def generate_to_json_callback(od_error: OdError) -> str:
 
 
 def generate_from_json_callback(od_error: OdError) -> str:
-    lines = [
-        f"from_json(#{{'id' := ?{od_error.get_id_macro()}, 'details' := Details}}) ->"
+    tokens = [
+        "from_json(",
+        f'#{{<<"id">> := ?{od_error.get_id_macro()}}}',
+        ") ->\n"
     ]
+
     if od_error.args:
+        tokens.insert(1, "ErrorJson = ")
+
+        details_var = "DetailsJson"
+        tokens.append(f'{INDENT}{details_var} = maps:get(<<"details">>, ErrorJson')
+        if all(arg.nullable for arg in od_error.args):
+            tokens.append(", #{}")
+        tokens.append("),\n\n")
+
         for arg in od_error.args:
-            if arg.nullable:
-                lines.append(
-                    f'    {arg.name} = maps:get(<<"{arg.name}">>, Details, undefined),'
-                )
-            else:
-                lines.append(f'    {arg.name} = maps:get(<<"{arg.name}">>, Details),')
-        lines.append(
-            f"    ?{od_error.get_error_macro()}({', '.join(arg.name for arg in od_error.args)});"
-        )
-    else:
-        lines.append(f"    ?{od_error.get_error_macro()};")
-    return "\n".join(lines)
+            tokens.extend(arg.generate_from_json_decoding(details_var=details_var))
+
+        tokens.append("\n")
+
+    tokens.append(f"{INDENT}?{od_error.get_error_macro()}.")
+
+    return "".join(tokens)
 
 
 def generate_error_dialyzer_type(od_error: OdError) -> str:

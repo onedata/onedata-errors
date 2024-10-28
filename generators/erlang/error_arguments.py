@@ -29,6 +29,11 @@ class _PrintEncodingStrategy(Enum):
     CUSTOM = "custom"
 
 
+class _JsonDecodingStrategy(Enum):
+    DIRECT = "direct"
+    CUSTOM = "custom"
+
+
 class ErrorArg(NamedTuple):
     name: str
     nullable: bool = False
@@ -36,6 +41,7 @@ class ErrorArg(NamedTuple):
 
     json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.DIRECT
     print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.DIRECT
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.DIRECT
 
     def get_erlang_variable_name(self) -> str:
         return self.name[0].upper() + self.name[1:]
@@ -51,6 +57,44 @@ class ErrorArg(NamedTuple):
         return self._generate_to_json_encoding(
             is_printed=is_printed, indent_level=indent_level
         )
+
+    def generate_from_json_decoding(self, *, details_var: str, indent_level: int = 1) -> List[str]:
+        indent_0 = indent_level * INDENT
+        indent_1 = (indent_level + 1) * INDENT
+        indent_2 = (indent_level + 2) * INDENT
+
+        erl_var = self.get_erlang_variable_name()
+        tokens = []
+
+        maps_get_tokens = ['maps:get(<<"', self.name, '">>, ', details_var, ")"]
+        if self.nullable:
+            maps_get_tokens.insert(-1, ", null")
+
+        if self.json_decoding_strategy == _JsonDecodingStrategy.DIRECT:
+            tokens.extend([indent_0, erl_var, " = "])
+
+            if self.nullable:
+                tokens.extend(["utils:null_to_undefined(", *maps_get_tokens, ")"])
+            else:
+                tokens.extend(maps_get_tokens)
+
+            tokens.append(",\n")
+
+        elif self.json_decoding_strategy == _JsonDecodingStrategy.CUSTOM:
+            json_var = f"{erl_var}Json"
+
+            if self.nullable:
+                tokens.extend([indent_0, erl_var, " = case ", *maps_get_tokens, " of\n"])
+                tokens.extend([indent_1, "null ->\n", indent_2, "undefined;\n"])
+                tokens.extend([indent_1, json_var, " ->\n"])
+                tokens.extend(self._generate_json_decoding(json_var=json_var, indent_level=indent_level+2))
+                tokens.extend(["\n", indent_0, "end,\n"])
+            else:
+                tokens.extend([indent_0, json_var, " = ", *maps_get_tokens, ",\n"])
+                tokens.extend(self._generate_json_decoding(json_var=json_var, assign_to=erl_var, indent_level=indent_level))
+                tokens.append(",\n")
+
+        return tokens
 
     def _generate_to_json_encoding(
         self, *, is_printed: bool = False, indent_level: int = 1
@@ -310,6 +354,11 @@ class ErrorArg(NamedTuple):
     ) -> List[str]:
         return []
 
+    def _generate_json_decoding(
+        self, *, json_var: str, assign_to: Optional[str] = None, indent_level: int = 1
+    ) -> List[str]:
+        return []
+
 
 class BinaryArg(ErrorArg):
     fmt_control_sequence: str = "~ts"
@@ -318,6 +367,7 @@ class BinaryArg(ErrorArg):
 class AtomArg(ErrorArg):
     fmt_control_sequence: str = "~ts"
     json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
 
     def _generate_json_encoding(
         self, *, erl_var: str, assign_to: Optional[str] = None, indent_level: int = 1
@@ -325,6 +375,13 @@ class AtomArg(ErrorArg):
         indent = indent_level * INDENT
         assignment = f"{assign_to} = " if assign_to else ""
         return [f"{indent}{assignment}atom_to_binary({erl_var}, utf8)"]
+
+    def _generate_json_decoding(
+        self, *, json_var: str, assign_to: Optional[str] = None, indent_level: int = 1
+    ) -> List[str]:
+        indent = indent_level * INDENT
+        assignment = f"{assign_to} = " if assign_to else ""
+        return [f"{indent}{assignment}binary_to_existing_atom({json_var}, utf8)"]
 
 
 class IntegerArg(ErrorArg):
@@ -336,20 +393,28 @@ class ConsumerArg(ErrorArg):
 
     json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
     print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
 
     def _generate_json_encoding(
         self, *, erl_var: str, assign_to: Optional[str] = None, indent_level: int = 1
     ) -> List[str]:
         indent = indent_level * INDENT
         assignment = f"{assign_to} = " if assign_to else ""
-        return [f"{indent}{assignment}aai:subject_to_json({erl_var}, utf8)"]
+        return [f"{indent}{assignment}aai:subject_to_json({erl_var})"]
 
     def _generate_print_encoding(
         self, *, json_var: str, erl_var: str, assign_to: Optional[str] = None, indent_level: int = 1
     ) -> List[str]:
         indent = indent_level * INDENT
         assignment = f"{assign_to} = " if assign_to else ""
-        return [f"{indent}{assignment}aai:subject_to_printable({erl_var}, utf8)"]
+        return [f"{indent}{assignment}aai:subject_to_printable({erl_var})"]
+
+    def _generate_json_decoding(
+        self, *, json_var: str, assign_to: Optional[str] = None, indent_level: int = 1
+    ) -> List[str]:
+        indent = indent_level * INDENT
+        assignment = f"{assign_to} = " if assign_to else ""
+        return [f"{indent}{assignment}aai:subject_from_json({json_var})"]
 
 
 
