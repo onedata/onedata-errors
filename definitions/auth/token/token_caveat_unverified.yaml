@@ -3,4 +3,4 @@ description: "Provided token is not valid - {caveat}."
 http_code: 400
 args:
   - name: caveat
-    type: caveat
+    type: caveat_unverified

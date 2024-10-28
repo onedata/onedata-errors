@@ -551,7 +551,9 @@ class AtmTaskArgumentValueBuilderTypes(ErrorArg):
     json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
 
     def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
-        return [f"lists:map(fun atm_task_argument_value_builder:type_to_json/1, {erl_var})"]
+        return [
+            f"lists:map(fun atm_task_argument_value_builder:type_to_json/1, {erl_var})"
+        ]
 
     def _generate_print_encoding_expr_lines(
         self, *, json_var: str, erl_var: str
@@ -559,7 +561,9 @@ class AtmTaskArgumentValueBuilderTypes(ErrorArg):
         return [f"?fmt_csv({json_var})"]
 
     def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
-        return [f"lists:map(fun atm_task_argument_value_builder:type_from_json/1, {json_var})"]
+        return [
+            f"lists:map(fun atm_task_argument_value_builder:type_from_json/1, {json_var})"
+        ]
 
 
 class AaiService(ErrorArg):
@@ -619,21 +623,23 @@ class TokenType(ErrorArg):
         return [f"token_type:from_json({json_var})"]
 
 
+class CaveatUnverified(ErrorArg):
+    fmt_control_sequence: str = "~ts"
 
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
 
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"caveats:to_json({erl_var})"]
 
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"caveats:unverified_description({erl_var})"]
 
-
-
-
-
-
-class CaveatArg(ErrorArg):
-    def map_to_details(self):
-        return f"caveats:to_json({self.name})"
-
-    def map_to_format(self):
-        return f"caveats:unverified_description({self.name})"
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"caveats:from_json({json_var})"]
 
 
 class ListArg(ErrorArg):
@@ -642,10 +648,6 @@ class ListArg(ErrorArg):
 
     def map_to_format(self):
         return self.map_to_details()
-
-
-class JsonArg(ErrorArg):
-    pass
 
 
 # TODO handle all types
@@ -669,10 +671,7 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "aai_service": AaiService,
         "aai_consumer": AaiConsumer,
         "token_type": TokenType,
-
-
-        "caveat": CaveatArg,
+        "caveat_unverified": CaveatUnverified,
         "list": ListArg,
-        "json": JsonArg,
     }
     return arg_classes.get(arg_type, Binary)(name, nullable)

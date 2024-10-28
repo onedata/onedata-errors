@@ -3,6 +3,5 @@ description: "Bad Let's Encrypt response: {errorMessage}."
 http_code: 400
 args:
   - name: problemDocument
-    type: json
     nullable: true
   - name: errorMessage
