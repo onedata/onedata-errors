@@ -3,5 +3,6 @@ description: "Cannot access file \"{path}\": {errno}."
 http_code: 500
 args:
   - name: path
+    type: path
   - name: errno
     type: atom

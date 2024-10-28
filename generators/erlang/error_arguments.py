@@ -707,6 +707,16 @@ class ByteSize(Integer):
         return [f"str_utils:format_byte_size({erl_var})"]
 
 
+class Path(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.FROM_JSON
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"str_utils:to_binary(filename:flatten({erl_var}))"]
+
+
 class ListArg(ErrorArg):
     # TODO rm list
     pass
@@ -737,6 +747,7 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "caveat_unverified": CaveatUnverified,
         "dns_servers": DnsServers,
         "byte_size": ByteSize,
+        "path": Path,
         "list": ListArg,
     }
     return arg_classes.get(arg_type)(name, nullable)
