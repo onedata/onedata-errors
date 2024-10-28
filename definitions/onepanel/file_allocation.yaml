@@ -3,6 +3,6 @@ description: "File allocation error. Allocated {actualSize} out of {targetSize}.
 http_code: 400
 args:
   - name: actualSize
-    type: integer
+    type: byte_size
   - name: targetSize
-    type: integer
+    type: byte_size

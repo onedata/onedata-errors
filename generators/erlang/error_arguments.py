@@ -673,6 +673,17 @@ class DnsServers(ErrorArg):
         ]
 
 
+class ByteSize(Integer):
+    fmt_control_sequence: str = "~ts"
+
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"str_utils:format_byte_size({erl_var})"]
+
+
 class ListArg(ErrorArg):
     # TODO rm list
     pass
@@ -701,6 +712,7 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "token_type": TokenType,
         "caveat_unverified": CaveatUnverified,
         "dns_servers": DnsServers,
+        "byte_size": ByteSize,
         "list": ListArg,
     }
     return arg_classes.get(arg_type, Binary)(name, nullable)
