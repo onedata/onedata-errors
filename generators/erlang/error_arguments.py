@@ -623,6 +623,29 @@ class TokenType(ErrorArg):
         return [f"token_type:from_json({json_var})"]
 
 
+class InviteTokenTypeWithAny(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [
+            f"case {erl_var} of\n",
+            f'{INDENT}any -> <<"any">>;\n',
+            f"{INDENT}_ -> token_type:invite_type_to_str({erl_var})\n",
+            f"end"
+        ]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [
+            f"case {json_var} of\n",
+            f'{INDENT}<<"any">> -> any;\n',
+            f"{INDENT}_ -> token_type:invite_type_from_str({json_var})\n",
+            f"end"
+        ]
+
+
 class CaveatUnverified(ErrorArg):
     fmt_control_sequence: str = "~ts"
 
@@ -710,9 +733,10 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "aai_service": AaiService,
         "aai_consumer": AaiConsumer,
         "token_type": TokenType,
+        "invite_token_type_with_any": InviteTokenTypeWithAny,
         "caveat_unverified": CaveatUnverified,
         "dns_servers": DnsServers,
         "byte_size": ByteSize,
         "list": ListArg,
     }
-    return arg_classes.get(arg_type, Binary)(name, nullable)
+    return arg_classes.get(arg_type)(name, nullable)

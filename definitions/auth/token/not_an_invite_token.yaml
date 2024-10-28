@@ -3,6 +3,6 @@ description: "Expected an invitation token of type '{expectedInviteType}', but r
 http_code: 400
 args:
   - name: expectedInviteType
-    type: atom
+    type: invite_token_type_with_any
   - name: received
     type: token_type
