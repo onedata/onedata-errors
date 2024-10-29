@@ -1,7 +1,7 @@
 id: unauthorized
 args:
   - name: authError
-    type: error
+    type: OnedataError
     nullable: true
 description: >-
   You must authenticate yourself to perform this operation.

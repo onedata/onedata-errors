@@ -1,10 +1,10 @@
 id: relationAlreadyExists
 args:
   - name: childType
-    type: atom
+    type: Atom
   - name: childId
   - name: parentType
-    type: atom
+    type: Atom
   - name: parentId
 description: >-
   Bad value: {childType}:{childId} is already a member of {parentType}:{parentId}.

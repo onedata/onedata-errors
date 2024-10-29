@@ -1,7 +1,7 @@
 id: tokenCaveatUnverified
 args:
   - name: caveat
-    type: caveat_unverified
+    type: CaveatUnverified
 description: >-
   Provided token is not valid - {caveat}.
 http_code: 400

@@ -1,7 +1,7 @@
 id: limitReached
 args:
   - name: limit
-    type: integer
+    type: Integer
   - name: resourceDescription
 description: >-
   The limit for {resourceDescription} has been reached: {limit}.

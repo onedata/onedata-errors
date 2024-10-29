@@ -1,7 +1,7 @@
 id: tokenTimeCaveatRequired
 args:
   - name: maxTtl
-    type: integer
+    type: Integer
 description: >-
   You must specify a time caveat with maximum TTL of {maxTtl} seconds.
 http_code: 400

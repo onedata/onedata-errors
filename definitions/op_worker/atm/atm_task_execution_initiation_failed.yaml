@@ -2,7 +2,7 @@ id: atmTaskExecutionInitiationFailed
 args:
   - name: atmTaskSchemaId
   - name: specificError
-    type: error
+    type: OnedataError
 description: >-
   Failed to initiate automation task execution (id: "{atmTaskSchemaId}") (see details).
 http_code: 400

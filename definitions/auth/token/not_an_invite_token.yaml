@@ -1,9 +1,9 @@
 id: notAnInviteToken
 args:
   - name: expectedInviteType
-    type: invite_token_type_with_any
+    type: InviteTokenTypeWithAny
   - name: received
-    type: token_type
+    type: TokenType
 description: >-
   Expected an invitation token of type '{expectedInviteType}', but received a(n) {received}.
 http_code: 400

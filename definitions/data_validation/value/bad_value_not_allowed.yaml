@@ -2,7 +2,7 @@ id: badValueNotAllowed
 args:
   - name: key
   - name: allowed
-    type: binaries
+    type: Binaries
 description: >-
   Bad value: provided "{key}" must be one of: {allowed}.
 http_code: 400

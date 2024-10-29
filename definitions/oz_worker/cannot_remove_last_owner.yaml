@@ -1,7 +1,7 @@
 id: cannotRemoveLastOwner
 args:
   - name: entityType
-    type: atom
+    type: Atom
   - name: entityId
 description: >- 
   Cannot remove the last owner - another owner must be assigned first.

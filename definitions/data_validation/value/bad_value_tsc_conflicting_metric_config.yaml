@@ -3,9 +3,9 @@ args:
   - name: timeSeriesName
   - name: metricName
   - name: existingMetricConfig
-    type: metric_config
+    type: MetricConfig
   - name: conflictingMetricConfig
-    type: metric_config
+    type: MetricConfig
 description: >-
   Provided metric config for 'time series' {timeSeriesName} and metric '{metricName}'
   conflicts with existing metric config (see details).

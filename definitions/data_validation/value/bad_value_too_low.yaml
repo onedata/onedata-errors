@@ -2,7 +2,7 @@ id: badValueTooLow
 args:
   - name: key
   - name: limit
-    type: integer
+    type: Integer
 description: >-
   Bad value: provided "{key}" must be at least {limit}.
 http_code: 400

@@ -2,7 +2,7 @@ id: requiresPosixCompatibleStorage
 args:
   - name: storageId
   - name: posixCompatibleStorages
-    type: binaries
+    type: Binaries
 description: >-
   Cannot apply for storage {storageId} - this operation requires
   a POSIX-compatible storage (any of: {posixCompatibleStorages}).

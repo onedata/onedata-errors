@@ -2,7 +2,7 @@ id: atmTaskResultDispatchFailed
 args:
   - name: atmStoreSchemaId
   - name: specificError
-    type: error
+    type: OnedataError
 description: >-
   Failed to dispatch automation task execution result to automation store
   "{atmStoreSchemaId}" (see details).

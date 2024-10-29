@@ -2,9 +2,9 @@ id: autoStorageImportNotSupported
 args:
   - name: storageId
   - name: supportedStorages
-    type: binaries
+    type: Binaries
   - name: supportedObjectStorages
-    type: binaries
+    type: Binaries
 description: >-
   Cannot configure auto storage import on storage {storageId} - this operation
   requires any of: {supportedStorages} storage with canonical path type and

@@ -2,9 +2,9 @@ id: badValueNotInRange
 args:
   - name: key
   - name: low
-    type: integer
+    type: Integer
   - name: high
-    type: integer
+    type: Integer
 description: >-
   Bad value: provided "{key}" must be between <{low}, {high}>.
 http_code: 400

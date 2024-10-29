@@ -1,9 +1,9 @@
 id: illegalSupportStageTransition
 args:
   - name: currentProviderStage
-    type: provider_support_stage
+    type: ProviderSupportStage
   - name: currentStorageStage
-    type: storage_support_stage
+    type: StorageSupportStage
 description: >-
   Illegal support stage transition: this operation cannot be performed while
   the storage is in stage '{currentStorageStage}' and provider is in stage

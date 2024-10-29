@@ -1,9 +1,12 @@
 id: errorOnNodes
 args:
-  - name: hostnames
-    type: list
   - name: error
-    type: error
+    type: OnepanelError
+  - name: hostnames
+    type: Binaries
 description: >-
   Error on nodes {hostnames}: {error}
-http_code: 400
+http_code: |
+  -spec to_http_code(t()) -> od_error:http_code().
+  to_http_code(?ERROR_ON_NODES(Error, _)) ->
+      errors:to_http_code(Error).

@@ -2,7 +2,7 @@ id: atmParallelBoxExecutionInitiationFailed
 args:
   - name: atmParallelBoxSchemaId
   - name: specificError
-    type: error
+    type: OnedataError
 description: >-
   Failed to initiate automation parallel box execution (id: "{atmParallelBoxSchemaId}") (see details).
 http_code: 400

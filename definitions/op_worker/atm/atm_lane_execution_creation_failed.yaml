@@ -2,7 +2,7 @@ id: atmLaneExecutionCreationFailed
 args:
   - name: atmLaneSchemaId
   - name: specificError
-    type: error
+    type: OnedataError
 description: >-
   Failed to create automation lane execution (id: "{atmLaneSchemaId}") (see details).
 http_code: 400

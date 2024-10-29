@@ -1,9 +1,9 @@
 id: forbiddenForCurrentArchiveState
 args:
   - name: currentState
-    type: atom
+    type: Atom
   - name: allowedStates
-    type: list
+    type: List
 description: >-
   This operation is forbidden while the archive state is {currentState}.
   Allowed states are: {allowedStates}.

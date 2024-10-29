@@ -1,7 +1,7 @@
 id: badVersion
 args:
   - name: supportedVersions
-    type: list
+    type: List
 description: >-
   Bad version - supported versions: {supportedVersions}.
 http_code: 400

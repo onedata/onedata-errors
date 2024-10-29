@@ -2,7 +2,7 @@ id: atmLambdaConfigBadValue
 args:
   - name: parameterName
   - name: specificError
-    type: error
+    type: OnedataError
 description: >-
   Bad value provided for parameter "{parameterName}" of lambda config (see details).
 http_code: 400

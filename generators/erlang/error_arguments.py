@@ -467,6 +467,17 @@ class OnedataError(ErrorArg):
         return [f"errors:from_json({json_var})"]
 
 
+class OnepanelError(OnedataError):
+    fmt_control_sequence: str = "~ts"
+
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f'maps:get(<<"description">>, {json_var})']
+
+
 class AtmDataType(ErrorArg):
     fmt_control_sequence: str = "~ts"
 
@@ -634,7 +645,7 @@ class InviteTokenTypeWithAny(ErrorArg):
             f"case {erl_var} of\n",
             f'{INDENT}any -> <<"any">>;\n',
             f"{INDENT}_ -> token_type:invite_type_to_str({erl_var})\n",
-            f"end"
+            f"end",
         ]
 
     def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
@@ -642,7 +653,7 @@ class InviteTokenTypeWithAny(ErrorArg):
             f"case {json_var} of\n",
             f'{INDENT}<<"any">> -> any;\n',
             f"{INDENT}_ -> token_type:invite_type_from_str({json_var})\n",
-            f"end"
+            f"end",
         ]
 
 
@@ -679,7 +690,7 @@ class DnsServers(ErrorArg):
             "lists:map(fun\n",
             f"{INDENT}(defaults) -> {self.DNS_DEFAULTS};\n",
             f"{INDENT}(Ip) -> element(2, {{ok, _}} = ip_utils:to_binary(Ip))\n",
-            f"end, {erl_var})"
+            f"end, {erl_var})",
         ]
 
     def _generate_print_encoding_expr_lines(
@@ -692,7 +703,7 @@ class DnsServers(ErrorArg):
             "lists:map(fun\n",
             f"{INDENT}({self.DNS_DEFAULTS}) -> default;\n",
             f"{INDENT}(Ip) -> element(2, {{ok, _}} = ip_utils:to_ip4_address(Ip))\n",
-            f"end, {json_var})"
+            f"end, {json_var})",
         ]
 
 
@@ -717,6 +728,45 @@ class Path(ErrorArg):
         return [f"str_utils:to_binary(filename:flatten({erl_var}))"]
 
 
+class MetricConfig(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"jsonable_record:to_json({erl_var}, metric_config)"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"jsonable_record:from_json({json_var}, metric_config)"]
+
+
+class ProviderSupportStage(ErrorArg):
+    fmt_control_sequence: str = "~w"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"support_stage:serialize(provider, {erl_var})"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"support_stage:deserialize(provider, {json_var})"]
+
+
+class StorageSupportStage(ErrorArg):
+    fmt_control_sequence: str = "~w"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"support_stage:serialize(storage, {erl_var})"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"support_stage:deserialize(storage, {json_var})"]
+
+
 class ListArg(ErrorArg):
     # TODO rm list
     pass
@@ -725,29 +775,34 @@ class ListArg(ErrorArg):
 # TODO handle all types
 def load_argument(arg_yaml: dict) -> ErrorArg:
     name = arg_yaml["name"]
-    arg_type = arg_yaml.get("type", "binary")
+    arg_type = arg_yaml.get("type", "Binary")
     nullable = arg_yaml.get("nullable", False)
 
     arg_classes = {
-        "binary": Binary,
-        "binaries": Binaries,
-        "atom": Atom,
-        "integer": Integer,
-        "error": OnedataError,
-        "atm_data_type": AtmDataType,
-        "atm_data_types": AtmDataTypes,
-        "atm_workflow_schemas": AtmWorkflowSchemas,
-        "atm_store_schema_ids": AtmStoreSchemaIds,
-        "atm_task_argument_value_builder_type": AtmTaskArgumentValueBuilderType,
-        "atm_task_argument_value_builder_types": AtmTaskArgumentValueBuilderTypes,
-        "aai_service": AaiService,
-        "aai_consumer": AaiConsumer,
-        "token_type": TokenType,
-        "invite_token_type_with_any": InviteTokenTypeWithAny,
-        "caveat_unverified": CaveatUnverified,
-        "dns_servers": DnsServers,
-        "byte_size": ByteSize,
-        "path": Path,
-        "list": ListArg,
+        "Binary": Binary,
+        "Binaries": Binaries,
+        "Atom": Atom,
+        "Integer": Integer,
+        "OnedataError": OnedataError,
+        "OnepanelError": OnepanelError,
+        "AtmDataType": AtmDataType,
+        "AtmDataTypes": AtmDataTypes,
+        "AtmWorkflowSchemas": AtmWorkflowSchemas,
+        "AtmStoreSchemaIds": AtmStoreSchemaIds,
+        "AtmTaskArgumentValueBuilderType": AtmTaskArgumentValueBuilderType,
+        "AtmTaskArgumentValueBuilderTypes": AtmTaskArgumentValueBuilderTypes,
+        "AaiService": AaiService,
+        "AaiConsumer": AaiConsumer,
+        "TokenType": TokenType,
+        "InviteTokenTypeWithAny": InviteTokenTypeWithAny,
+        "CaveatUnverified": CaveatUnverified,
+        "DnsServers": DnsServers,
+        "ByteSize": ByteSize,
+        "Path": Path,
+        "MetricConfig": MetricConfig,
+        "ProviderSupportStage": ProviderSupportStage,
+        "StorageSupportStage": StorageSupportStage,
+        "List": ListArg,
+        "Json": ErrorArg,  # TODO
     }
     return arg_classes.get(arg_type)(name, nullable)

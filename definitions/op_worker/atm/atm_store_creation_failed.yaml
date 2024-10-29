@@ -2,7 +2,7 @@ id: atmStoreCreationFailed
 args:
   - name: atmStoreSchemaId
   - name: specificError
-    type: error
+    type: OnedataError
 description: >-
   Failed to create automation store (schema id: "{atmStoreSchemaId}") (see details).
 http_code: 400

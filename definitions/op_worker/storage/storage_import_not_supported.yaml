@@ -2,7 +2,7 @@ id: storageImportNotSupported
 args:
   - name: storageId
   - name: objectStorages
-    type: binaries
+    type: Binaries
 description: >-
   Cannot configure storage import on storage {storageId} - this operation
   requires storage with canonical path type and on object storages

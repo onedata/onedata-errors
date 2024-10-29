@@ -1,7 +1,7 @@
 id: badServiceToken
 args:
   - name: tokenError
-    type: error
+    type: OnedataError
 description: >-
   Provided service token is not valid (see details).
 http_code: 400

@@ -2,7 +2,7 @@ id: atmDataValueConstraintUnverified
 args:
   - name: value
   - name: type
-    type: atm_data_type
+    type: AtmDataType
   - name: valueConstraints
 description: >-
   Provided value doesn't meet the constraints (see details).

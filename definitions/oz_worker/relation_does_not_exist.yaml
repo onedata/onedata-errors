@@ -1,10 +1,10 @@
 id: relationDoesNotExist
 args:
   - name: childType
-    type: atom
+    type: Atom
   - name: childId
   - name: parentType
-    type: atom
+    type: Atom
   - name: parentId
 description: >- 
   Bad value: {childType}:{childId} is not a member of {parentType}:{parentId}.

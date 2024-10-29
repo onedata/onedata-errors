@@ -1,9 +1,9 @@
 id: fileAccess
 args:
   - name: path
-    type: path
+    type: Path
   - name: errno
-    type: atom
+    type: Atom
 description: >-
   Cannot access file "{path}": {errno}.
 http_code: 500

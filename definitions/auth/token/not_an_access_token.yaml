@@ -1,7 +1,7 @@
 id: notAnAccessToken
 args:
   - name: received
-    type: token_type
+    type: TokenType
 description: >-
   Expected an access token, but received a(n) {received}.
 http_code: 400

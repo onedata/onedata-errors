@@ -1,7 +1,7 @@
 id: posix
 args:
   - name: errno
-    type: atom
+    type: Atom
 description: >-
   Operation failed with POSIX error: {errno}.
 http_code: 400

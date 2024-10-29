@@ -1,7 +1,7 @@
 id: inviteTokenConsumerInvalid
 args:
   - name: consumer
-    type: aai_consumer
+    type: AaiConsumer
 description: >-
   The consumer '{consumer}' is invalid for this type of invite token.
 http_code: 400

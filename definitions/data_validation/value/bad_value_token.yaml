@@ -2,7 +2,7 @@ id: badValueToken
 args:
   - name: key
   - name: tokenError
-    type: error
+    type: OnedataError
 description: >-
   Bad value: provided "{key}" is not a valid token (see details).
 http_code: 400

@@ -2,7 +2,7 @@ id: atmTaskResultMappingFailed
 args:
   - name: result
   - name: specificError
-    type: error
+    type: OnedataError
 description: >-
   Failed to map automation task execution result "{result}" (see details).
 http_code: 400
