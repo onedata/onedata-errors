@@ -1,7 +1,8 @@
 id: badValueTooLow
-description: "Bad value: provided \"{key}\" must be at least {limit}."
-http_code: 400
 args:
   - name: key
   - name: limit
     type: integer
+description: >-
+  Bad value: provided "{key}" must be at least {limit}.
+http_code: 400

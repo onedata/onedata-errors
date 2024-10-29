@@ -1,7 +1,8 @@
 id: atmStoreCreationFailed
-description: "Failed to create automation store (schema id: \"{atmStoreSchemaId}\") (see details)."
-http_code: 400
 args:
   - name: atmStoreSchemaId
   - name: specificError
     type: error
+description: >-
+  Failed to create automation store (schema id: "{atmStoreSchemaId}") (see details).
+http_code: 400

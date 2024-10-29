@@ -1,7 +1,8 @@
 id: atmParallelBoxExecutionCreationFailed
-description: "Failed to create automation parallel box execution (id: \"{atmParallelBoxSchemaId}\") (see details)."
-http_code: 400
 args:
   - name: atmParallelBoxSchemaId
   - name: specificError
     type: error
+description: >-
+  Failed to create automation parallel box execution (id: "{atmParallelBoxSchemaId}") (see details).
+http_code: 400

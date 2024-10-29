@@ -1,3 +1,4 @@
 id: tokenSessionInvalid
-description: "This token is bound to a session different than presented by the client or no longer existent."
+description: >-
+  This token is bound to a session different than presented by the client or no longer existent.
 http_code: 400

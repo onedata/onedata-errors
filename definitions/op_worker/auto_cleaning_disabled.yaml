@@ -1,3 +1,4 @@
 id: autoCleaningDisabled
-description: "Auto-cleaning is disabled."
+description: >-
+  Auto-cleaning is disabled.
 http_code: 400

@@ -1,5 +1,7 @@
 id: statOperationNotSupported
-description: "Storage {storageId} does not support the `stat` operation or equivalent used for acquiring files metadata."
-http_code: 400
 args:
   - name: storageId
+description: >-
+  Storage {storageId} does not support the `stat` operation or equivalent
+  used for acquiring files metadata.
+http_code: 400

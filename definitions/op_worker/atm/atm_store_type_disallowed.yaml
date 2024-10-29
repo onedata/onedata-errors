@@ -1,7 +1,9 @@
 id: atmStoreTypeDisallowed
-description: "Bad automation store: the type of store (schema id: \"{atmStoreSchemaId}\") must be one of: {allowed}."
-http_code: 400
 args:
   - name: atmStoreSchemaId
   - name: allowed
     type: atm_store_schema_ids
+description: >-
+  Bad automation store: the type of store (schema id: "{atmStoreSchemaId}")
+  must be one of: {allowed}.
+http_code: 400

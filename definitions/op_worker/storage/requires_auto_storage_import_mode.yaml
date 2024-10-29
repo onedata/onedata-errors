@@ -1,4 +1,4 @@
 id: requiresAutoStorageImportMode
-description: "Operation requires space with auto storage import mode."
+description: >-
+  Operation requires space with auto storage import mode.
 http_code: 400
-

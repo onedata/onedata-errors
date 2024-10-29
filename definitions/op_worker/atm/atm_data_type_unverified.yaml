@@ -1,7 +1,8 @@
 id: atmDataTypeUnverified
-description: "Provided value is not of expected type (see details)."
-http_code: 400
 args:
   - name: value
   - name: expType
     type: atm_data_type
+description: >-
+  Provided value is not of expected type (see details).
+http_code: 400

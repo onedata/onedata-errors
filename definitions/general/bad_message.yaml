@@ -1,5 +1,6 @@
 id: badMessage
-description: "This message could not be understood by the server."
-http_code: 400
 args:
   - name: message
+description: >-
+  This message could not be understood by the server.
+http_code: 400

@@ -1,3 +1,4 @@
 id: atmWorkflowExecutionNotEnded
-description: "Specified automation workflow execution has not ended yet."
+description: >-
+  Specified automation workflow execution has not ended yet.
 http_code: 400

@@ -1,7 +1,8 @@
 id: atmTaskArgMappingFailed
-description: "Failed to map automation task execution argument \"{argument}\" (see details)."
-http_code: 400
 args:
   - name: argument
   - name: specificError
     type: error
+description: >-
+  Failed to map automation task execution argument "{argument}" (see details).
+http_code: 400

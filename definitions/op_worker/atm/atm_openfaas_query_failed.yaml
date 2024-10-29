@@ -1,6 +1,7 @@
 id: atmOpenfaasQueryFailed
-description: "Failed to query OpenFaaS service."
-http_code: 400
 args:
   - name: reason
     nullable: true
+description: >-
+  Failed to query OpenFaaS service.
+http_code: 400

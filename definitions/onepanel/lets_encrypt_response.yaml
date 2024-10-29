@@ -1,7 +1,8 @@
 id: letsEncryptResponse
-description: "Bad Let's Encrypt response: {errorMessage}."
-http_code: 400
 args:
   - name: problemDocument
     nullable: true
   - name: errorMessage
+description: >-
+  Bad Let's Encrypt response: {errorMessage}.
+http_code: 400

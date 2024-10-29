@@ -1,3 +1,4 @@
 id: filePopularityDisabled
-description: "File popularity is disabled."
+description: >-
+  File popularity is disabled.
 http_code: 400

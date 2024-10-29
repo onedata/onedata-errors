@@ -1,5 +1,6 @@
 id: badValueIPv4Address
-description: "Bad value: provided \"{key}\" is not a valid IPv4 address."
-http_code: 400
 args:
   - name: key
+description: >-
+  Bad value: provided "{key}" is not a valid IPv4 address.
+http_code: 400

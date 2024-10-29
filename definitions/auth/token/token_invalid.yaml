@@ -1,3 +1,4 @@
 id: tokenInvalid
-description: "Provided token is not valid."
+description: >-
+  Provided token is not valid.
 http_code: 400

@@ -1,8 +1,9 @@
 id: fileAllocation
-description: "File allocation error. Allocated {actualSize} out of {targetSize}."
-http_code: 400
 args:
   - name: actualSize
     type: byte_size
   - name: targetSize
     type: byte_size
+description: >-
+  File allocation error. Allocated {actualSize} out of {targetSize}.
+http_code: 400

@@ -1,3 +1,5 @@
 id: atmLaneExecutionRerunFailed
-description: "Failed to rerun specified lane execution. Lane execution can be rerun only if it is in one of the following states: 'finished', 'failed', 'cancelled'."
+description: >-
+  Failed to rerun specified lane execution. Lane execution can be rerun only
+  if it is in one of the following states: 'finished', 'failed', 'cancelled'.
 http_code: 400

@@ -1,5 +1,6 @@
 id: guiPackageUnverified
-description: "Provided GUI package could not be verified - unknown SHA sum '{shaSum}'."
-http_code: 400
 args:
   - name: shaSum
+description: >-
+  Provided GUI package could not be verified - unknown SHA sum '{shaSum}'.
+http_code: 400

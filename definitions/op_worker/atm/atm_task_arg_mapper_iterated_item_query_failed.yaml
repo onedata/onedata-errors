@@ -1,6 +1,7 @@
 id: atmTaskArgMapperIteratedItemQueryFailed
-description: "Failed to perform query on iterated item (see details)."
-http_code: 400
 args:
   - name: value
   - name: query
+description: >-
+  Failed to perform query on iterated item (see details).
+http_code: 400

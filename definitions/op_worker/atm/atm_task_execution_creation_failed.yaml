@@ -1,7 +1,8 @@
 id: atmTaskExecutionCreationFailed
-description: "Failed to create automation task execution (id: \"{atmTaskSchemaId}\") (see details)."
-http_code: 400
 args:
   - name: atmTaskSchemaId
   - name: specificError
     type: error
+description: >-
+  Failed to create automation task execution (id: "{atmTaskSchemaId}") (see details).
+http_code: 400

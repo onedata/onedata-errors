@@ -1,5 +1,6 @@
 id: badValueInteger
-description: "Bad value: provided \"{key}\" must be an integer."
-http_code: 400
 args:
   - name: key
+description: >-
+  Bad value: provided "{key}" must be an integer.
+http_code: 400

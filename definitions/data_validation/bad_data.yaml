@@ -1,6 +1,7 @@
 id: badData
-description: TODO
-http_code: 400
 args:
   - name: key
   - name: specificErrorOrHint
+description: >-
+  TODO
+http_code: 400

@@ -1,7 +1,8 @@
 id: badValueNotAllowed
-description: "Bad value: provided \"{key}\" must be one of: {allowed}."
-http_code: 400
 args:
   - name: key
   - name: allowed
     type: binaries
+description: >-
+  Bad value: provided "{key}" must be one of: {allowed}.
+http_code: 400

@@ -1,6 +1,7 @@
 id: badConsumerToken
-description: "Provided consumer token is not valid (see details)."
-http_code: 400
 args:
   - name: tokenError
     type: error
+description: >-
+  Provided consumer token is not valid (see details).
+http_code: 400

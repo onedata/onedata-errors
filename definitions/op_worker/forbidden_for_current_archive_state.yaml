@@ -1,8 +1,10 @@
 id: forbiddenForCurrentArchiveState
-description: "This operation is forbidden while the archive state is {currentState}. Allowed states are: {allowedStates}."
-http_code: 400
 args:
   - name: currentState
     type: atom
   - name: allowedStates
     type: list
+description: >-
+  This operation is forbidden while the archive state is {currentState}.
+  Allowed states are: {allowedStates}.
+http_code: 400

@@ -1,7 +1,8 @@
 id: badValueToken
-description: "Bad value: provided \"{key}\" is not a valid token (see details)."
-http_code: 400
 args:
   - name: key
   - name: tokenError
     type: error
+description: >-
+  Bad value: provided "{key}" is not a valid token (see details).
+http_code: 400

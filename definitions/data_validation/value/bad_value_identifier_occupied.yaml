@@ -1,5 +1,6 @@
 id: badValueIdentifierOccupied
-description: "Bad value: provided identifier (\"{key}\") is already occupied."
-http_code: 400
 args:
   - name: key
+description: >-
+  Bad value: provided identifier ("{key}") is already occupied.
+http_code: 400

@@ -1,5 +1,6 @@
 id: atmStoreContentNotSet
-description: "No content has been set for this store (schema id: \"{atmStoreSchemaId}\")."
-http_code: 400
 args:
   - name: atmStoreSchemaId
+description: >-
+  No content has been set for this store (schema id: "{atmStoreSchemaId}").
+http_code: 400

@@ -1,3 +1,4 @@
 id: inviteTokenSubjectNotAuthorized
-description: "The subject of this token is not (or no longer) authorized to issue such invitations."
+description: >-
+  The subject of this token is not (or no longer) authorized to issue such invitations.
 http_code: 400

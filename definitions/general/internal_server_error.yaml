@@ -1,6 +1,9 @@
 id: internalServerError
-description: "The server has encountered an error while processing this request. If the problem persists, please contact the site's administrators, citing the following reference: {reference}"
-http_code: 500
 args:
   - name: reference
     nullable: true
+description: >-
+  The server has encountered an error while processing this request.
+  If the problem persists, please contact the site's administrators,
+  citing the following reference: {reference}
+http_code: 500

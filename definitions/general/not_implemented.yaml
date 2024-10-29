@@ -1,3 +1,4 @@
 id: notImplemented
-description: "This operation is not implemented."
+description: >-
+  This operation is not implemented.
 http_code: 501

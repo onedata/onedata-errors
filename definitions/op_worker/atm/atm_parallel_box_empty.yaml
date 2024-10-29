@@ -1,5 +1,6 @@
 id: atmParallelBoxEmpty
-description: "Bad automation parallel box: parallel box (id: \"{atmParallelBoxSchemaId}\") must not be empty."
-http_code: 400
 args:
   - name: atmParallelBoxSchemaId
+description: >-
+  Bad automation parallel box: parallel box (id: "{atmParallelBoxSchemaId}") must not be empty.
+http_code: 400

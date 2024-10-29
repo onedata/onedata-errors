@@ -1,3 +1,4 @@
 id: serviceUnavailable
-description: "Service required for this operation is offline."
+description: >-
+  Service required for this operation is offline.
 http_code: 503

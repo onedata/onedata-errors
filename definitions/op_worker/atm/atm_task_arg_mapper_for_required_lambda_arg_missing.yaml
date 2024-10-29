@@ -1,5 +1,6 @@
 id: atmTaskArgMapperForRequiredLambdaArgMissing
-description: "Missing argument mapper for required lambda argument: {argument}."
-http_code: 400
 args:
   - name: argument
+description: >-
+  Missing argument mapper for required lambda argument: {argument}.
+http_code: 400

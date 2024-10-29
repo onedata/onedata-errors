@@ -1,8 +1,11 @@
 id: illegalSupportStageTransition
-description: "Illegal support stage transition: this operation cannot be performed while the storage is in stage '{currentStorageStage}' and provider is in stage '{currentProviderStage}'."
-http_code: 400
 args:
   - name: currentProviderStage
     type: provider_support_stage
   - name: currentStorageStage
     type: storage_support_stage
+description: >-
+  Illegal support stage transition: this operation cannot be performed while
+  the storage is in stage '{currentStorageStage}' and provider is in stage
+  '{currentProviderStage}'.
+http_code: 400

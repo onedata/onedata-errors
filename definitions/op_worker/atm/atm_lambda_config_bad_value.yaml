@@ -1,7 +1,8 @@
 id: atmLambdaConfigBadValue
-description: "Bad value provided for parameter \"{parameterName}\" of lambda config (see details)."
-http_code: 400
 args:
   - name: parameterName
   - name: specificError
     type: error
+description: >-
+  Bad value provided for parameter "{parameterName}" of lambda config (see details).
+http_code: 400

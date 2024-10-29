@@ -1,5 +1,6 @@
 id: noConnectionToNewNode
-description: "Cannot add node \"{hostname}\", connection failed."
-http_code: 400
 args:
   - name: hostname
+description: >-
+  Cannot add node "{hostname}", connection failed.
+http_code: 400

@@ -1,3 +1,4 @@
 id: tokenSubjectInvalid
-description: "The token subject is invalid (does not exist or is different than expected)."
+description: >-
+  The token subject is invalid (does not exist or is different than expected).
 http_code: 400

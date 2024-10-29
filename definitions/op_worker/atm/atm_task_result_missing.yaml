@@ -1,7 +1,9 @@
 id: atmTaskResultMissing
-description: "Missing required value for result '{missingResultName}' in the lambda output. Received values for result names: {receivedResultNames}."
-http_code: 400
 args:
   - name: missingResultName
   - name: receivedResultNames
     type: binaries
+description: >-
+  Missing required value for result '{missingResultName}' in the lambda output.
+  Received values for result names: {receivedResultNames}.
+http_code: 400

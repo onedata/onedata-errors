@@ -1,5 +1,6 @@
 id: requiresImportedStorage
-description: "Cannot apply for storage {storageId} - this operation requires an imported storage."
-http_code: 400
 args:
   - name: storageId
+description: >-
+  Cannot apply for storage {storageId} - this operation requires an imported storage.
+http_code: 400

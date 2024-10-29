@@ -1,5 +1,6 @@
 id: tokenCaveatUnknown
-description: "Unknown caveat - '{caveat}'."
-http_code: 400
 args:
   - name: caveat
+description: >-
+  Unknown caveat - '{caveat}'.
+http_code: 400

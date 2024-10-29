@@ -1,5 +1,6 @@
 id: badValueEmpty
-description: "Bad value: provided \"{key}\" must not be empty."
-http_code: 400
 args:
   - name: key
+description: >-
+  Bad value: provided "{key}" must not be empty.
+http_code: 400

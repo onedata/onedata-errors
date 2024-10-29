@@ -1,6 +1,7 @@
 id: viewQueryFailed
-description: "Query on view failed. Error category: {category}. Description: {description}."
-http_code: 400
 args:
   - name: category
   - name: description
+description: >-
+  Query on view failed. Error category: {category}. Description: {description}.
+http_code: 400

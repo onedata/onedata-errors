@@ -1,3 +1,4 @@
 id: badGRI
-description: "Provided GRI (Graph Resource Identifier) is invalid."
+description: >-
+  Provided GRI (Graph Resource Identifier) is invalid.
 http_code: 400

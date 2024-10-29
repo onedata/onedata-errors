@@ -1,8 +1,9 @@
 id: errorOnNodes
-description: "Error on nodes {hostnames}: {error}"
-http_code: 400
 args:
   - name: hostnames
     type: list
   - name: error
     type: error
+description: >-
+  Error on nodes {hostnames}: {error}
+http_code: 400

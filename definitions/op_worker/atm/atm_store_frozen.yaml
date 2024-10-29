@@ -1,5 +1,7 @@
 id: atmStoreFrozen
-description: "Failed to perform operation on automation store (schema id: \"{atmStoreSchemaId}\") as any modification is forbidden."
-http_code: 403
 args:
   - name: atmStoreSchemaId
+description: >-
+  Failed to perform operation on automation store (schema id: "{atmStoreSchemaId}")
+  as any modification is forbidden.
+http_code: 403

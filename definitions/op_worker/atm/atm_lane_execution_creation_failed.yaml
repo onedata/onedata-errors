@@ -1,7 +1,8 @@
 id: atmLaneExecutionCreationFailed
-description: "Failed to create automation lane execution (id: \"{atmLaneSchemaId}\") (see details)."
-http_code: 400
 args:
   - name: atmLaneSchemaId
   - name: specificError
     type: error
+description: >-
+  Failed to create automation lane execution (id: "{atmLaneSchemaId}") (see details).
+http_code: 400

@@ -1,5 +1,6 @@
 id: atmJobBatchCrashed
-description: "Job batch execution has crashed."
-http_code: 500
 args:
   - name: reason
+description: >-
+  Job batch execution has crashed.
+http_code: 500

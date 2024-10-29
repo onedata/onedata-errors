@@ -1,3 +1,4 @@
 id: subdomainDelegationDisabled
-description: "Subdomain delegation is disabled for this Oneprovider."
+description: >-
+  Subdomain delegation is disabled for this Oneprovider.
 http_code: 400

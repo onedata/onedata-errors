@@ -1,3 +1,4 @@
 id: cannotAddRelationToSelf
-description: "Cannot add relation to self."
+description: >-
+  Cannot add relation to self.
 http_code: 400

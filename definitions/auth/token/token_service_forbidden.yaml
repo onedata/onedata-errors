@@ -1,6 +1,7 @@
 id: tokenServiceForbidden
-description: "The service {service} is forbidden for this subject."
-http_code: 400
 args:
   - name: service
     type: aai_service
+description: >-
+  The service {service} is forbidden for this subject.
+http_code: 400

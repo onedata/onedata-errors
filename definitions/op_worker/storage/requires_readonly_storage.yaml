@@ -1,5 +1,7 @@
 id: requiresReadonlyStorage
-description: "Cannot apply for storage {storageIdOrType} - this operation requires a readonly storage."
-http_code: 400
 args:
   - name: storageIdOrType
+description: >-
+  Cannot apply for storage {storageIdOrType} - this operation requires
+  a readonly storage.
+http_code: 400

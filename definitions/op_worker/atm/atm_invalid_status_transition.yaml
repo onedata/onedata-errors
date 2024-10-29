@@ -1,8 +1,9 @@
 id: atmInvalidStatusTransition
-description: "Invalid status transition (see details)."
-http_code: 400
 args:
   - name: prevStatus
     type: atom
   - name: newStatus
     type: atom
+description: >-
+  Invalid status transition (see details).
+http_code: 400

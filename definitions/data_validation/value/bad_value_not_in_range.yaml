@@ -1,9 +1,10 @@
 id: badValueNotInRange
-description: "Bad value: provided \"{key}\" must be between <{low}, {high}>."
-http_code: 400
 args:
   - name: key
   - name: low
     type: integer
   - name: high
     type: integer
+description: >-
+  Bad value: provided "{key}" must be between <{low}, {high}>.
+http_code: 400

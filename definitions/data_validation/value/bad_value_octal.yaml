@@ -1,5 +1,6 @@
 id: badValueOctal
-description: "Bad value: provided \"{key}\" is not a valid octal number."
-http_code: 400
 args:
   - name: key
+description: >-
+  Bad value: provided "{key}" is not a valid octal number.
+http_code: 400

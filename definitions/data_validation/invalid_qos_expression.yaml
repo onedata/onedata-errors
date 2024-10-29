@@ -1,5 +1,6 @@
 id: invalidQosExpression
-description: "Invalid QoS expression: {reason}."
-http_code: 400
 args:
   - name: reason
+description: >-
+  Invalid QoS expression: {reason}.
+http_code: 400

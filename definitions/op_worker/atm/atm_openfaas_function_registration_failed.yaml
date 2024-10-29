@@ -1,3 +1,4 @@
 id: atmOpenfaasFunctionRegistrationFailed
-description: "Failed to register function in OpenFaaS service."
+description: >-
+  Failed to register function in OpenFaaS service.
 http_code: 400

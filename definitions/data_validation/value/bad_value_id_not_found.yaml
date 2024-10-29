@@ -1,5 +1,6 @@
 id: badValueIdNotFound
-description: "Bad value: provided ID (\"{key}\") does not exist."
-http_code: 400
 args:
   - name: key
+description: >-
+  Bad value: provided ID ("{key}") does not exist.
+http_code: 400

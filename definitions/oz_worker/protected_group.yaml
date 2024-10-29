@@ -1,3 +1,4 @@
 id: protectedGroup
-description: "Specified group is protected and cannot be deleted."
+description: >-
+  Specified group is protected and cannot be deleted.
 http_code: 403

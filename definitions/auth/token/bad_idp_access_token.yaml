@@ -1,6 +1,7 @@
 id: badIdpAccessToken
-description: "Provided access token for \"{idp}\" is not valid."
-http_code: 400
 args:
   - name: idp
     type: atom
+description: >-
+  Provided access token for "{idp}" is not valid.
+http_code: 400

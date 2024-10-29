@@ -1,3 +1,4 @@
 id: notSupported
-description: "This operation is not supported."
+description: >-
+  This operation is not supported.
 http_code: 400

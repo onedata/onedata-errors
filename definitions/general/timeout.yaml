@@ -1,3 +1,4 @@
 id: timeout
-description: "Operation timed out."
+description: >-
+  Operation timed out.
 http_code: 503

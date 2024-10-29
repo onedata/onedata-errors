@@ -1,8 +1,8 @@
 id: cannotDeleteEntity
-description: "Cannot delete {entityType}:{entityId}; failed to delete some dependent relations."
-http_code: 500
 args:
   - name: entityType
     type: atom
   - name: entityId
-    type: binary
+description: >-
+  Cannot delete {entityType}:{entityId}; failed to delete some dependent relations.
+http_code: 500

@@ -1,8 +1,9 @@
 id: atmUnsupportedDataType
-description: "Bad automation data type: provided \"{type}\" is not one of: {allowed}."
-http_code: 400
 args:
   - name: type
     type: atm_data_type
   - name: allowed
     type: atm_data_types
+description: >-
+  Bad automation data type: provided "{type}" is not one of: {allowed}.
+http_code: 400

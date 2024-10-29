@@ -1,6 +1,7 @@
 id: spaceAlreadySupportedWithImportedStorage
-description: "Space {spaceId} is already supported with an imported storage {storageId}."
-http_code: 409
 args:
   - name: spaceId
   - name: storageId
+description: >-
+  Space {spaceId} is already supported with an imported storage {storageId}.
+http_code: 409
