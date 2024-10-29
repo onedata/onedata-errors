@@ -767,6 +767,21 @@ class StorageSupportStage(ErrorArg):
         return [f"support_stage:deserialize(storage, {json_var})"]
 
 
+class TscLayout(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [
+            "?fmt_csv(maps:fold(fun(TimeSeriesName, MetricNames, Acc) ->\n",
+            f'{INDENT}Acc ++ [?fmt("~ts -> [~ts]", [TimeSeriesName, ?fmt_csv(MetricNames)])]\n',
+            f"end, [], {erl_var}))"
+        ]
+
+
 class ListArg(ErrorArg):
     # TODO rm list
     pass
@@ -802,6 +817,7 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "MetricConfig": MetricConfig,
         "ProviderSupportStage": ProviderSupportStage,
         "StorageSupportStage": StorageSupportStage,
+        "TscLayout": TscLayout,
         "List": ListArg,
         "Json": ErrorArg,  # TODO
     }

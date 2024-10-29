@@ -1,6 +1,8 @@
 id: timeSeriesCollectionMissingLayout
 args:
   - name: missingLayout
+    type: TscLayout
 description: >-
-  TODO
+  The request refers to a layout that is not reflected in the time series collection;
+  the following part of the layout is missing (time series name -> metric names): {missingLayout}.
 http_code: 400
