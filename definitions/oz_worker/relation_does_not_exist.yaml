@@ -6,6 +6,13 @@ args:
   - name: parentType
     type: Atom
   - name: parentId
+x-additional_to_json_variables:
+  - name: RelationToString
+    assign: |
+      case {ChildType, ParentType} of
+          {od_space, od_provider} -> <<"is not supported by">>;
+          {_, _} -> <<"is not a member of">>
+      end
 description: >- 
-  Bad value: {childType}:{childId} is not a member of {parentType}:{parentId}.
+  Bad value: {childType}:{childId} TODO {parentType}:{parentId}.
 http_code: 400

@@ -1,7 +1,7 @@
 id: badIdpAccessToken
 args:
   - name: idp
-    type: Atom
+    type: ErlangTerm
 description: >-
   Provided access token for "{idp}" is not valid.
 http_code: 400

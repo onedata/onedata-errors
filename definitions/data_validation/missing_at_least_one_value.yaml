@@ -1,6 +1,7 @@
 id: missingAtLeastOneValue
 args:
   - name: keys
+    type: ErlangTerm
 description: >-
   Missing data, you must provide at least one of: {keys}.
 http_code: 400

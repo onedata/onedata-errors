@@ -782,6 +782,21 @@ class TscLayout(ErrorArg):
         ]
 
 
+class Json(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"json_utils:encode({erl_var})"]
+
+
+class ErlangTerm(ErrorArg):
+    fmt_control_sequence: str = "~tp"
+
+
 class ListArg(ErrorArg):
     # TODO rm list
     pass
@@ -818,7 +833,8 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "ProviderSupportStage": ProviderSupportStage,
         "StorageSupportStage": StorageSupportStage,
         "TscLayout": TscLayout,
+        "Json": Json,
+        "ErlangTerm": ErlangTerm,
         "List": ListArg,
-        "Json": ErrorArg,  # TODO
     }
     return arg_classes.get(arg_type)(name, nullable)
