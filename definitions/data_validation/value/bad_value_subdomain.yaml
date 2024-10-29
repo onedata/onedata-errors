@@ -1,0 +1,3 @@
+id: badValueSubdomain
+description: "Bad value: provided subdomain is not valid."
+http_code: 400

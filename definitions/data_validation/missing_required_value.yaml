@@ -1,0 +1,5 @@
+id: missingRequiredValue
+description: "Missing required value: {key}."
+http_code: 400
+args:
+  - name: key

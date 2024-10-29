@@ -1,0 +1,3 @@
+id: badValueFilePath
+description: "Bad value: provided file path is invalid."
+http_code: 400

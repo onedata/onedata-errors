@@ -1,0 +1,6 @@
+id: badValueCaveat
+description: "Provided caveat is invalid: '{caveat}'."
+http_code: 400
+args:
+  - name: caveat
+    type: json_term

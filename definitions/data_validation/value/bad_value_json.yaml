@@ -1,0 +1,5 @@
+id: badValueJSON
+description: "Bad value: provided \"{key}\" must be a valid JSON."
+http_code: 400
+args:
+  - name: key

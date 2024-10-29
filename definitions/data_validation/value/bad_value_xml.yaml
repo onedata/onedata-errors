@@ -1,0 +1,5 @@
+id: badValueXML
+description: "Bad value: provided \"{key}\" must be a valid XML."
+http_code: 400
+args:
+  - name: key

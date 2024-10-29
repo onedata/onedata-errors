@@ -1,0 +1,10 @@
+id: badValueTimeSeriesCollectionConflictingMetricConfig
+description: "Provided metric config for 'time series' {timeSeriesName} and metric '{metricName}' conflicts with existing metric config (see details)."
+http_code: 400
+args:
+  - name: timeSeriesName
+  - name: metricName
+  - name: existingMetricConfig
+    type: metric_config
+  - name: conflictingMetricConfig
+    type: metric_config

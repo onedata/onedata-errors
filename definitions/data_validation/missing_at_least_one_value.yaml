@@ -1,0 +1,5 @@
+id: missingAtLeastOneValue
+description: "Missing data, you must provide at least one of: {keys}."
+http_code: 400
+args:
+  - name: keys

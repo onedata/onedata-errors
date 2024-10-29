@@ -1,0 +1,5 @@
+id: badValueString
+description: "Bad value: provided \"{key}\" must be a string."
+http_code: 400
+args:
+  - name: key

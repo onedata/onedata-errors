@@ -1,0 +1,6 @@
+id: timeSeriesCollectionTooManyMetrics
+description: The time series collection cannot have more than {limit} metrics.
+http_code: 400
+args:
+  - name: limit
+    type: integer
