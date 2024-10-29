@@ -8,7 +8,7 @@ import os
 import re
 import shutil
 
-from typing import Final, List, NamedTuple
+from typing import Dict, Final, List, NamedTuple, Union
 
 from error_arguments import ErrorArg, load_argument
 
@@ -46,7 +46,7 @@ class OdError(NamedTuple):
     type: str
     id: str
     description: str
-    http_code: int
+    http_code: Union[str, int]
     args: List[ErrorArg]
 
     def get_id_macro(self) -> str:
@@ -236,7 +236,7 @@ def generate_error_module(od_error: OdError, output_dir: str) -> None:
         error_type=od_error.type,
         to_json=generate_to_json_callback(od_error),
         from_json=generate_from_json_callback(od_error),
-        http_code=od_error.http_code,
+        to_http_code=generate_to_http_code_callback(od_error),
     )
 
     file_path = os.path.join(output_dir, f"{od_error.type}.erl")
@@ -275,7 +275,9 @@ def generate_to_json_callback(od_error: OdError) -> str:
         details_tokens[-1] = f"\n{2*INDENT}}},\n"
 
         if fmt_placeholders:
-            fmt_str = od_error.description.format(**fmt_placeholder_to_control_sequence).replace('"', '\\"')
+            fmt_str = od_error.description.format(
+                **fmt_placeholder_to_control_sequence
+            ).replace('"', '\\"')
             print_vars = [
                 fmt_placeholder_to_print_var[placeholder]
                 for placeholder in fmt_placeholders
@@ -307,10 +309,10 @@ def generate_from_json_callback(od_error: OdError) -> str:
     tokens = ["from_json(", f'#{{<<"id">> := ?{od_error.get_id_macro()}}}', ") ->\n"]
 
     if od_error.args:
-        tokens.insert(1, "ErrorJson = ")
+        tokens.insert(1, "OdErrorJson = ")
 
         details_var = "DetailsJson"
-        tokens.append(f'{INDENT}{details_var} = maps:get(<<"details">>, ErrorJson')
+        tokens.append(f'{INDENT}{details_var} = maps:get(<<"details">>, OdErrorJson')
         if all(arg.nullable for arg in od_error.args):
             tokens.append(", #{}")
         tokens.append("),\n\n")
@@ -323,6 +325,41 @@ def generate_from_json_callback(od_error: OdError) -> str:
     tokens.append(f"{INDENT}?{od_error.get_error_macro()}.")
 
     return "".join(tokens)
+
+
+HTTP_CODE_TO_MACRO: Final[Dict[int, str]] = {
+    400: "?HTTP_400_BAD_REQUEST",
+    401: "?HTTP_401_UNAUTHORIZED",
+    403: "?HTTP_403_FORBIDDEN",
+    404: "?HTTP_404_NOT_FOUND",
+    405: "?HTTP_405_METHOD_NOT_ALLOWED",
+    409: "?HTTP_409_CONFLICT",
+    413: "?HTTP_413_PAYLOAD_TOO_LARGE",
+    415: "?HTTP_415_UNSUPPORTED_MEDIA_TYPE",
+    416: "?HTTP_416_RANGE_NOT_SATISFIABLE",
+    426: "?HTTP_426_UPGRADE_REQUIRED",
+    429: "?HTTP_429_TOO_MANY_REQUESTS",
+    500: "?HTTP_500_INTERNAL_SERVER_ERROR",
+    501: "?HTTP_501_NOT_IMPLEMENTED",
+    503: "?HTTP_503_SERVICE_UNAVAILABLE",
+}
+
+
+def generate_to_http_code_callback(od_error: OdError) -> str:
+    http_code = od_error.http_code
+
+    if isinstance(http_code, int):
+        http_code_macro = HTTP_CODE_TO_MACRO[http_code]
+
+        return "".join(
+            [
+                f"-spec to_http_code(t()) -> {http_code_macro}.\n",
+                "to_http_code(_) ->\n",
+                f"{INDENT}{http_code_macro}.",
+            ]
+        )
+
+    return http_code
 
 
 def generate_error_dialyzer_type(od_error: OdError) -> str:

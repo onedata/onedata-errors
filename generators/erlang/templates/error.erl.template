@@ -39,6 +39,4 @@
 {from_json}
 
 
--spec to_http_code(t()) -> {http_code}.
-to_http_code(_) ->
-    {http_code}.
+{to_http_code}
