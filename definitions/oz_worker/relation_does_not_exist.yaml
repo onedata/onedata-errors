@@ -6,13 +6,25 @@ args:
   - name: parentType
     type: Atom
   - name: parentId
-x-additional_to_json_variables:
-  - name: RelationToString
-    assign: |
-      case {ChildType, ParentType} of
+x-erl-to_json: |
+  to_json(?ERROR_RELATION_DOES_NOT_EXIST(ChType, ChId, ParType, ParId)) ->
+      RelationToString = case {ChType, ParType} of
           {od_space, od_provider} -> <<"is not supported by">>;
           {_, _} -> <<"is not a member of">>
-      end
-description: >- 
-  Bad value: {childType}:{childId} TODO {parentType}:{parentId}.
+      end,
+      #{
+          <<"id">> => ?ERROR_RELATION_DOES_NOT_EXIST_ID,
+          <<"details">> => #{
+              <<"childType">> => ChType,
+              <<"childId">> => ChId,
+              <<"parentType">> => ParType,
+              <<"parentId">> => ParId
+          },
+          <<"description">> => ?fmt("Bad value: ~ts:~ts ~ts ~ts:~ts.", [
+              gri:serialize_type(ChType), ChId,
+              RelationToString,
+              gri:serialize_type(ParType), ParId
+          ])
+      }.
+description: null
 http_code: 400

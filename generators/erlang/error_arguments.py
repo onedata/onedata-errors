@@ -797,6 +797,32 @@ class ErlangTerm(ErrorArg):
     fmt_control_sequence: str = "~tp"
 
 
+class GriEntityType(ErrorArg):
+    fmt_control_sequence: str = "~ts"
+
+    json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.FROM_JSON
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"gri:serialize_type({erl_var})"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"gri:deserialize_type({json_var})"]
+
+
+class GriEntityTypeAsAtom(Atom):
+    fmt_control_sequence: str = "~ts"
+
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
+    json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
+
+    def _generate_print_encoding_expr_lines(
+        self, *, json_var: str, erl_var: str
+    ) -> List[str]:
+        return [f"gri:serialize_type({erl_var})"]
+
+
 class ListArg(ErrorArg):
     # TODO rm list
     pass
@@ -835,6 +861,8 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "TscLayout": TscLayout,
         "Json": Json,
         "ErlangTerm": ErlangTerm,
+        "GriEntityType": GriEntityType,
+        "GriEntityTypeAsAtom": GriEntityTypeAsAtom,
         "List": ListArg,
     }
     return arg_classes.get(arg_type)(name, nullable)

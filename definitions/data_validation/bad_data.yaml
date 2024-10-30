@@ -2,8 +2,7 @@ id: badData
 args:
   - name: key
   - name: specificErrorOrHint
-description: >-
-  null
+description: null
 x-erl-to_json: |
   to_json(?ERROR_BAD_DATA(Key, ?ERROR = SpecificError)) ->
       #{
