@@ -1,8 +1,23 @@
 id: nodeNotCompatible
+x-erl-headers:
+  include: 
+    - onedata.hrl
 args:
   - name: hostname
   - name: clusterType
     type: Atom
+x-erl-to_json: |
+  to_json(?ERROR_NODE_NOT_COMPATIBLE(Hostname, NodeClusterType)) when
+      NodeClusterType == ?ONEPROVIDER;
+      NodeClusterType == ?ONEZONE
+  ->
+      #{
+          <<"id">> => ?ERROR_NODE_NOT_COMPATIBLE_ID,
+          <<"details">> => #{
+              <<"hostname">> => Hostname, <<"clusterType">> => NodeClusterType},
+          <<"description">> => ?fmt("Cannot add \"~ts\", it is a ~ts node.",
+              [Hostname, NodeClusterType])
+      }.
 description: >-
   Cannot add "{hostname}", it is a {clusterType} node.
 http_code: 400

@@ -3,7 +3,31 @@ args:
   - name: currentState
     type: Atom
   - name: allowedStates
-    type: List
+x-erl-to_json: |
+  to_json(?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(CurrentState, AllowedStates)) ->
+      #{
+          <<"id">> => ?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
+          <<"description">> => ?fmt(
+              "This operation is forbidden while the archive state is ~ts. Allowed states are: ~ts.",
+              [CurrentState, ?fmt_csv(AllowedStates)]
+          ),
+          <<"details">> => #{
+              <<"allowedStates">> => json_utils:encode(AllowedStates),
+              <<"currentState">> => json_utils:encode(CurrentState)
+          }
+      }.
+x-erl-from_json: |
+  from_json(#{
+      <<"id">> := ?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
+      <<"details">> := #{
+          <<"allowedStates">> := AllowedStates,
+          <<"currentState">> := CurrentState
+      }
+  }) ->
+      ?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(
+          binary_to_existing_atom(json_utils:decode(CurrentState)),
+          [binary_to_existing_atom(StateBin) || StateBin <- json_utils:decode(AllowedStates)]
+      ).
 description: >-
   This operation is forbidden while the archive state is {currentState}.
   Allowed states are: {allowedStates}.

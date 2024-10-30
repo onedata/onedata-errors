@@ -2,6 +2,20 @@ id: storageTestFailed
 args:
   - name: operation
     type: Atom
+x-erl-to_json: |
+  to_json(?ERROR_STORAGE_TEST_FAILED(Operation)) ->
+      #{
+          <<"id">> => ?ERROR_STORAGE_TEST_FAILED_ID,
+          <<"details">> => #{<<"operation">> => str_utils:to_binary(Operation)},
+          <<"description">> => ?fmt("Failed to ~ts test file on storage.", [Operation])
+      }.
+x-erl-from_json: |
+  from_json(#{<<"id">> := ?ERROR_STORAGE_TEST_FAILED_ID, <<"details">> := #{<<"operation">> := Operation}}) when
+      Operation == <<"read">>;
+      Operation == <<"write">>;
+      Operation == <<"remove">>
+  ->
+      ?ERROR_STORAGE_TEST_FAILED(binary_to_atom(Operation, utf8)).
 description: >-
   Failed to {operation} test file on storage.
 http_code: 400
