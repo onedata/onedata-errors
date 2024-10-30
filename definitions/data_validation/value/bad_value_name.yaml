@@ -1,6 +1,13 @@
 id: badValueName
+x-erl-headers:
+  include: 
+    - validation.hrl
+  macros:
+    - alias: requirements
+      ref: ?NAME_REQUIREMENTS_DESCRIPTION
 args:
   - name: key
+    nullable: true
 description: >-
-  TODO
+  Bad value provided for "{key}": {requirements}
 http_code: 400

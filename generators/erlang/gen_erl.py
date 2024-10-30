@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 
+from collections import ChainMap
 from typing import Dict, Final, List, NamedTuple, Union
 
 from error_arguments import ErrorArg, load_argument
@@ -41,6 +42,17 @@ INDENT: Final[str] = 4 * " "
 HORIZONTAL_COMMENT_LINE: Final[str] = "%%" + 68 * "-"
 
 
+class MacroRef(NamedTuple):
+    alias: str
+    ref: str
+    fmt_control_sequence: str
+
+
+class OdErrorCtx(NamedTuple):
+    includes: List[str]
+    macros: List[MacroRef]
+
+
 class OdError(NamedTuple):
     name: str
     type: str
@@ -48,6 +60,7 @@ class OdError(NamedTuple):
     description: str
     http_code: Union[str, int]
     args: List[ErrorArg]
+    ctx: OdErrorCtx
 
     def get_id_macro(self) -> str:
         return f"ERROR_{self.name.upper()}_ID"
@@ -122,6 +135,7 @@ def load_error_definition(yaml_definition_path: str) -> OdError:
         description=yaml_data["description"],
         http_code=yaml_data["http_code"],
         args=args,
+        ctx=load_error_ctx(yaml_data),
     )
 
 
@@ -132,6 +146,30 @@ def read_yaml_file(file_path: str) -> dict:
 
 def extract_error_name(file_path: str) -> str:
     return os.path.splitext(os.path.basename(file_path))[0]
+
+
+def load_error_ctx(yaml_data: dict) -> OdErrorCtx:
+    includes = []
+    macros = []
+
+    if "x-erl-headers" in yaml_data:
+        headers = yaml_data["x-erl-headers"]
+
+        includes = headers.get("include", [])
+        macros = [load_macro(macro_yaml) for macro_yaml in headers.get("macros", [])]
+
+    return OdErrorCtx(
+        includes=includes,
+        macros=macros
+    )
+
+
+def load_macro(macro_yaml: dict) -> MacroRef:
+    return MacroRef(
+        alias=macro_yaml["alias"],
+        ref=macro_yaml["ref"],
+        fmt_control_sequence=macro_yaml.get("fmt_control_sequence", "~ts")
+    )
 
 
 def generate_errors_hrl(error_groups: List[OdErrorGroup]) -> None:
@@ -232,7 +270,10 @@ def generate_error_modules(error_groups: List[OdErrorGroup]) -> None:
 
 
 def generate_error_module(od_error: OdError, output_dir: str) -> None:
+    includes = "\n".join(f'-include("{hrl}").' for hrl in od_error.ctx.includes)
+
     erl_content = ERROR_TEMPLATE.format(
+        includes=includes,
         error_type=od_error.type,
         to_json=generate_to_json_callback(od_error),
         from_json=generate_from_json_callback(od_error),
@@ -246,14 +287,18 @@ def generate_error_module(od_error: OdError, output_dir: str) -> None:
 def generate_to_json_callback(od_error: OdError) -> str:
     encoding_tokens = []
     details_tokens = []
-    description_tokens = [f'<<"{od_error.description}">>\n']
+
+    fmt_placeholders = re.findall(r"\{(\w+)\}", od_error.description)
+    fmt_placeholder_to_fmt_var = {}
+    fmt_placeholder_to_control_sequence = {}
+
+    for macro in od_error.ctx.macros:
+        if macro.alias in fmt_placeholders:
+            fmt_placeholder_to_fmt_var[macro.alias] = macro.ref
+            fmt_placeholder_to_control_sequence[macro.alias] = macro.fmt_control_sequence
 
     if od_error.args:
         details_tokens.append(f'{2*INDENT}<<"details">> => #{{\n')
-
-        fmt_placeholders = re.findall(r"\{(\w+)\}", od_error.description)
-        fmt_placeholder_to_print_var = {}
-        fmt_placeholder_to_control_sequence = {}
 
         for arg in od_error.args:
             arg_encoding = arg.generate_to_json_encoding(
@@ -262,34 +307,36 @@ def generate_to_json_callback(od_error: OdError) -> str:
 
             if arg_encoding.tokens:
                 encoding_tokens.extend(arg_encoding.tokens)
-                encoding_tokens.append("\n")
 
             details_tokens.extend(
                 [3 * INDENT, f'<<"{arg.name}">> => {arg_encoding.json_var}', ",\n"]
             )
 
-            fmt_placeholder_to_print_var[arg.name] = arg_encoding.print_var
+            fmt_placeholder_to_fmt_var[arg.name] = arg_encoding.print_var
             fmt_placeholder_to_control_sequence[arg.name] = arg.fmt_control_sequence
+
+        if encoding_tokens:
+            encoding_tokens.append("\n")
 
         # replace last comma with closing bracket
         details_tokens[-1] = f"\n{2*INDENT}}},\n"
 
-        if fmt_placeholders:
-            fmt_str = od_error.description.format(
-                **fmt_placeholder_to_control_sequence
-            ).replace('"', '\\"')
-            print_vars = [
-                fmt_placeholder_to_print_var[placeholder]
-                for placeholder in fmt_placeholders
-            ]
-            description_tokens = [
-                "?fmt(\n",
-                f'{3*INDENT}"{fmt_str}",\n',
-                f"{3*INDENT}[",
-                ", ".join(print_vars),
-                "]\n",
-                f"{2*INDENT})\n",
-            ]
+    if fmt_placeholders:
+        fmt_str = od_error.description.format(**fmt_placeholder_to_control_sequence).replace('"', '\\"')
+        fmt_vars = [
+            fmt_placeholder_to_fmt_var[placeholder]
+            for placeholder in fmt_placeholders
+        ]
+        description_tokens = [
+            "?fmt(\n",
+            f'{3*INDENT}"{fmt_str}",\n',
+            f"{3*INDENT}[",
+            ", ".join(fmt_vars),
+            "]\n",
+            f"{2*INDENT})\n",
+        ]
+    else:
+        description_tokens = [f'<<"{od_error.description}">>\n']
 
     tokens = [
         f"to_json(?{od_error.get_error_macro()}) ->\n",
