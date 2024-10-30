@@ -9,7 +9,7 @@ import re
 import shutil
 
 from collections import ChainMap
-from typing import Dict, Final, List, NamedTuple, Union
+from typing import Dict, Final, List, NamedTuple, Optional, Union
 
 from error_arguments import ErrorArg, load_argument
 
@@ -61,6 +61,8 @@ class OdError(NamedTuple):
     http_code: Union[str, int]
     args: List[ErrorArg]
     ctx: OdErrorCtx
+    to_json: Optional[str]
+    from_json: Optional[str]
 
     def get_id_macro(self) -> str:
         return f"ERROR_{self.name.upper()}_ID"
@@ -136,6 +138,8 @@ def load_error_definition(yaml_definition_path: str) -> OdError:
         http_code=yaml_data["http_code"],
         args=args,
         ctx=load_error_ctx(yaml_data),
+        to_json=yaml_data.get("x-erl-to_json"),
+        from_json=yaml_data.get("x-erl-from_json"),
     )
 
 
@@ -285,6 +289,9 @@ def generate_error_module(od_error: OdError, output_dir: str) -> None:
 
 
 def generate_to_json_callback(od_error: OdError) -> str:
+    if od_error.to_json:
+        return od_error.to_json.strip()
+
     encoding_tokens = []
     details_tokens = []
 
@@ -353,6 +360,9 @@ def generate_to_json_callback(od_error: OdError) -> str:
 
 
 def generate_from_json_callback(od_error: OdError) -> str:
+    if od_error.from_json:
+        return od_error.from_json.strip()
+
     tokens = ["from_json(", f'#{{<<"id">> := ?{od_error.get_id_macro()}}}', ") ->\n"]
 
     if od_error.args:

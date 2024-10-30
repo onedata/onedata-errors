@@ -688,7 +688,7 @@ class DnsServers(ErrorArg):
     def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
         return [
             "lists:map(fun\n",
-            f"{INDENT}(defaults) -> {self.DNS_DEFAULTS};\n",
+            f"{INDENT}(default) -> {self.DNS_DEFAULTS};\n",
             f"{INDENT}(Ip) -> element(2, {{ok, _}} = ip_utils:to_binary(Ip))\n",
             f"end, {erl_var})",
         ]

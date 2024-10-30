@@ -3,5 +3,38 @@ args:
   - name: key
   - name: specificErrorOrHint
 description: >-
-  TODO
+  null
+x-erl-to_json: |
+  to_json(?ERROR_BAD_DATA(Key, ?ERROR = SpecificError)) ->
+      #{
+          <<"id">> => ?ERROR_BAD_DATA_ID,
+          <<"details">> => #{
+              <<"key">> => Key,
+              <<"specificError">> => errors:to_json(SpecificError)
+          },
+          <<"description">> => ?fmt("Bad value provided for \"~ts\" (see details).", [Key])
+      };
+  to_json(?ERROR_BAD_DATA(Key, HumanReadableHint)) ->
+      HumanReadableHintJson = utils:undefined_to_null(HumanReadableHint),
+
+      #{
+          <<"id">> => <<"badData">>,
+          <<"details">> => #{
+              <<"key">> => Key,
+              <<"hint">> => HumanReadableHintJson
+          },
+          <<"description">> => ?fmt("Bad value provided for \"~ts\": ~ts.", [Key, HumanReadableHintJson])
+      }.
+x-erl-from_json: |
+  from_json(#{<<"id">> := ?ERROR_BAD_DATA_ID, <<"details">> := #{
+      <<"key">> := Key,
+      <<"specificError">> := SpecificError
+  }}) ->
+      ?ERROR_BAD_DATA(Key, errors:from_json(SpecificError));
+
+  from_json(#{<<"id">> := ?ERROR_BAD_DATA_ID, <<"details">> := DetailsJson}) ->
+      Key = maps:get(<<"key">>, DetailsJson),
+      HumanReadableHint = utils:null_to_undefined(maps:get(<<"hint">>, DetailsJson, null)),
+
+      ?ERROR_BAD_DATA(Key, HumanReadableHint).
 http_code: 400
