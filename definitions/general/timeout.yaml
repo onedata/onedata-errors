@@ -2,3 +2,4 @@ id: timeout
 description: >-
   Operation timed out.
 http_code: 503
+errno: EAGAIN

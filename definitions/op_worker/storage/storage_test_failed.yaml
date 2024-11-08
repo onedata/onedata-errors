@@ -19,3 +19,4 @@ x-erl-from_json: |
 description: >-
   Failed to {operation} test file on storage.
 http_code: 400
+errno: EIO

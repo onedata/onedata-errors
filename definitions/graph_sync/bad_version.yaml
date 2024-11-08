@@ -5,3 +5,4 @@ args:
 description: >-
   Bad version - supported versions: {supportedVersions}.
 http_code: 400
+errno: EINVAL

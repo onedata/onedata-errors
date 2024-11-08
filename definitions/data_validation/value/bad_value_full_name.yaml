@@ -8,3 +8,4 @@ x-erl-headers:
 description: >-
   Bad value: {requirements}
 http_code: 400
+errno: EINVAL

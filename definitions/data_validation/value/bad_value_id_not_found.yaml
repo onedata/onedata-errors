@@ -4,3 +4,4 @@ args:
 description: >-
   Bad value: provided ID ("{key}") does not exist.
 http_code: 400
+errno: EINVAL

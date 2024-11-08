@@ -2,3 +2,4 @@ id: rpcUndefined
 description: >-
   Requested RPC operation is not defined.
 http_code: 400
+errno: EINVAL

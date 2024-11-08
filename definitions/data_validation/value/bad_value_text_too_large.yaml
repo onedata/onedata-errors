@@ -6,3 +6,4 @@ args:
 description: >-
   Bad value: the text provided in "{key}" cannot be larger than {limit} characters.
 http_code: 400
+errno: EINVAL

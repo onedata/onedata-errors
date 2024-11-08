@@ -2,3 +2,4 @@ id: quotaExceeded
 description: >-
   Space's storage quota has been exceeded.
 http_code: 400
+errno: ENOSPC

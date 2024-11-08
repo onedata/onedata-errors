@@ -2,3 +2,4 @@ id: notSubscribable
 description: >-
   Requested resource is not subscribable.
 http_code: 400
+errno: EINVAL

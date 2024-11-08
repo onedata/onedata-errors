@@ -2,3 +2,4 @@ id: noConnectionToPeerOneprovider
 description: >-
   No connection to peer Oneprovider.
 http_code: 503
+errno: ENETUNREACH

@@ -11,3 +11,4 @@ args:
 description: >-
   Bad value provided for "{key}": {requirements}
 http_code: 400
+errno: EINVAL

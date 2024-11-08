@@ -2,3 +2,4 @@ id: tokenInvalid
 description: >-
   Provided token is not valid.
 http_code: 400
+errno: EINVAL

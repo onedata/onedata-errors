@@ -5,3 +5,4 @@ args:
 description: >-
   You are not authorized to perform this operation: {hint}
 http_code: 403
+errno: EACCES

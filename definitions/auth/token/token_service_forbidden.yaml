@@ -5,3 +5,4 @@ args:
 description: >-
   The service {service} is forbidden for this subject.
 http_code: 400
+errno: EINVAL

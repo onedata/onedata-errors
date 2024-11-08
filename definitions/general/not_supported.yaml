@@ -2,3 +2,4 @@ id: notSupported
 description: >-
   This operation is not supported.
 http_code: 400
+errno: ENOTSUP

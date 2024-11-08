@@ -2,3 +2,4 @@ id: badValueEmail
 description: >-
   Bad value: provided e-mail is not valid.
 http_code: 400
+errno: EINVAL

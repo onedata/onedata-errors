@@ -37,3 +37,4 @@ x-erl-from_json: |
 
       ?ERROR_BAD_DATA(Key, HumanReadableHint).
 http_code: 400
+errno: EINVAL

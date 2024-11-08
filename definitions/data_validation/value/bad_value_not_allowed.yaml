@@ -6,3 +6,4 @@ args:
 description: >-
   Bad value: provided "{key}" must be one of: {allowed}.
 http_code: 400
+errno: EINVAL

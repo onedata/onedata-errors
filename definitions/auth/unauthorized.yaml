@@ -6,3 +6,4 @@ args:
 description: >-
   You must authenticate yourself to perform this operation.
 http_code: 401
+errno: EACCES

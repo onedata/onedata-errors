@@ -7,3 +7,4 @@ description: >-
   Bad value: provided "{key}" must be a list containing zero or more following
   values: {allowed}.
 http_code: 400
+errno: EINVAL

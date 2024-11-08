@@ -5,3 +5,4 @@ description: >-
   Cannot apply for storage {storageId} - this operation requires
   a non-imported storage.
 http_code: 400
+errno: EINVAL

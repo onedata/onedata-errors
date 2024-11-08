@@ -2,6 +2,8 @@ id: badIdpAccessToken
 args:
   - name: idp
     type: ErlangTerm
-description: >-
+description: >
   Provided access token for "{idp}" is not valid.
+  ST+RATATATA
 http_code: 400
+errno: EINVAL

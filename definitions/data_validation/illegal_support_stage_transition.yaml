@@ -9,3 +9,4 @@ description: >-
   the storage is in stage '{currentStorageStage}' and provider is in stage
   '{currentProviderStage}'.
 http_code: 400
+errno: EINVAL

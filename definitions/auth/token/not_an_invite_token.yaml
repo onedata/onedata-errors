@@ -7,3 +7,4 @@ args:
 description: >-
   Expected an invitation token of type '{expectedInviteType}', but received a(n) {received}.
 http_code: 400
+errno: EINVAL

@@ -4,3 +4,4 @@ args:
 description: >-
   Invalid QoS expression: {reason}.
 http_code: 400
+errno: EINVAL

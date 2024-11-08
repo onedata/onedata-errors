@@ -3,5 +3,8 @@ args:
   - name: tokenError
     type: OnedataError
 description: >-
-  Provided service token is not valid (see details).
+  Provided service token is not valid (see details). #TODO recursive error extraction
+gui_description_override: >-
+  XD {{ustafa}} HEHEHEHE
 http_code: 400
+errno: EINVAL

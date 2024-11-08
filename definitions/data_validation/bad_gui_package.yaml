@@ -2,3 +2,4 @@ id: badGuiPackage
 description: >-
   Provider GUI package could not be understood by the server.
 http_code: 400
+errno: EINVAL

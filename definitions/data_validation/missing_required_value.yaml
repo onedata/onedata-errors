@@ -4,3 +4,4 @@ args:
 description: >-
   Missing required value: {key}.
 http_code: 400
+errno: EINVAL

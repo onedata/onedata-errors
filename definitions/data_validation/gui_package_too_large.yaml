@@ -2,3 +2,4 @@ id: guiPackageTooLarge
 description: >-
   Provider GUI package is too large.
 http_code: 400
+errno: EINVAL
