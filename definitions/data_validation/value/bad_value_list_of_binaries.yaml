@@ -1,7 +1,0 @@
-id: badValueListOfStrings
-args:
-  - name: key
-description: >-
-  Bad value: provided "{key}" must be a list of strings.
-http_code: 400
-errno: EINVAL
