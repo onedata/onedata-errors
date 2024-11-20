@@ -458,24 +458,19 @@ class OnedataError(ErrorArg):
     fmt_control_sequence: str = "~ts"
 
     json_encoding_strategy: _JsonEncodingStrategy = _JsonEncodingStrategy.CUSTOM
+    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
     json_decoding_strategy: _JsonDecodingStrategy = _JsonDecodingStrategy.CUSTOM
 
     def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
         return [f"errors:to_json({erl_var})"]
 
-    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
-        return [f"errors:from_json({json_var})"]
-
-
-class OnepanelError(OnedataError):
-    fmt_control_sequence: str = "~ts"
-
-    print_encoding_strategy: _PrintEncodingStrategy = _PrintEncodingStrategy.CUSTOM
-
     def _generate_print_encoding_expr_lines(
         self, *, json_var: str, erl_var: str
     ) -> List[str]:
         return [f'maps:get(<<"description">>, {json_var})']
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"errors:from_json({json_var})"]
 
 
 class AtmDataType(ErrorArg):
@@ -823,11 +818,6 @@ class GriEntityTypeAsAtom(Atom):
         return [f"gri:serialize_type({erl_var})"]
 
 
-class ListArg(ErrorArg):
-    # TODO rm list
-    pass
-
-
 # TODO handle all types
 def load_argument(arg_yaml: dict) -> ErrorArg:
     name = arg_yaml["name"]
@@ -840,7 +830,6 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "Atom": Atom,
         "Integer": Integer,
         "OnedataError": OnedataError,
-        "OnepanelError": OnepanelError,
         "AtmDataType": AtmDataType,
         "AtmDataTypes": AtmDataTypes,
         "AtmWorkflowSchemas": AtmWorkflowSchemas,
@@ -862,7 +851,6 @@ def load_argument(arg_yaml: dict) -> ErrorArg:
         "Json": Json,
         "ErlangTerm": ErlangTerm,
         "GriEntityType": GriEntityType,
-        "GriEntityTypeAsAtom": GriEntityTypeAsAtom,
-        "List": ListArg,
+        "GriEntityTypeAsAtom": GriEntityTypeAsAtom
     }
     return arg_classes.get(arg_type)(name, nullable)

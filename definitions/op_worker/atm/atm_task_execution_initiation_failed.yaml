@@ -4,5 +4,5 @@ args:
   - name: specificError
     type: OnedataError
 description: >-
-  Failed to initiate automation task execution (id: "{atmTaskSchemaId}") (see details).
+  Failed to initiate automation task execution (id: "{atmTaskSchemaId}"). {specificError}
 http_code: 400

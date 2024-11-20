@@ -4,5 +4,5 @@ args:
   - name: specificError
     type: OnedataError
 description: >-
-  Bad value provided for parameter "{parameterName}" of lambda config (see details).
+  Bad value provided for parameter "{parameterName}" of lambda config. {specificError}
 http_code: 400

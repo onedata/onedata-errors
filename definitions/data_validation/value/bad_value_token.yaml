@@ -4,6 +4,6 @@ args:
   - name: tokenError
     type: OnedataError
 description: >-
-  Bad value: provided "{key}" is not a valid token (see details).
+  Bad value: provided "{key}" is not a valid token. {tokenError}
 http_code: 400
 errno: EINVAL

@@ -1,7 +1,7 @@
 id: errorOnNodes
 args:
   - name: error
-    type: OnepanelError
+    type: OnedataError
   - name: hostnames
     type: Binaries
 description: >-
