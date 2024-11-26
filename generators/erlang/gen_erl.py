@@ -7,95 +7,36 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import re
 import shutil
-from typing import Dict, Final, List, NamedTuple, Optional, Union
+from typing import List
 
-import yaml
-
-from .error_args.base import ErrorArgType
-from .error_args.loader import TypeLoader, create_error_arg
-
-ERROR_DEFINITIONS_ROOT_DIR: Final[str] = "definitions"
-OUTPUT_DIR: Final[str] = "generated/erlang"
-TEMPLATES_DIR: Final[str] = os.path.join(os.path.dirname(__file__), "templates")
-
-
-def read_template(template_name: str) -> str:
-    with open(os.path.join(TEMPLATES_DIR, template_name), encoding="utf-8") as f:
-        return f.read()
-
-
-ERRORS_HRL_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "errors.hrl")
-ERRORS_HRL_TEMPLATE: Final[str] = read_template("errors.hrl.template")
-
-ERRORS_ERL_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "errors.erl")
-ERRORS_ERL_TEMPLATE: Final[str] = read_template("errors.erl.template")
-
-OD_ERROR_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "od_error.erl")
-OD_ERROR_TEMPLATE: Final[str] = read_template("od_error.erl.template")
-
-ERROR_TYPES_DIR: Final[str] = os.path.join(OUTPUT_DIR, "types")
-ERROR_TEMPLATE: Final[str] = read_template("error.erl.template")
-
-
-INDENT: Final[str] = 4 * " "
-HORIZONTAL_COMMENT_LINE: Final[str] = "%%" + 68 * "-"
-
-
-class MacroRef(NamedTuple):
-    alias: str
-    ref: str
-    fmt_control_sequence: str
-
-
-class OdErrorCtx(NamedTuple):
-    includes: List[str]
-    macros: List[MacroRef]
-
-
-class OdError(NamedTuple):
-    name: str
-    type: str
-    id: str
-    description: str
-    http_code: Union[str, int]
-    args: List[ErrorArgType]
-    ctx: OdErrorCtx
-    to_json: Optional[str]
-    from_json: Optional[str]
-
-    def get_id_macro(self) -> str:
-        return f"ERROR_{self.name.upper()}_ID"
-
-    def get_type_macro(self) -> str:
-        return f"ERROR_{self.name.upper()}_TYPE"
-
-    def get_args_as_erlang_variable_names(self) -> List[str]:
-        return [arg.get_erlang_variable_name() for arg in self.args]
-
-    def get_error_macro(self) -> str:
-        if not self.args:
-            return f"ERROR_{self.name.upper()}"
-
-        args = ", ".join(self.get_args_as_erlang_variable_names())
-        return f"ERROR_{self.name.upper()}({args})"
-
-
-class OdErrorGroup(NamedTuple):
-    name: str
-    errors: List[OdError]
+from .constants import (
+    ERROR_TYPES_DIR,
+    ERRORS_ERL_FILE_PATH,
+    ERRORS_HRL_FILE_PATH,
+    HORIZONTAL_COMMENT_LINE,
+    HTTP_CODE_TO_MACRO,
+    INDENT,
+    OD_ERROR_FILE_PATH,
+    OUTPUT_DIR,
+)
+from .error_args.loader import TypeLoader
+from .error_definitions import OdError, OdErrorGroup
+from .loaders.error_definitions_loader import load_error_definitions
+from .loaders.template_loader import load_all_templates
 
 
 def main():
     TypeLoader.load_types()
+    templates = load_all_templates()
 
     clean_output_dir()
 
-    error_groups = load_error_groups()
+    error_groups = load_error_definitions()
 
-    generate_errors_hrl(error_groups)
-    generate_od_error_behaviour()
-    generate_errors_interface_module(error_groups)
-    generate_error_modules(error_groups)
+    generate_errors_hrl(error_groups, templates.errors_hrl)
+    generate_od_error_behaviour(templates.od_error)
+    generate_errors_interface_module(error_groups, templates.errors_erl)
+    generate_error_modules(error_groups, templates.error)
 
 
 def clean_output_dir() -> None:
@@ -103,80 +44,9 @@ def clean_output_dir() -> None:
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
-def load_error_groups() -> List[OdErrorGroup]:
-    error_groups = [
-        create_error_group(parent_dir_path, sorted(file_names))
-        for parent_dir_path, _, file_names in os.walk(ERROR_DEFINITIONS_ROOT_DIR)
-        if file_names
-    ]
-    return sorted(error_groups, key=lambda x: x.name)
-
-
-def create_error_group(parent_dir_path: str, file_names: List[str]) -> OdErrorGroup:
-    od_errors = [
-        load_error_definition(os.path.join(parent_dir_path, file_name))
-        for file_name in file_names
-    ]
-    return OdErrorGroup(
-        name=os.path.relpath(parent_dir_path, ERROR_DEFINITIONS_ROOT_DIR),
-        errors=od_errors,
-    )
-
-
-def load_error_definition(yaml_definition_path: str) -> OdError:
-    yaml_data = read_yaml_file(yaml_definition_path)
-    error_name = extract_error_name(yaml_definition_path)
-    args = []
-
-    for arg in yaml_data.get("args", []):
-        args.append(create_error_arg(arg))
-
-    return OdError(
-        name=error_name,
-        type=f"od_error_{error_name}",
-        id=yaml_data["id"],
-        description=yaml_data["description"],
-        http_code=yaml_data["http_code"],
-        args=args,
-        ctx=load_error_ctx(yaml_data),
-        to_json=yaml_data.get("x-erl-to_json"),
-        from_json=yaml_data.get("x-erl-from_json"),
-    )
-
-
-def read_yaml_file(file_path: str) -> dict:
-    with open(file_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
-
-
-def extract_error_name(file_path: str) -> str:
-    return os.path.splitext(os.path.basename(file_path))[0]
-
-
-def load_error_ctx(yaml_data: dict) -> OdErrorCtx:
-    includes = []
-    macros = []
-
-    if "x-erl-headers" in yaml_data:
-        headers = yaml_data["x-erl-headers"]
-
-        includes = headers.get("include", [])
-        macros = [load_macro(macro_yaml) for macro_yaml in headers.get("macros", [])]
-
-    return OdErrorCtx(includes=includes, macros=macros)
-
-
-def load_macro(macro_yaml: dict) -> MacroRef:
-    return MacroRef(
-        alias=macro_yaml["alias"],
-        ref=macro_yaml["ref"],
-        fmt_control_sequence=macro_yaml.get("fmt_control_sequence", "~ts"),
-    )
-
-
-def generate_errors_hrl(error_groups: List[OdErrorGroup]) -> None:
+def generate_errors_hrl(error_groups: List[OdErrorGroup], template: str) -> None:
     lines = generate_errors_hrl_group_lines(error_groups)
-    hrl_content = ERRORS_HRL_TEMPLATE.format(macros="\n".join(lines))
+    hrl_content = template.format(macros="\n".join(lines))
     write_to_file(ERRORS_HRL_FILE_PATH, hrl_content)
 
 
@@ -237,12 +107,13 @@ def build_error_macro_definition(od_error: OdError) -> str:
     return f"-define({error_macro}, {error_expansion})."
 
 
-def generate_od_error_behaviour() -> None:
-    with open(OD_ERROR_FILE_PATH, "w", encoding="utf-8") as f:
-        f.write(OD_ERROR_TEMPLATE)
+def generate_od_error_behaviour(template: str) -> None:
+    write_to_file(OD_ERROR_FILE_PATH, template)
 
 
-def generate_errors_interface_module(error_groups: List[OdErrorGroup]) -> None:
+def generate_errors_interface_module(
+    error_groups: List[OdErrorGroup], template: str
+) -> None:
     types = [
         generate_error_dialyzer_type(od_error)
         for group in error_groups
@@ -255,26 +126,26 @@ def generate_errors_interface_module(error_groups: List[OdErrorGroup]) -> None:
         for od_error in group.errors
     ]
 
-    erl_content = ERRORS_ERL_TEMPLATE.format(
+    erl_content = template.format(
         types=" |\n".join(types), id_to_type_mapping=",\n".join(id_to_type_mapping)
     )
 
     write_to_file(ERRORS_ERL_FILE_PATH, erl_content)
 
 
-def generate_error_modules(error_groups: List[OdErrorGroup]) -> None:
+def generate_error_modules(error_groups: List[OdErrorGroup], template: str) -> None:
     for group in error_groups:
         group_dir = os.path.join(ERROR_TYPES_DIR, group.name)
         os.makedirs(group_dir, exist_ok=True)
 
         for od_error in group.errors:
-            generate_error_module(od_error, group_dir)
+            generate_error_module(od_error, group_dir, template)
 
 
-def generate_error_module(od_error: OdError, output_dir: str) -> None:
+def generate_error_module(od_error: OdError, output_dir: str, template: str) -> None:
     includes = "\n".join(f'-include("{hrl}").' for hrl in od_error.ctx.includes)
 
-    erl_content = ERROR_TEMPLATE.format(
+    erl_content = template.format(
         includes=includes,
         error_type=od_error.type,
         to_json=generate_to_json_callback(od_error),
@@ -387,24 +258,6 @@ def generate_from_json_callback(od_error: OdError) -> str:
     tokens.append(f"{INDENT}?{od_error.get_error_macro()}.")
 
     return "".join(tokens)
-
-
-HTTP_CODE_TO_MACRO: Final[Dict[int, str]] = {
-    400: "?HTTP_400_BAD_REQUEST",
-    401: "?HTTP_401_UNAUTHORIZED",
-    403: "?HTTP_403_FORBIDDEN",
-    404: "?HTTP_404_NOT_FOUND",
-    405: "?HTTP_405_METHOD_NOT_ALLOWED",
-    409: "?HTTP_409_CONFLICT",
-    413: "?HTTP_413_PAYLOAD_TOO_LARGE",
-    415: "?HTTP_415_UNSUPPORTED_MEDIA_TYPE",
-    416: "?HTTP_416_RANGE_NOT_SATISFIABLE",
-    426: "?HTTP_426_UPGRADE_REQUIRED",
-    429: "?HTTP_429_TOO_MANY_REQUESTS",
-    500: "?HTTP_500_INTERNAL_SERVER_ERROR",
-    501: "?HTTP_501_NOT_IMPLEMENTED",
-    503: "?HTTP_503_SERVICE_UNAVAILABLE",
-}
 
 
 def generate_to_http_code_callback(od_error: OdError) -> str:
