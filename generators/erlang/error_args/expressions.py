@@ -72,7 +72,7 @@ class ListMapExpression(Expression):
             var=ctx.erl_var if isinstance(ctx, JsonEncodingCtx) else ctx.json_var
         )
         lines.append(
-            Line(f"end, {input_list}", ending=",", indent_level=ctx.indent_level)
+            Line(f"end, {input_list})", ending=",", indent_level=ctx.indent_level)
         )
 
         return lines
@@ -92,7 +92,7 @@ class ListMapFunRefExpression(Expression):
         )
         return [
             Line(
-                f"lists:map(fun {self.module}:{self.function}/1, {input_list}",
+                f"lists:map(fun {self.module}:{self.function}/1, {input_list})",
                 ending=",",
                 indent_level=ctx.indent_level,
             )

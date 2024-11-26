@@ -21,11 +21,11 @@ class TokenType(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("token_type:to_str({var})")
+        SimpleExpression("token_type:to_json({var})")
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
         SimpleExpression("token_type:to_printable({erl_var})")
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("token_type:from_str({var})")
+        SimpleExpression("token_type:from_json({var})")
     )

@@ -17,7 +17,7 @@ class Templates(NamedTuple):
     error: str
 
 
-def load_all_templates() -> Templates:
+def load_templates() -> Templates:
     return Templates(
         errors_hrl=_read_template("errors.hrl.template"),
         errors_erl=_read_template("errors.erl.template"),

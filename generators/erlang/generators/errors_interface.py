@@ -28,8 +28,7 @@ def generate_errors_interface_module(
     ]
 
     erl_content = template.format(
-        types=" |\n".join(types), 
-        id_to_type_mapping=",\n".join(id_to_type_mapping)
+        types=" |\n".join(types), id_to_type_mapping=",\n".join(id_to_type_mapping)
     )
 
     write_to_file(ERRORS_ERL_FILE_PATH, erl_content)
@@ -40,4 +39,4 @@ def _generate_error_dialyzer_type(od_error: OdError) -> str:
 
 
 def _generate_error_id_to_type_mapping(od_error: OdError) -> str:
-    return f"{INDENT}?{od_error.get_id_macro()} => ?{od_error.get_type_macro()}" 
+    return f"{INDENT}?{od_error.get_id_macro()} => ?{od_error.get_type_macro()}"

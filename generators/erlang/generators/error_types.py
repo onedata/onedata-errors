@@ -6,15 +6,23 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import os
 import re
-from typing import List, Dict
+from typing import Dict, List, NamedTuple, Tuple
 
-from ..constants import ERROR_TYPES_DIR, INDENT, HTTP_CODE_TO_MACRO
+from ..constants import ERROR_TYPES_DIR, HTTP_CODE_TO_MACRO, INDENT
 from ..error_definitions import OdError, OdErrorGroup
 from .utils import write_to_file
 
 
+class FormatPlaceholders(NamedTuple):
+    """Container for format placeholders and their mappings."""
+
+    placeholders: List[str]
+    fmt_vars: Dict[str, str]
+    control_sequences: Dict[str, str]
+
+
 def generate_error_types(error_groups: List[OdErrorGroup], template: str) -> None:
-    """Generate individual error module files for each error group."""
+    """Generate individual error type modules for each error group."""
     for group in error_groups:
         group_dir = os.path.join(ERROR_TYPES_DIR, group.name)
         os.makedirs(group_dir, exist_ok=True)
@@ -42,86 +50,95 @@ def _generate_to_json_callback(od_error: OdError) -> str:
     if od_error.to_json:
         return od_error.to_json.strip()
 
-    encoding_tokens = []
-    details_tokens = []
+    fmt_info = _collect_format_placeholders(od_error)
+    encoding_tokens, details_tokens = _generate_encoding_and_details(od_error, fmt_info)
 
+    description_tokens = _generate_description_tokens(od_error.description, fmt_info)
+
+    return "".join(
+        [
+            f"to_json(?{od_error.get_error_macro()}) ->\n",
+            *encoding_tokens,
+            f"{INDENT}#{{\n",
+            f'{2*INDENT}<<"id">> => ?{od_error.get_id_macro()},\n',
+            *details_tokens,
+            f'{2*INDENT}<<"description">> => ',
+            *description_tokens,
+            f"{INDENT}}}.",
+        ]
+    )
+
+
+def _collect_format_placeholders(od_error: OdError) -> FormatPlaceholders:
     fmt_placeholders = re.findall(r"\{(\w+)\}", od_error.description)
-    fmt_placeholder_to_fmt_var: Dict[str, str] = {}
-    fmt_placeholder_to_control_sequence: Dict[str, str] = {}
+    fmt_vars: Dict[str, str] = {}
+    control_sequences: Dict[str, str] = {}
 
     for macro in od_error.ctx.macros:
         if macro.alias in fmt_placeholders:
-            fmt_placeholder_to_fmt_var[macro.alias] = macro.ref
-            fmt_placeholder_to_control_sequence[macro.alias] = macro.fmt_control_sequence
+            fmt_vars[macro.alias] = macro.ref
+            control_sequences[macro.alias] = macro.fmt_control_sequence
 
-    if od_error.args:
-        details_tokens.append(f'{2*INDENT}<<"details">> => #{{\n')
+    return FormatPlaceholders(fmt_placeholders, fmt_vars, control_sequences)
 
-        for arg in od_error.args:
-            arg_encoding = arg.generate_to_json_encoding(
-                is_printed=arg.name in fmt_placeholders
-            )
 
-            if arg_encoding.tokens:
-                encoding_tokens.extend(arg_encoding.tokens)
+def _generate_encoding_and_details(
+    od_error: OdError, fmt_info: FormatPlaceholders
+) -> Tuple[List[str], List[str]]:
+    encoding_tokens: List[str] = []
+    details_tokens: List[str] = []
 
-            details_tokens.extend(
-                [3 * INDENT, f'<<"{arg.name}">> => {arg_encoding.json_var}', ",\n"]
-            )
+    if not od_error.args:
+        return encoding_tokens, details_tokens
 
-            fmt_placeholder_to_fmt_var[arg.name] = arg_encoding.print_var
-            fmt_placeholder_to_control_sequence[arg.name] = arg.fmt_control_sequence
+    details_tokens.append(f'{2*INDENT}<<"details">> => #{{\n')
 
-        if encoding_tokens:
-            encoding_tokens.append("\n")
+    for arg in od_error.args:
+        arg_encoding = arg.generate_to_json_encoding(
+            is_printed=arg.name in fmt_info.placeholders
+        )
 
-        details_tokens[-1] = f"\n{2*INDENT}}},\n"
+        if arg_encoding.tokens:
+            encoding_tokens.extend(arg_encoding.tokens)
 
-    description_tokens = _generate_description_tokens(
-        od_error.description,
-        fmt_placeholders,
-        fmt_placeholder_to_fmt_var,
-        fmt_placeholder_to_control_sequence
-    )
+        details_tokens.extend(
+            [3 * INDENT, f'<<"{arg.name}">> => {arg_encoding.json_var}', ",\n"]
+        )
 
-    tokens = [
-        f"to_json(?{od_error.get_error_macro()}) ->\n",
-        *encoding_tokens,
-        f"{INDENT}#{{\n",
-        f'{2*INDENT}<<"id">> => ?{od_error.get_id_macro()},\n',
-        *details_tokens,
-        f'{2*INDENT}<<"description">> => ',
-        *description_tokens,
-        f"{INDENT}}}.",
-    ]
+        if arg_encoding.print_var:
+            fmt_info.fmt_vars[arg.name] = arg_encoding.print_var
+            fmt_info.control_sequences[arg.name] = arg.fmt_control_sequence
 
-    return "".join(tokens)
+    if encoding_tokens:
+        encoding_tokens.append("\n")
+
+    details_tokens[-1] = f"\n{2*INDENT}}},\n"
+
+    return encoding_tokens, details_tokens
 
 
 def _generate_description_tokens(
     description: str,
-    fmt_placeholders: List[str],
-    fmt_placeholder_to_fmt_var: Dict[str, str],
-    fmt_placeholder_to_control_sequence: Dict[str, str],
+    fmt_info: FormatPlaceholders,
 ) -> List[str]:
-    if fmt_placeholders:
+    if fmt_info.placeholders:
         fmt_str = (
             description.replace("\n", "\\n")
-            .format(**fmt_placeholder_to_control_sequence)
+            .format(**fmt_info.control_sequences)
             .replace('"', '\\"')
         )
-        fmt_vars = [
-            fmt_placeholder_to_fmt_var[placeholder] for placeholder in fmt_placeholders
-        ]
+        fmt_vars = ", ".join(
+            fmt_info.fmt_vars[placeholder] for placeholder in fmt_info.placeholders
+        )
         return [
             "?fmt(\n",
             f'{3*INDENT}"{fmt_str}",\n',
             f"{3*INDENT}[",
-            ", ".join(fmt_vars),
+            fmt_vars,
             "]\n",
             f"{2*INDENT})\n",
         ]
-    
+
     description = description.replace("\n", "\\n")
     return [f'<<"{description}">>\n']
 
@@ -130,25 +147,35 @@ def _generate_from_json_callback(od_error: OdError) -> str:
     if od_error.from_json:
         return od_error.from_json.strip()
 
+    return _generate_default_from_json(od_error)
+
+
+def _generate_default_from_json(od_error: OdError) -> str:
     tokens = ["from_json(", f'#{{<<"id">> := ?{od_error.get_id_macro()}}}', ") ->\n"]
 
     if od_error.args:
         tokens.insert(1, "OdErrorJson = ")
-
-        details_var = "DetailsJson"
-        tokens.append(f'{INDENT}{details_var} = maps:get(<<"details">>, OdErrorJson')
-        if all(arg.nullable for arg in od_error.args):
-            tokens.append(", #{}")
-        tokens.append("),\n\n")
-
-        for arg in od_error.args:
-            tokens.extend(arg.generate_from_json_decoding(details_var=details_var))
-
-        tokens.append("\n")
+        tokens.extend(_generate_args_decoding(od_error))
 
     tokens.append(f"{INDENT}?{od_error.get_error_macro()}.")
 
     return "".join(tokens)
+
+
+def _generate_args_decoding(od_error: OdError) -> List[str]:
+    """Generate tokens for decoding error arguments from JSON."""
+    details_var = "DetailsJson"
+    tokens = [f'{INDENT}{details_var} = maps:get(<<"details">>, OdErrorJson']
+
+    if all(arg.nullable for arg in od_error.args):
+        tokens.append(", #{}")
+    tokens.append("),\n\n")
+
+    for arg in od_error.args:
+        tokens.extend(arg.generate_from_json_decoding(details_var=details_var))
+
+    tokens.append("\n")
+    return tokens
 
 
 def _generate_to_http_code_callback(od_error: OdError) -> str:
@@ -156,7 +183,6 @@ def _generate_to_http_code_callback(od_error: OdError) -> str:
 
     if isinstance(http_code, int):
         http_code_macro = HTTP_CODE_TO_MACRO[http_code]
-
         return "".join(
             [
                 f"-spec to_http_code(t()) -> {http_code_macro}.\n",
@@ -165,4 +191,4 @@ def _generate_to_http_code_callback(od_error: OdError) -> str:
             ]
         )
 
-    return http_code 
+    return http_code
