@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Literal, Tuple, Union
 
-from .context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
+from .translation_context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
 
 TranslationContext = Union[JsonEncodingCtx, PrintEncodingCtx, JsonDecodingCtx]
 

@@ -8,7 +8,7 @@ from typing import ClassVar
 
 from ..base import ErrorArgType
 from ..expressions import ListMapExpression, SimpleExpression
-from ..strategies import (
+from ..translation_strategies import (
     CustomStrategy,
     JsonDecodingStrategy,
     JsonEncodingStrategy,

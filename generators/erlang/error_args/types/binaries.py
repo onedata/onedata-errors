@@ -8,7 +8,7 @@ from typing import ClassVar
 
 from ..base import ErrorArgType
 from ..expressions import SimpleExpression
-from ..strategies import CustomStrategy, PrintEncodingStrategy
+from ..translation_strategies import CustomStrategy, PrintEncodingStrategy
 
 
 class Binaries(ErrorArgType):

@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar, List
 
 from ..base import INDENT, ErrorArgType, PrintEncodingStrategy
-from ..context import PrintEncodingCtx
+from ..translation_context import PrintEncodingCtx
 
 
 class TscLayout(ErrorArgType):
@@ -20,7 +20,7 @@ class TscLayout(ErrorArgType):
     # )
     # def _generate_print_encoding_expr_lines(self, ctx: PrintEncodingCtx) -> List[str]:
     #     return [
-    #         "?fmt_csv(maps:fold(fun(TimeSeriesName, MetricNames, Acc) ->\n",
+    #         "od_error_utils:format_csv(maps:fold(fun(TimeSeriesName, MetricNames, Acc) ->\n",
     #         f'{INDENT}Acc ++ [?fmt("~ts -> [~ts]", [TimeSeriesName, ?fmt_csv(MetricNames)])]\n',
     #         f"end, [], {ctx.erl_var}))",
     #     ]

@@ -7,9 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from abc import ABC
 from typing import ClassVar, List, NamedTuple, Optional
 
-from .context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
 from .expressions import format_lines
-from .strategies import (
+from .translation_context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
+from .translation_strategies import (
     CustomStrategy,
     DirectStrategy,
     FromJsonStrategy,
