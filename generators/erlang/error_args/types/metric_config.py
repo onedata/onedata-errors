@@ -1,0 +1,27 @@
+"""Metric config argument type."""
+
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from typing import List
+
+from ..base import ErrorArgType, JsonDecodingStrategy, JsonEncodingStrategy
+
+
+class MetricConfig(ErrorArgType):
+    """Metric config type."""
+
+    fmt_control_sequence = "~ts"
+    json_encoding_strategy = JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy = JsonDecodingStrategy.CUSTOM
+
+    @classmethod
+    def type_name(cls) -> str:
+        return "MetricConfig"
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"jsonable_record:to_json({erl_var}, metric_config)"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"jsonable_record:from_json({json_var}, metric_config)"]

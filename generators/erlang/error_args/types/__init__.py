@@ -1,0 +1,1 @@
+"""Error argument types package."""

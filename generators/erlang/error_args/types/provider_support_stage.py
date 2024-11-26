@@ -1,0 +1,27 @@
+"""Provider support stage argument type."""
+
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from typing import List
+
+from ..base import ErrorArgType, JsonDecodingStrategy, JsonEncodingStrategy
+
+
+class ProviderSupportStage(ErrorArgType):
+    """Provider support stage type."""
+
+    fmt_control_sequence = "~w"
+    json_encoding_strategy = JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy = JsonDecodingStrategy.CUSTOM
+
+    @classmethod
+    def type_name(cls) -> str:
+        return "ProviderSupportStage"
+
+    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+        return [f"support_stage:serialize(provider, {erl_var})"]
+
+    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+        return [f"support_stage:deserialize(provider, {json_var})"]
