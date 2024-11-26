@@ -131,7 +131,7 @@ def _generate_description_tokens(
             fmt_info.fmt_vars[placeholder] for placeholder in fmt_info.placeholders
         )
         return [
-            "?fmt(\n",
+            "od_error:format_description(\n",
             f'{3*INDENT}"{fmt_str}",\n',
             f"{3*INDENT}[",
             fmt_vars,

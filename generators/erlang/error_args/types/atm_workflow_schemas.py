@@ -16,5 +16,5 @@ class AtmWorkflowSchemas(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("?fmt_csv({erl_var})")
+        SimpleExpression("od_error:format_csv({erl_var})")
     )

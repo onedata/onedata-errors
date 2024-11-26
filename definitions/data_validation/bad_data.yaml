@@ -11,7 +11,7 @@ x-erl-to_json: |
               <<"key">> => Key,
               <<"specificError">> => errors:to_json(SpecificError)
           },
-          <<"description">> => ?fmt("Bad value provided for \"~ts\" (see details).", [Key])
+          <<"description">> => od_error:format_description("Bad value provided for \"~ts\" (see details).", [Key])
       };
   to_json(?ERROR_BAD_DATA(Key, HumanReadableHint)) ->
       HumanReadableHintJson = utils:undefined_to_null(HumanReadableHint),
@@ -22,7 +22,7 @@ x-erl-to_json: |
               <<"key">> => Key,
               <<"hint">> => HumanReadableHintJson
           },
-          <<"description">> => ?fmt("Bad value provided for \"~ts\": ~ts.", [Key, HumanReadableHintJson])
+          <<"description">> => od_error:format_description("Bad value provided for \"~ts\": ~ts.", [Key, HumanReadableHintJson])
       }.
 x-erl-from_json: |
   from_json(#{<<"id">> := ?ERROR_BAD_DATA_ID, <<"details">> := #{

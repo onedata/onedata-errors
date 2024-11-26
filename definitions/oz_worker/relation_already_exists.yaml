@@ -20,7 +20,7 @@ x-erl-to_json: |
               <<"parentType">> => gri:serialize_type(ParType),
               <<"parentId">> => ParId
           },
-          <<"description">> => ?fmt("Bad value: ~ts:~ts ~ts ~ts:~ts.", [
+          <<"description">> => od_error:format_description("Bad value: ~ts:~ts ~ts ~ts:~ts.", [
               gri:serialize_type(ChType), ChId,
               RelationToString,
               gri:serialize_type(ParType), ParId

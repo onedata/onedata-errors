@@ -28,7 +28,7 @@ class AtmTaskArgumentValueBuilderTypes(ErrorArgType):
         )
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("?fmt_csv({json_var})")
+        SimpleExpression("od_error:format_csv({json_var})")
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
         ListMapFunRefExpression(

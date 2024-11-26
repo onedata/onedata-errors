@@ -15,7 +15,7 @@ x-erl-to_json: |
           <<"id">> => ?ERROR_NODE_NOT_COMPATIBLE_ID,
           <<"details">> => #{
               <<"hostname">> => Hostname, <<"clusterType">> => NodeClusterType},
-          <<"description">> => ?fmt("Cannot add \"~ts\", it is a ~ts node.",
+          <<"description">> => od_error:format_description("Cannot add \"~ts\", it is a ~ts node.",
               [Hostname, NodeClusterType])
       }.
 description: >-

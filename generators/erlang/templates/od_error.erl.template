@@ -38,6 +38,23 @@
 
 -export_type([http_code/0, errno/0, t/0]).
 
+-export([format_description/2, format_csv/1]).
+
+
+%%%===================================================================
+%%% API
+%%%===================================================================
+
+
+-spec format_description(string(), [term()]) -> string().
+format_description(Format, Args) ->
+    str_utils:ensure_suffix(str_utils:format_bin(Format, Args), <<".">>).
+
+
+-spec format_csv([string()]) -> string().
+format_csv(Values) ->
+    str_utils:join_as_binaries(Values, <<", ">>).
+
 
 %%%===================================================================
 %%% od_error behaviour definition

@@ -8,20 +8,18 @@ import os
 import shutil
 
 from .constants import OUTPUT_DIR
-from .error_args.loader import TypeLoader as ErrorArgsLoader
-from .generators.errors_hrl import generate_errors_hrl
-from .generators.od_error import generate_od_error_behaviour
-from .generators.errors_interface import generate_errors_interface_module
 from .generators.error_types import generate_error_types
+from .generators.errors_hrl import generate_errors_hrl
+from .generators.errors_interface import generate_errors_interface_module
+from .generators.od_error import generate_od_error_behaviour
 from .loaders.error_definitions_loader import load_error_definitions
-from .loaders.template_loader import load_all_templates
+from .loaders.template_loader import load_templates
 
 
 def main():
     clean_output_dir()
 
-    ErrorArgsLoader.load_types()
-    templates = load_all_templates()
+    templates = load_templates()
     error_groups = load_error_definitions()
 
     generate_errors_hrl(error_groups, templates.errors_hrl)

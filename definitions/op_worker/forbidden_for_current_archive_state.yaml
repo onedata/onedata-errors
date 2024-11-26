@@ -7,9 +7,9 @@ x-erl-to_json: |
   to_json(?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(CurrentState, AllowedStates)) ->
       #{
           <<"id">> => ?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
-          <<"description">> => ?fmt(
+          <<"description">> => od_error:format_description(
               "This operation is forbidden while the archive state is ~ts. Allowed states are: ~ts.",
-              [CurrentState, ?fmt_csv(AllowedStates)]
+              [CurrentState, od_error:format_csv(AllowedStates)]
           ),
           <<"details">> => #{
               <<"allowedStates">> => json_utils:encode(AllowedStates),

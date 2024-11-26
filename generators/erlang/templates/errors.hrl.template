@@ -18,11 +18,6 @@
 -include("posix/errno.hrl").
 
 
-% TODO mv to util modue? od_error_utils?
--define(fmt(Format, Args), str_utils:ensure_suffix(str_utils:format_bin(Format, Args), <<".">>)).
--define(fmt_csv(Values), str_utils:join_as_binaries(Values, <<", ">>)).
-
-
 -record(od_error, {{
     type :: module(),
     args = undefined :: term()

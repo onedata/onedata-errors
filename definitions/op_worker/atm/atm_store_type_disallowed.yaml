@@ -2,7 +2,7 @@ id: atmStoreTypeDisallowed
 args:
   - name: atmStoreSchemaId
   - name: allowed
-    type: AtmStoreSchemaIds
+    type: AtmStoreTypes
 description: >-
   Bad automation store: the type of store (schema id: "{atmStoreSchemaId}")
   must be one of: {allowed}.

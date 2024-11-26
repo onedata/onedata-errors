@@ -1,7 +1,7 @@
 id: cannotDeleteEntity
 args:
   - name: entityType
-    type: GriEntityTypeAsAtom
+    type: GriEntityType
   - name: entityId
 description: >-
   Cannot delete {entityType}:{entityId}; failed to delete some dependent relations.
