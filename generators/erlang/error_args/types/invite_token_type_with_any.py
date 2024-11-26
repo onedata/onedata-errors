@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import List
+from typing import ClassVar, List
 
 from ..base import INDENT, ErrorArgType, JsonDecodingStrategy, JsonEncodingStrategy
 
@@ -12,13 +12,9 @@ from ..base import INDENT, ErrorArgType, JsonDecodingStrategy, JsonEncodingStrat
 class InviteTokenTypeWithAny(ErrorArgType):
     """Invite token type with any."""
 
-    fmt_control_sequence = "~ts"
-    json_encoding_strategy = JsonEncodingStrategy.CUSTOM
-    json_decoding_strategy = JsonDecodingStrategy.CUSTOM
-
-    @classmethod
-    def type_name(cls) -> str:
-        return "InviteTokenTypeWithAny"
+    fmt_control_sequence: ClassVar[str] = "~ts"
+    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: ClassVar[JsonDecodingStrategy] = JsonDecodingStrategy.CUSTOM
 
     def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
         return [

@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import List
+from typing import ClassVar, List
 
 from ..base import ErrorArgType, JsonEncodingStrategy, PrintEncodingStrategy
 
@@ -12,13 +12,11 @@ from ..base import ErrorArgType, JsonEncodingStrategy, PrintEncodingStrategy
 class Path(ErrorArgType):
     """Path type."""
 
-    fmt_control_sequence = "~ts"
-    json_encoding_strategy = JsonEncodingStrategy.CUSTOM
-    print_encoding_strategy = PrintEncodingStrategy.FROM_JSON
-
-    @classmethod
-    def type_name(cls) -> str:
-        return "Path"
+    fmt_control_sequence: ClassVar[str] = "~ts"
+    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = JsonEncodingStrategy.CUSTOM
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = (
+        PrintEncodingStrategy.FROM_JSON
+    )
 
     def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
         return [f"str_utils:to_binary(filename:flatten({erl_var}))"]

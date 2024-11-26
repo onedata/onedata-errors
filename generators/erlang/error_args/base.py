@@ -4,9 +4,9 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from enum import Enum
-from typing import List, NamedTuple, Optional
+from typing import ClassVar, List, NamedTuple, Optional
 
 INDENT: str = 4 * " "
 
@@ -37,20 +37,21 @@ class ErrorArgType(ABC):
     """Base class for all error argument types."""
 
     # Default values for class attributes
-    fmt_control_sequence: str = "~w"
-    json_encoding_strategy: JsonEncodingStrategy = JsonEncodingStrategy.DIRECT
-    print_encoding_strategy: PrintEncodingStrategy = PrintEncodingStrategy.DIRECT
-    json_decoding_strategy: JsonDecodingStrategy = JsonDecodingStrategy.DIRECT
+    fmt_control_sequence: ClassVar[str] = "~w"
+    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = JsonEncodingStrategy.DIRECT
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = (
+        PrintEncodingStrategy.DIRECT
+    )
+    json_decoding_strategy: ClassVar[JsonDecodingStrategy] = JsonDecodingStrategy.DIRECT
 
     def __init__(self, name: str, nullable: bool = False) -> None:
         self.name = name
         self.nullable = nullable
 
     @classmethod
-    @abstractmethod
     def type_name(cls) -> str:
         """Returns the name of this type as used in YAML definitions."""
-        pass
+        return cls.__name__
 
     def get_erlang_variable_name(self) -> str:
         """Returns Erlang variable name for this argument."""

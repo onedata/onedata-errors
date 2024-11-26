@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import List
+from typing import ClassVar, List
 
 from ..base import ErrorArgType, JsonDecodingStrategy, JsonEncodingStrategy
 
@@ -12,13 +12,9 @@ from ..base import ErrorArgType, JsonDecodingStrategy, JsonEncodingStrategy
 class StorageSupportStage(ErrorArgType):
     """Storage support stage type."""
 
-    fmt_control_sequence = "~w"
-    json_encoding_strategy = JsonEncodingStrategy.CUSTOM
-    json_decoding_strategy = JsonDecodingStrategy.CUSTOM
-
-    @classmethod
-    def type_name(cls) -> str:
-        return "StorageSupportStage"
+    fmt_control_sequence: ClassVar[str] = "~w"
+    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = JsonEncodingStrategy.CUSTOM
+    json_decoding_strategy: ClassVar[JsonDecodingStrategy] = JsonDecodingStrategy.CUSTOM
 
     def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
         return [f"support_stage:serialize(storage, {erl_var})"]
