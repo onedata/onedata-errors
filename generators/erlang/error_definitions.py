@@ -4,6 +4,10 @@ These structures are populated from YAML definitions and used by generators
 to produce Erlang code.
 """
 
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
 from typing import List, NamedTuple, Optional, Union
 
 from .error_args.base import ErrorArgType
