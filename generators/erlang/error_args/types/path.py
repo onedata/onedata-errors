@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar, List
 
 from ..base import ErrorArgType, JsonEncodingStrategy, PrintEncodingStrategy
+from ..context import JsonEncodingCtx
 
 
 class Path(ErrorArgType):
@@ -18,5 +19,5 @@ class Path(ErrorArgType):
         PrintEncodingStrategy.FROM_JSON
     )
 
-    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
-        return [f"str_utils:to_binary(filename:flatten({erl_var}))"]
+    def _generate_json_encoding_expr_lines(self, ctx: JsonEncodingCtx) -> List[str]:
+        return [f"str_utils:to_binary(filename:flatten({ctx.erl_var}))"]

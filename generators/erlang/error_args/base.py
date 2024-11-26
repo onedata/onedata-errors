@@ -7,6 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from abc import ABC
 from enum import Enum
 from typing import ClassVar, List, NamedTuple, Optional
+from dataclasses import dataclass
+from .context import JsonEncodingCtx, PrintEncodingCtx, JsonDecodingCtx
 
 INDENT: str = 4 * " "
 
@@ -375,13 +377,18 @@ class ErrorArgType(ABC):
     def _generate_json_encoding(
         self, *, erl_var: str, assign_to: Optional[str] = None, indent_level: int = 1
     ) -> List[str]:
+        ctx = JsonEncodingCtx(
+            erl_var=erl_var,
+            assign_to=assign_to,
+            indent_level=indent_level
+        )
         return self._postprocess_generated_expression(
-            self._generate_json_encoding_expr_lines(erl_var=erl_var),
+            self._generate_json_encoding_expr_lines(ctx),
             assign_to=assign_to,
             indent_level=indent_level,
         )
 
-    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+    def _generate_json_encoding_expr_lines(self, ctx: JsonEncodingCtx) -> List[str]:
         return []
 
     def _generate_print_encoding(
@@ -392,29 +399,36 @@ class ErrorArgType(ABC):
         assign_to: Optional[str] = None,
         indent_level: int = 1,
     ) -> List[str]:
+        ctx = PrintEncodingCtx(
+            erl_var=erl_var,
+            json_var=json_var,
+            assign_to=assign_to,
+            indent_level=indent_level
+        )
         return self._postprocess_generated_expression(
-            self._generate_print_encoding_expr_lines(
-                erl_var=erl_var, json_var=json_var
-            ),
+            self._generate_print_encoding_expr_lines(ctx),
             assign_to=assign_to,
             indent_level=indent_level,
         )
 
-    def _generate_print_encoding_expr_lines(
-        self, *, json_var: str, erl_var: str
-    ) -> List[str]:
+    def _generate_print_encoding_expr_lines(self, ctx: PrintEncodingCtx) -> List[str]:
         return []
 
     def _generate_json_decoding(
         self, *, json_var: str, assign_to: Optional[str] = None, indent_level: int = 1
     ) -> List[str]:
+        ctx = JsonDecodingCtx(
+            json_var=json_var,
+            assign_to=assign_to,
+            indent_level=indent_level
+        )
         return self._postprocess_generated_expression(
-            self._generate_json_decoding_expr_lines(json_var=json_var),
+            self._generate_json_decoding_expr_lines(ctx),
             assign_to=assign_to,
             indent_level=indent_level,
         )
 
-    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+    def _generate_json_decoding_expr_lines(self, ctx: JsonDecodingCtx) -> List[str]:
         return []
 
     @staticmethod

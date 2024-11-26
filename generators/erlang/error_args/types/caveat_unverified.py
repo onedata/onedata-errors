@@ -12,6 +12,7 @@ from ..base import (
     JsonEncodingStrategy,
     PrintEncodingStrategy,
 )
+from ..context import JsonEncodingCtx, PrintEncodingCtx, JsonDecodingCtx
 
 
 class CaveatUnverified(ErrorArgType):
@@ -24,13 +25,11 @@ class CaveatUnverified(ErrorArgType):
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = JsonDecodingStrategy.CUSTOM
 
-    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
-        return [f"caveats:to_json({erl_var})"]
+    def _generate_json_encoding_expr_lines(self, ctx: JsonEncodingCtx) -> List[str]:
+        return [f"caveats:to_json({ctx.erl_var})"]
 
-    def _generate_print_encoding_expr_lines(
-        self, *, json_var: str, erl_var: str
-    ) -> List[str]:
-        return [f"caveats:unverified_description({erl_var})"]
+    def _generate_print_encoding_expr_lines(self, ctx: PrintEncodingCtx) -> List[str]:
+        return [f"caveats:unverified_description({ctx.erl_var})"]
 
-    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
-        return [f"caveats:from_json({json_var})"]
+    def _generate_json_decoding_expr_lines(self, ctx: JsonDecodingCtx) -> List[str]:
+        return [f"caveats:from_json({ctx.json_var})"]

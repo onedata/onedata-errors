@@ -13,6 +13,7 @@ from ..base import (
     JsonEncodingStrategy,
     PrintEncodingStrategy,
 )
+from ..context import JsonEncodingCtx, PrintEncodingCtx, JsonDecodingCtx
 
 
 class DnsServers(ErrorArgType):
@@ -27,23 +28,21 @@ class DnsServers(ErrorArgType):
 
     DNS_DEFAULTS: ClassVar[str] = '<<"system defaults">>'
 
-    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
+    def _generate_json_encoding_expr_lines(self, ctx: JsonEncodingCtx) -> List[str]:
         return [
             "lists:map(fun\n",
             f"{INDENT}(default) -> {self.DNS_DEFAULTS};\n",
             f"{INDENT}(Ip) -> element(2, {{ok, _}} = ip_utils:to_binary(Ip))\n",
-            f"end, {erl_var})",
+            f"end, {ctx.erl_var})",
         ]
 
-    def _generate_print_encoding_expr_lines(
-        self, *, json_var: str, erl_var: str
-    ) -> List[str]:
-        return [f"?fmt_csv({json_var})"]
+    def _generate_print_encoding_expr_lines(self, ctx: PrintEncodingCtx) -> List[str]:
+        return [f"?fmt_csv({ctx.json_var})"]
 
-    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
+    def _generate_json_decoding_expr_lines(self, ctx: JsonDecodingCtx) -> List[str]:
         return [
             "lists:map(fun\n",
             f"{INDENT}({self.DNS_DEFAULTS}) -> default;\n",
             f"{INDENT}(Ip) -> element(2, {{ok, _}} = ip_utils:to_ip4_address(Ip))\n",
-            f"end, {json_var})",
+            f"end, {ctx.json_var})",
         ]

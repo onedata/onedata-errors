@@ -12,6 +12,7 @@ from ..base import (
     JsonEncodingStrategy,
     PrintEncodingStrategy,
 )
+from ..context import JsonEncodingCtx, PrintEncodingCtx, JsonDecodingCtx
 
 
 class AtmDataTypes(ErrorArgType):
@@ -24,13 +25,11 @@ class AtmDataTypes(ErrorArgType):
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = JsonDecodingStrategy.CUSTOM
 
-    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
-        return [f"lists:map(fun atm_data_type:type_to_json/1, {erl_var})"]
+    def _generate_json_encoding_expr_lines(self, ctx: JsonEncodingCtx) -> List[str]:
+        return [f"lists:map(fun atm_data_type:type_to_json/1, {ctx.erl_var})"]
 
-    def _generate_print_encoding_expr_lines(
-        self, *, json_var: str, erl_var: str
-    ) -> List[str]:
-        return [f"?fmt_csv({json_var})"]
+    def _generate_print_encoding_expr_lines(self, ctx: PrintEncodingCtx) -> List[str]:
+        return [f"?fmt_csv({ctx.json_var})"]
 
-    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
-        return [f"lists:map(fun atm_data_type:type_from_json/1, {json_var})"]
+    def _generate_json_decoding_expr_lines(self, ctx: JsonDecodingCtx) -> List[str]:
+        return [f"lists:map(fun atm_data_type:type_from_json/1, {ctx.json_var})"]

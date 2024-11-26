@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar, List
 
 from ..base import ErrorArgType, JsonDecodingStrategy, JsonEncodingStrategy
+from ..context import JsonEncodingCtx, JsonDecodingCtx
 
 
 class ProviderSupportStage(ErrorArgType):
@@ -16,8 +17,8 @@ class ProviderSupportStage(ErrorArgType):
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = JsonEncodingStrategy.CUSTOM
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = JsonDecodingStrategy.CUSTOM
 
-    def _generate_json_encoding_expr_lines(self, *, erl_var: str) -> List[str]:
-        return [f"support_stage:serialize(provider, {erl_var})"]
+    def _generate_json_encoding_expr_lines(self, ctx: JsonEncodingCtx) -> List[str]:
+        return [f"support_stage:serialize(provider, {ctx.erl_var})"]
 
-    def _generate_json_decoding_expr_lines(self, *, json_var: str) -> List[str]:
-        return [f"support_stage:deserialize(provider, {json_var})"]
+    def _generate_json_decoding_expr_lines(self, ctx: JsonDecodingCtx) -> List[str]:
+        return [f"support_stage:deserialize(provider, {ctx.json_var})"]
