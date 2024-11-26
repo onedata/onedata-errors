@@ -1,0 +1,12 @@
+[tool.black]
+line-length = 88
+target-version = ['py38']
+fast = true
+include = '\.pyi?$'
+preview = true
+
+[tool.isort]
+py_version = 38
+profile = "black"                  # Use Black's import style
+line_length = 88                   # Maximum line length for imports
+overwrite_in_place = true

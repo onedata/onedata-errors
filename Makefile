@@ -1,8 +1,7 @@
-.PHONY: submodules venv init format black-check static-analysis type-check lint test-with-clean test-without-clean dist pypi_check pypi_upload
+.PHONY: format black-check static-analysis type-check lint clean erlang
 
-STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v7"
-ERLANG_GENERATOR := generators/erlang/gen_erl.py
-SRC_FILES := $(ERLANG_GENERATOR)
+STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v8"
+SRC_FILES := generators/
 
 UID := $(shell id -u)
 GID := $(shell id -g)
@@ -27,8 +26,8 @@ endef
 
 format:
 	$(call print_target)
-	$(call docker_run, isort -rc $(SRC_FILES))
-	$(call docker_run, black --fast $(SRC_FILES))
+	$(call docker_run, isort $(SRC_FILES) --settings-file .pyproject.toml)
+	$(call docker_run, black $(SRC_FILES) --config .pyproject.toml)
 
 ##
 ## Linting
@@ -36,15 +35,15 @@ format:
 
 black-check:
 	$(call print_target)
-	$(call docker_run, black $(SRC_FILES) --check) || (echo "Code failed Black format checking. Please run 'make format' before commiting your changes."; exit 1)
+	$(call docker_run, black $(SRC_FILES) --config .pyproject.toml --check) || (echo "Code failed Black format checking. Please run 'make format' before committing your changes."; exit 1)
 
 static-analysis:
 	$(call print_target)
-	$(call docker_run, pylint $(SRC_FILES) --rcfile=.pylintrc --recursive=y)
+	$(call docker_run, pylint $(SRC_FILES) --output-format=colorized --recursive=y --py-version=3.8 --rcfile=/tmp/rc_file)
 
 type-check:
 	$(call print_target)
-	$(call docker_run, mypy $(SRC_FILES) --ignore-missing-imports)
+	$(call docker_run, mypy $(SRC_FILES) --disable-error-code=import-untyped)
 
 lint: black-check static-analysis type-check
 	@:
@@ -55,6 +54,7 @@ lint: black-check static-analysis type-check
 
 clean:
 	@rm -rf generated
+	@echo "Cleaned generated files."
 
 erlang:
-	python $(ERLANG_GENERATOR)
+	python -m generators.erlang.gen_erl
