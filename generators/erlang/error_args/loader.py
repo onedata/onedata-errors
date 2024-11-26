@@ -12,38 +12,46 @@ from . import types
 from .base import ErrorArgType
 from .registry import TypeRegistry
 
-_types_loaded: bool = False
 
+class TypeLoader:
+    """Class for loading and registering error argument types."""
 
-def load_types() -> None:
-    """Automatically load and register all error argument types."""
-    global _types_loaded
-    if _types_loaded:
-        return
+    _types_loaded: bool = False
 
-    types_dir = Path(types.__file__).parent
+    @classmethod
+    def load_types(cls) -> None:
+        """Automatically load and register all error argument types."""
+        if cls._types_loaded:
+            return
 
-    for module_info in pkgutil.iter_modules([str(types_dir)]):
-        module = importlib.import_module(
-            f"generators.erlang.error_args.types.{module_info.name}"
-        )
+        types_dir = Path(types.__file__).parent
 
-        # Find all classes in module that inherit from ErrorArgType
-        for attr_name in dir(module):
-            attr = getattr(module, attr_name)
-            if (
-                isinstance(attr, type)
-                and issubclass(attr, ErrorArgType)
-                and attr is not ErrorArgType
-            ):
-                TypeRegistry.register(attr)
+        for module_info in pkgutil.iter_modules([str(types_dir)]):
+            module = importlib.import_module(
+                f"generators.erlang.error_args.types.{module_info.name}"
+            )
 
-    _types_loaded = True
+            # Find all classes in module that inherit from ErrorArgType
+            for attr_name in dir(module):
+                attr = getattr(module, attr_name)
+                if (
+                    isinstance(attr, type)
+                    and issubclass(attr, ErrorArgType)
+                    and attr is not ErrorArgType
+                ):
+                    TypeRegistry.register(attr)
+
+        cls._types_loaded = True
+
+    @classmethod
+    def are_types_loaded(cls) -> bool:
+        """Check if types have been loaded."""
+        return cls._types_loaded
 
 
 def create_error_arg(arg_yaml: dict) -> ErrorArgType:
     """Create error argument from YAML definition."""
-    load_types()
+    TypeLoader.load_types()
 
     return TypeRegistry.create(
         type_name=arg_yaml.get("type", "Binary"),

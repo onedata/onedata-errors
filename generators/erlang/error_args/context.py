@@ -1,30 +1,26 @@
-"""Context classes for error argument type code generation."""
+"""Context classes for error argument type translation code generation."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from dataclasses import dataclass
-from typing import Optional
+from typing import NamedTuple, Optional
 
 
-@dataclass
-class JsonEncodingCtx:
+class JsonEncodingCtx(NamedTuple):
     erl_var: str
     assign_to: Optional[str] = None
     indent_level: int = 1
 
 
-@dataclass
-class PrintEncodingCtx:
+class PrintEncodingCtx(NamedTuple):
     erl_var: str
     json_var: str
     assign_to: Optional[str] = None
     indent_level: int = 1
 
 
-@dataclass
-class JsonDecodingCtx:
+class JsonDecodingCtx(NamedTuple):
     json_var: str
     assign_to: Optional[str] = None
-    indent_level: int = 1 
+    indent_level: int = 1

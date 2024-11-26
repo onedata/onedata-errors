@@ -4,32 +4,28 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import ClassVar, List
+from typing import ClassVar
 
-from ..base import (
-    ErrorArgType,
+from ..base import ErrorArgType
+from ..expressions import SimpleExpression
+from ..strategies import (
+    CustomStrategy,
     JsonDecodingStrategy,
     JsonEncodingStrategy,
     PrintEncodingStrategy,
 )
-from ..context import JsonEncodingCtx, PrintEncodingCtx, JsonDecodingCtx
 
 
 class OnedataError(ErrorArgType):
     """Onedata error type."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
-    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = JsonEncodingStrategy.CUSTOM
-    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = (
-        PrintEncodingStrategy.CUSTOM
+    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
+        SimpleExpression("errors:to_json({var})")
     )
-    json_decoding_strategy: ClassVar[JsonDecodingStrategy] = JsonDecodingStrategy.CUSTOM
-
-    def _generate_json_encoding_expr_lines(self, ctx: JsonEncodingCtx) -> List[str]:
-        return [f"errors:to_json({ctx.erl_var})"]
-
-    def _generate_print_encoding_expr_lines(self, ctx: PrintEncodingCtx) -> List[str]:
-        return [f'maps:get(<<"description">>, {ctx.json_var})']
-
-    def _generate_json_decoding_expr_lines(self, ctx: JsonDecodingCtx) -> List[str]:
-        return [f"errors:from_json({ctx.json_var})"]
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
+        SimpleExpression('maps:get(<<"description">>, {json_var})')
+    )
+    json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
+        SimpleExpression("errors:from_json({var})")
+    )

@@ -7,13 +7,12 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 import os
 import re
 import shutil
-
-from collections import ChainMap
 from typing import Dict, Final, List, NamedTuple, Optional, Union
 
-from error_arguments import ErrorArg, load_argument
-
 import yaml
+
+from .error_args.base import ErrorArgType
+from .error_args.loader import TypeLoader, create_error_arg
 
 ERROR_DEFINITIONS_ROOT_DIR: Final[str] = "definitions"
 OUTPUT_DIR: Final[str] = "generated/erlang"
@@ -21,7 +20,7 @@ TEMPLATES_DIR: Final[str] = os.path.join(os.path.dirname(__file__), "templates")
 
 
 def read_template(template_name: str) -> str:
-    with open(os.path.join(TEMPLATES_DIR, template_name)) as f:
+    with open(os.path.join(TEMPLATES_DIR, template_name), encoding="utf-8") as f:
         return f.read()
 
 
@@ -59,7 +58,7 @@ class OdError(NamedTuple):
     id: str
     description: str
     http_code: Union[str, int]
-    args: List[ErrorArg]
+    args: List[ErrorArgType]
     ctx: OdErrorCtx
     to_json: Optional[str]
     from_json: Optional[str]
@@ -87,6 +86,8 @@ class OdErrorGroup(NamedTuple):
 
 
 def main():
+    TypeLoader.load_types()
+
     clean_output_dir()
 
     error_groups = load_error_groups()
@@ -128,7 +129,7 @@ def load_error_definition(yaml_definition_path: str) -> OdError:
     args = []
 
     for arg in yaml_data.get("args", []):
-        args.append(load_argument(arg))
+        args.append(create_error_arg(arg))
 
     return OdError(
         name=error_name,
@@ -144,7 +145,7 @@ def load_error_definition(yaml_definition_path: str) -> OdError:
 
 
 def read_yaml_file(file_path: str) -> dict:
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
@@ -162,17 +163,14 @@ def load_error_ctx(yaml_data: dict) -> OdErrorCtx:
         includes = headers.get("include", [])
         macros = [load_macro(macro_yaml) for macro_yaml in headers.get("macros", [])]
 
-    return OdErrorCtx(
-        includes=includes,
-        macros=macros
-    )
+    return OdErrorCtx(includes=includes, macros=macros)
 
 
 def load_macro(macro_yaml: dict) -> MacroRef:
     return MacroRef(
         alias=macro_yaml["alias"],
         ref=macro_yaml["ref"],
-        fmt_control_sequence=macro_yaml.get("fmt_control_sequence", "~ts")
+        fmt_control_sequence=macro_yaml.get("fmt_control_sequence", "~ts"),
     )
 
 
@@ -240,7 +238,7 @@ def build_error_macro_definition(od_error: OdError) -> str:
 
 
 def generate_od_error_behaviour() -> None:
-    with open(OD_ERROR_FILE_PATH, "w") as f:
+    with open(OD_ERROR_FILE_PATH, "w", encoding="utf-8") as f:
         f.write(OD_ERROR_TEMPLATE)
 
 
@@ -302,12 +300,15 @@ def generate_to_json_callback(od_error: OdError) -> str:
     for macro in od_error.ctx.macros:
         if macro.alias in fmt_placeholders:
             fmt_placeholder_to_fmt_var[macro.alias] = macro.ref
-            fmt_placeholder_to_control_sequence[macro.alias] = macro.fmt_control_sequence
+            fmt_placeholder_to_control_sequence[macro.alias] = (
+                macro.fmt_control_sequence
+            )
 
     if od_error.args:
         details_tokens.append(f'{2*INDENT}<<"details">> => #{{\n')
 
         for arg in od_error.args:
+            # import pdb; pdb.set_trace()
             arg_encoding = arg.generate_to_json_encoding(
                 is_printed=arg.name in fmt_placeholders
             )
@@ -329,10 +330,13 @@ def generate_to_json_callback(od_error: OdError) -> str:
         details_tokens[-1] = f"\n{2*INDENT}}},\n"
 
     if fmt_placeholders:
-        fmt_str = od_error.description.format(**fmt_placeholder_to_control_sequence).replace('"', '\\"')
+        fmt_str = (
+            od_error.description.replace("\n", "\\n")
+            .format(**fmt_placeholder_to_control_sequence)
+            .replace('"', '\\"')
+        )
         fmt_vars = [
-            fmt_placeholder_to_fmt_var[placeholder]
-            for placeholder in fmt_placeholders
+            fmt_placeholder_to_fmt_var[placeholder] for placeholder in fmt_placeholders
         ]
         description_tokens = [
             "?fmt(\n",
@@ -343,7 +347,8 @@ def generate_to_json_callback(od_error: OdError) -> str:
             f"{2*INDENT})\n",
         ]
     else:
-        description_tokens = [f'<<"{od_error.description}">>\n']
+        description = od_error.description.replace("\n", "\\n")
+        description_tokens = [f'<<"{description}">>\n']
 
     tokens = [
         f"to_json(?{od_error.get_error_macro()}) ->\n",
@@ -428,7 +433,7 @@ def generate_error_id_to_type_mapping(od_error: OdError) -> str:
 
 
 def write_to_file(file_path: str, content: str) -> None:
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         f.write(content)
 
 

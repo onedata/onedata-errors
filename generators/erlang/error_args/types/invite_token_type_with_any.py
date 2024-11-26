@@ -4,31 +4,32 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from typing import ClassVar, List
+from typing import ClassVar
 
-from ..base import INDENT, ErrorArgType, JsonDecodingStrategy, JsonEncodingStrategy
-from ..context import JsonEncodingCtx, JsonDecodingCtx
+from ..base import ErrorArgType
+from ..expressions import CaseExpression, SimpleExpression
+from ..strategies import CustomStrategy, JsonDecodingStrategy, JsonEncodingStrategy
 
 
 class InviteTokenTypeWithAny(ErrorArgType):
     """Invite token type with any."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
-    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = JsonEncodingStrategy.CUSTOM
-    json_decoding_strategy: ClassVar[JsonDecodingStrategy] = JsonDecodingStrategy.CUSTOM
-
-    def _generate_json_encoding_expr_lines(self, ctx: JsonEncodingCtx) -> List[str]:
-        return [
-            f"case {ctx.erl_var} of\n",
-            f'{INDENT}any -> <<"any">>;\n',
-            f"{INDENT}_ -> token_type:invite_type_to_str({ctx.erl_var})\n",
-            f"end",
-        ]
-
-    def _generate_json_decoding_expr_lines(self, ctx: JsonDecodingCtx) -> List[str]:
-        return [
-            f"case {ctx.json_var} of\n",
-            f'{INDENT}<<"any">> -> any;\n',
-            f"{INDENT}_ -> token_type:invite_type_from_str({ctx.json_var})\n",
-            f"end",
-        ]
+    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
+        CaseExpression(
+            match_template="{var}",
+            clauses=[
+                ("any", SimpleExpression('<<"any">>')),
+                ("_", SimpleExpression("token_type:invite_type_to_str({var})")),
+            ],
+        )
+    )
+    json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
+        CaseExpression(
+            match_template="{var}",
+            clauses=[
+                ('<<"any">>', SimpleExpression("any")),
+                ("_", SimpleExpression("token_type:invite_type_from_str({var})")),
+            ],
+        )
+    )
