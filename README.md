@@ -1,99 +1,199 @@
 # Error Definitions
 
-This repository contains YAML-based error definitions and code generators 
-for Onedata services.
+## Table of Contents
+- [Overview](#overview)
+- [Structure](#structure)
+- [Error Definition Guide](#error-definition-guide)
+  - [File Location and Naming](#file-location-and-naming)
+  - [Error Definition Structure](#error-definition-structure)
+  - [Examples](#examples)
+  - [Best Practices](#best-practices)
+- [Type System](#type-system)
+  - [Available Types](#available-types)
+  - [Adding New Types](#adding-new-types)
+- [Code Generation](#code-generation)
+  - [Erlang](#erlang)
+
+## Overview
+
+This repository provides a framework for defining and handling errors across Onedata services:
+- Standardized error definitions in YAML format
+- Code generation for consistent error handling
+- Uniform error responses in REST APIs
+
+The workflow:
+1. Define errors in YAML files
+2. Generate code using provided generators 
+3. Use generated code in your service
 
 ## Structure
 
 Error definitions are stored in `definitions/` directory, organized by categories:
-- `auth/` - authentication and authorization errors
-- `connection/` - network connectivity errors 
-- `data_validation/` - data validation errors
-- `general/` - common system errors
-- `graph_sync/` - graph sync protocol errors
+- `auth/` - Authentication and authorization errors
+- `connection/` - Network connectivity errors 
+- `data_validation/` - Data validation errors
+- `general/` - Common system errors
+- `graph_sync/` - Graph sync protocol errors
 - `onepanel/` - Onepanel specific errors
 - `op_worker/` - Oneprovider worker specific errors
 - `oz_worker/` - Onezone worker specific errors
 - `posix/` - POSIX errors
 
-Each error definition contains:
-- `id` - unique identifier of the error
-- `args` - list of arguments returned in `details` field of the error response as well as used in `description`
-- `description` - error description with placeholders for `args`
-- `http_code` - HTTP status code to be returned in REST API response for the error
-- `errno` - POSIX error number associated with the error (optional)
+## Error Definition Guide
 
+### File Location and Naming
 
-## Adding New Errors
+New error definitions should be added to appropriate category under `definitions/` 
+directory following these conventions:
+- Use snake_case for filenames
+- Name should reflect the error condition
+- Extension must be `.yaml`
 
-Add new YAML definition file in appropriate category under `definitions/` directory. 
+Example: `definitions/auth/invalid_credentials.yaml`
 
-Caveats:
-1. When writing a `description` for an error, consider whether new lines should 
-be preserved in the generated code. If so, always remember to use `|-` in the 
-description. For example, if the description is:
+### Error Definition Structure
+
+Each error definition requires the following fields:
 
 ```yaml
+# Unique identifier of the error (camelCase)
+id: invalidCredentials
+
+# HTTP status code for REST API responses
+http_code: 401
+
+# Human-readable error description with {argName} placeholders
 description: |-
-    You must authenticate yourself to perform this operation. 
-    {authError}
+    Invalid credentials provided.
+    Token: {token}
+
+# List of arguments used in description and returned in error details
+args:
+  - name: token          # Referenced in description
+    type: Token          # Argument type
+    nullable: true       # Can be null/missing
+
+# Optional: POSIX error number
+errno: ?EACCES
 ```
 
-2. `args` is a list of objects with the following fields:
-   - `name`: string() - the name of the argument
-   - `nullable`: boolean(), default: `false` - indicates whether the field is 
-     optional and as such appears as null in details or is absent. Such an 
-     argument should be the last in the list.
-   - `type`: default: `Binary` - specifies the type. Currently implemented types are:
-     - `AaiConsumer`
-     - `AaiService`
-     - `Atom`
-     - `AtmDataType`
-     - `AtmDataTypes`
-     - `AtmStoreSchemaIds`
-     - `AtmTaskArgumentValueBuilderType`
-     - `AtmTaskArgumentValueBuilderTypes`
-     - `AtmWorkflowSchemas`
-     - `Binary`
-     - `Binaries`
-     - `ByteSize`
-     - `CaveatUnverified`
-     - `DnsServers`
-     - `ErlangTerm`
-     - `GriEntityType`
-     - `GriEntityTypeAsAtom`
-     - `Integer`
-     - `InviteTokenTypeWithAny`
-     - `Json`
-     - `MetricConfig`
-     - `OnedataError`
-     - `Path`
-     - `ProviderSupportStage`
-     - `StorageSupportStage`
-     - `TokenType`
-     - `TscLayout`
+### Examples
 
+#### Simple Error
+```yaml
+id: serviceUnavailable
+http_code: 503
+description: The service is temporarily unavailable. Please try again later.
+```
+
+#### Complex Error
+```yaml
+id: tokenCaveatUnverified
+http_code: 403
+description: |-
+    Token verification failed.
+    Unverified caveat: {caveat}
+    Required permissions: {requiredPermission}
+args:
+  - name: caveat
+    type: CaveatUnverified
+  - name: requiredPermission
+    type: Binary
+```
+
+### Best Practices
+
+#### Description Formatting
+- Use `|-` for multiline descriptions to preserve formatting
+- Use `{argumentName}` for argument placeholders
+- Consider message readability
+
+#### Argument Handling
+- Place required arguments first
+- Place nullable arguments last
+- Use appropriate types for arguments
+
+## Type System
+
+### Available Types
+- `AaiConsumer` - AAI consumer type
+- `AaiService` - AAI service type  
+- `Atom` - Erlang atom
+- `AtmDataType` - ATM data type
+- `AtmDataTypes` - List of ATM data types
+- `AtmStoreSchemaIds` - List of ATM store schema IDs
+- `AtmTaskArgumentValueBuilderType` - ATM task argument value builder type
+- `AtmTaskArgumentValueBuilderTypes` - List of ATM task argument value builder types
+- `AtmWorkflowSchemas` - List of ATM workflow schemas
+- `Binary` - Binary string (default)
+- `Binaries` - List of binary strings
+- `ByteSize` - Size in bytes
+- `CaveatUnverified` - Unverified caveat
+- `DnsServers` - List of DNS servers
+- `ErlangTerm` - Generic Erlang term
+- `GriEntityType` - GRI entity type
+- `Integer` - Integer number
+- `InviteTokenTypeWithAny` - Invite token type with "any" option
+- `Json` - JSON value
+- `MetricConfig` - Metric configuration
+- `OnedataError` - Onedata error
+- `Path` - File system path
+- `ProviderSupportStage` - Provider support stage
+- `StorageSupportStage` - Storage support stage
+- `TokenType` - Token type
+- `TscLayout` - TSC layout
+
+### Adding New Types
+
+To add a new argument type:
+
+1. Create file in `generators/erlang/error_args/types/`
+2. Define class inheriting from `ErrorArgType`:
+
+```python
+from typing import ClassVar
+from ..base import ErrorArgType
+from ..expressions import SimpleExpression
+from ..translation_strategies import CustomStrategy
+
+class MyType(ErrorArgType):
+    """My custom type."""
+    
+    fmt_control_sequence: ClassVar[str] = "~ts"
+    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
+        SimpleExpression("my_module:to_json({var})")
+    )
+```
+
+Required class variables:
+- `fmt_control_sequence`: Erlang format string
+- Optional strategies:
+  - `json_encoding_strategy`
+  - `json_decoding_strategy`
+  - `print_encoding_strategy`
 
 ## Code Generation
-
-Currently supported languages:
-- [erlang](###Erlang)
-
-Generated code will be placed in `generated/{language}` directory.
 
 ### Erlang
 
 Requirements:
 - Python >= 3.8
 
-To generate Erlang code run:
-
+Usage:
 ```bash
 make erlang
 ```
 
-Generated Erlang components:
-- `errors.hrl` - Error macros definitions
-- `errors.erl` - Main error interface module  
-- `od_error.erl` - Behaviour specification for error types
-- `types/*.erl` - Generated error type modules
+Generated components:
+- `errors.hrl`
+  - Error macros (?ERROR_*)
+  - Record definitions
+- `errors.erl`
+  - Error interface module
+- `od_error.erl`
+  - Behaviour specification
+  - Common types
+  - Utility functions
+- `types/*.erl`
+  - Type-specific handling
+  - Custom formatting
