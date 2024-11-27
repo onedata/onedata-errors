@@ -99,6 +99,7 @@ class ErrorArgType(ABC):
                         json_var=json_var, indent_level=indent_level + 2
                     )
                 )
+                tokens[-1] = tokens[-1].rstrip(",\n")
                 tokens.extend(["\n", indent_0, "end,\n"])
             else:
                 tokens.extend([indent_0, json_var, " = ", *maps_get_tokens, ",\n"])
@@ -297,6 +298,7 @@ class ErrorArgType(ABC):
             tokens=tokens, json_var=json_var, print_var=print_var
         )
 
+    # pylint: disable=too-many-arguments
     def _generate_nullable_case_statement(
         self,
         *,
@@ -365,9 +367,13 @@ class ErrorArgType(ABC):
     def _generate_custom_json_encoding(
         self, *, erl_var: str, assign_to: Optional[str] = None, indent_level: int = 1
     ) -> List[str]:
+        if not isinstance(self.json_encoding_strategy, CustomStrategy):
+            raise ValueError("This should never happen")
+
         ctx = JsonEncodingCtx(
             erl_var=erl_var, assign_to=assign_to, indent_level=indent_level
         )
+        # pylint: disable=no-member
         return format_lines(self.json_encoding_strategy.expression.build(ctx), ctx)
 
     def _generate_custom_print_encoding(
@@ -378,18 +384,26 @@ class ErrorArgType(ABC):
         assign_to: Optional[str] = None,
         indent_level: int = 1,
     ) -> List[str]:
+        if not isinstance(self.print_encoding_strategy, CustomStrategy):
+            raise ValueError("This should never happen")
+
         ctx = PrintEncodingCtx(
             erl_var=erl_var,
             json_var=json_var,
             assign_to=assign_to,
             indent_level=indent_level,
         )
+        # pylint: disable=no-member
         return format_lines(self.print_encoding_strategy.expression.build(ctx), ctx)
 
     def _generate_custom_json_decoding(
         self, *, json_var: str, assign_to: Optional[str] = None, indent_level: int = 1
     ) -> List[str]:
+        if not isinstance(self.json_decoding_strategy, CustomStrategy):
+            raise ValueError("This should never happen")
+
         ctx = JsonDecodingCtx(
             json_var=json_var, assign_to=assign_to, indent_level=indent_level
         )
+        # pylint: disable=no-member
         return format_lines(self.json_decoding_strategy.expression.build(ctx), ctx)

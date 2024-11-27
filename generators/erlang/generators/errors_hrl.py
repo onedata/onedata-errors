@@ -40,13 +40,15 @@ def _generate_errors_hrl_group_header(error_group: OdErrorGroup) -> List[str]:
 def _generate_errors_hrl_definitions(od_errors: List[OdError]) -> List[str]:
     lines = []
     for od_error in od_errors:
-        lines.extend([
-            _build_error_id_macro_definition(od_error),
-            _build_error_type_macro_definition(od_error),
-            _build_error_match_macro_definition(od_error),
-            _build_error_new_macro_definition(od_error),
-            "",
-        ])
+        lines.extend(
+            [
+                _build_error_id_macro_definition(od_error),
+                _build_error_type_macro_definition(od_error),
+                _build_error_match_macro_definition(od_error),
+                _build_error_new_macro_definition(od_error),
+                "",
+            ]
+        )
     return lines
 
 

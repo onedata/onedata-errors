@@ -8,6 +8,8 @@ from .translation_context import JsonDecodingCtx, JsonEncodingCtx, PrintEncoding
 
 TranslationContext = Union[JsonEncodingCtx, PrintEncodingCtx, JsonDecodingCtx]
 
+LineEnding = Literal["", ",", ";"]
+
 
 @dataclass
 class Line:
@@ -15,9 +17,10 @@ class Line:
 
     content: str
     indent_level: int = 0
-    ending: Literal["", ",", ";"] = ""
+    ending: LineEnding = ""
 
 
+# pylint: disable=too-few-public-methods
 class Expression(ABC):
     """Base class for Erlang expressions."""
 
@@ -26,6 +29,7 @@ class Expression(ABC):
         """Build code lines using provided context."""
 
 
+# pylint: disable=too-few-public-methods
 class SimpleExpression(Expression):
     """Single line expression."""
 
@@ -45,6 +49,7 @@ class SimpleExpression(Expression):
         return [Line(expr, ending=",", indent_level=ctx.indent_level)]
 
 
+# pylint: disable=too-few-public-methods
 class ListMapExpression(Expression):
     """List map expression."""
 
@@ -57,7 +62,7 @@ class ListMapExpression(Expression):
 
         for i, (pattern, expr) in enumerate(self.fun_clauses):
             # Adding a semicolon for all clauses except the last one
-            ending = ";" if i < len(self.fun_clauses) - 1 else ""
+            ending: LineEnding = ";" if i < len(self.fun_clauses) - 1 else ""
             lines.append(Line(f"({pattern}) ->", indent_level=ctx.indent_level + 1))
 
             clause_ctx = ctx._replace(assign_to=None, indent_level=ctx.indent_level + 2)
@@ -78,6 +83,7 @@ class ListMapExpression(Expression):
         return lines
 
 
+# pylint: disable=too-few-public-methods
 class ListMapFunRefExpression(Expression):
     """List map with function reference expression."""
 
@@ -99,6 +105,7 @@ class ListMapFunRefExpression(Expression):
         ]
 
 
+# pylint: disable=too-few-public-methods
 class CaseExpression(Expression):
     """Case expression."""
 
@@ -114,7 +121,7 @@ class CaseExpression(Expression):
 
         for i, (pattern, expr) in enumerate(self.clauses):
             # Adding a semicolon for all clauses except the last one
-            ending = ";" if i < len(self.clauses) - 1 else ""
+            ending: LineEnding = ";" if i < len(self.clauses) - 1 else ""
             lines.append(Line(f"{pattern} ->", indent_level=ctx.indent_level + 1))
 
             clause_ctx = ctx._replace(assign_to=None, indent_level=ctx.indent_level + 2)
