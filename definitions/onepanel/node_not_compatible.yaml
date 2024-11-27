@@ -7,7 +7,7 @@ args:
   - name: clusterType
     type: Atom
 x-erl-to_json: |
-  to_json(?ERROR_NODE_NOT_COMPATIBLE(Hostname, NodeClusterType)) when
+  to_json(?ERROR_NODE_NOT_COMPATIBLE_MATCH(Hostname, NodeClusterType)) when
       NodeClusterType == ?ONEPROVIDER;
       NodeClusterType == ?ONEZONE
   ->

@@ -63,7 +63,7 @@ is_posix_code(ErrorCode) ->
 to_json(undefined) ->
     null;
 
-to_json(?ERROR_UNRECOGNIZED_ERROR(ErrorAsJson)) ->
+to_json(?ERROR_UNRECOGNIZED_ERROR_MATCH(ErrorAsJson)) ->
     % Carries errors that have not been recognized upon decoding.
     case maps:is_key(<<"description">>, ErrorAsJson) of
         true ->
@@ -78,7 +78,7 @@ to_json(Error = #od_error{{type = Type}}) ->
 to_json(OtherError) ->
     % Wildcard to catch all errors that might be returned by the application logic, but does
     % not match any error defined in this module. Inability to translate is treated as an
-    % unexpected exception (an ?ERROR_INTERNAL_SERVER_ERROR(ErrorRef) is returned).
+    % unexpected exception (an ?new_ERROR_INTERNAL_SERVER_ERROR(ErrorRef) is returned).
     ReturnedError = ?catch_exceptions(error({{cannot_translate_error, OtherError}})),
     to_json(ReturnedError).
 
@@ -95,12 +95,12 @@ from_json(ErrorJson) ->
         ErrorType = maps:get(ErrorId, ?ERROR_ID_TO_TYPE_MAPPING),
         ErrorType:from_json(ErrorJson)
     catch _:_ ->
-        ?ERROR_UNRECOGNIZED_ERROR(ErrorJson)
+        ?new_ERROR_UNRECOGNIZED_ERROR(ErrorJson)
     end.
 
 
 -spec to_http_code(error()) -> 400 | 401 | 403 | 404 | 409 | 500 | 501 | 503.
-to_http_code(?ERROR_UNRECOGNIZED_ERROR(_)) -> 
+to_http_code(?ERROR_UNRECOGNIZED_ERROR_MATCH(_)) -> 
     ?HTTP_500_INTERNAL_SERVER_ERROR;
 
 to_http_code(Error = #od_error{{type = Type}}) ->

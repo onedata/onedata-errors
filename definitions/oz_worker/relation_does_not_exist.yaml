@@ -7,7 +7,7 @@ args:
     type: Atom
   - name: parentId
 x-erl-to_json: |
-  to_json(?ERROR_RELATION_DOES_NOT_EXIST(ChType, ChId, ParType, ParId)) ->
+  to_json(?ERROR_RELATION_DOES_NOT_EXIST_MATCH(ChType, ChId, ParType, ParId)) ->
       RelationToString = case {ChType, ParType} of
           {od_space, od_provider} -> <<"is not supported by">>;
           {_, _} -> <<"is not a member of">>

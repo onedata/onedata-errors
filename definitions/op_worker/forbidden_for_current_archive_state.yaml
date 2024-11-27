@@ -4,7 +4,7 @@ args:
     type: Atom
   - name: allowedStates
 x-erl-to_json: |
-  to_json(?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(CurrentState, AllowedStates)) ->
+  to_json(?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_MATCH(CurrentState, AllowedStates)) ->
       #{
           <<"id">> => ?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
           <<"description">> => od_error:format_description(
@@ -24,7 +24,7 @@ x-erl-from_json: |
           <<"currentState">> := CurrentState
       }
   }) ->
-      ?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(
+      ?new_ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(
           binary_to_existing_atom(json_utils:decode(CurrentState)),
           [binary_to_existing_atom(StateBin) || StateBin <- json_utils:decode(AllowedStates)]
       ).

@@ -18,14 +18,32 @@
 -include("posix/errno.hrl").
 
 
+-record(od_error_ctx, {{
+    file :: string(),
+    line :: integer(),
+    timestamp :: time:iso8601(),
+    version :: string()
+}}).
+
 -record(od_error, {{
     type :: module(),
-    args = undefined :: term()
+    args = undefined :: term(),
+    ctx :: od_error:ctx()
 }}).
+
+-define(infer_error_ctx(),
+    #od_error_ctx{{
+        file = ?FILE,
+        line = ?LINE,
+        timestamp = od_error:iso8601_now(),
+        version = od_error:version()
+    }}
+).
 
 -define(ERROR, #od_error{{}}).
 -define(ERROR(Type), #od_error{{type = Type}}).
 -define(ERROR(Type, Args), #od_error{{type = Type, args = Args}}).
+-define(ERROR(Type, Args, Ctx), #od_error{{type = Type, args = Args, ctx = Ctx}}).
 
 
 %%--------------------------------------------------------------------
@@ -37,10 +55,13 @@
 % error Id. The original JSON representing the error is retained and returned
 % upon encoding.
 -define(ERROR_UNRECOGNIZED_ERROR_TYPE, od_error_unrecognized_error).
--define(ERROR_UNRECOGNIZED_ERROR(ErrorAsJson), ?ERROR(?ERROR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}})).
-
+-define(ERROR_UNRECOGNIZED_ERROR_MATCH(ErrorAsJson), 
+    ?ERROR(?ERROR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}})
+).
+-define(new_ERROR_UNRECOGNIZED_ERROR(ErrorAsJson), 
+    ?ERROR(?ERROR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}}, ?infer_error_ctx())
+).
 
 {macros}
-
 
 -endif.

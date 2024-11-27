@@ -7,7 +7,7 @@ args:
     type: GriEntityType
   - name: parentId
 x-erl-to_json: |
-  to_json(?ERROR_RELATION_ALREADY_EXISTS(ChType, ChId, ParType, ParId)) ->
+  to_json(?ERROR_RELATION_ALREADY_EXISTS_MATCH(ChType, ChId, ParType, ParId)) ->
       RelationToString = case {ChType, ParType} of
           {od_space, od_provider} -> <<"is already supported by">>;
           {_, _} -> <<"is already a member of">>

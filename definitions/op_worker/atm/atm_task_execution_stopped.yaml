@@ -1,4 +1,4 @@
-id: atmTaskExecutionStopped
+id: atmTaskExecutionEnded
 description: >-
   Specified automation task execution has already stopped.
 http_code: 400

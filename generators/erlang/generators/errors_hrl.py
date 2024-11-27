@@ -40,14 +40,13 @@ def _generate_errors_hrl_group_header(error_group: OdErrorGroup) -> List[str]:
 def _generate_errors_hrl_definitions(od_errors: List[OdError]) -> List[str]:
     lines = []
     for od_error in od_errors:
-        lines.extend(
-            [
-                _build_error_id_macro_definition(od_error),
-                _build_error_type_macro_definition(od_error),
-                _build_error_macro_definition(od_error),
-                "",
-            ]
-        )
+        lines.extend([
+            _build_error_id_macro_definition(od_error),
+            _build_error_type_macro_definition(od_error),
+            _build_error_match_macro_definition(od_error),
+            _build_error_new_macro_definition(od_error),
+            "",
+        ])
     return lines
 
 
@@ -59,9 +58,9 @@ def _build_error_type_macro_definition(od_error: OdError) -> str:
     return f"-define({od_error.get_type_macro()}, {od_error.type})."
 
 
-def _build_error_macro_definition(od_error: OdError) -> str:
+def _build_error_match_macro_definition(od_error: OdError) -> str:
     error_type_macro = f"?{od_error.get_type_macro()}"
-    error_macro = od_error.get_error_macro()
+    match_macro = od_error.get_match_macro()
 
     if od_error.args:
         args = ", ".join(od_error.get_args_as_erlang_variable_names())
@@ -69,4 +68,17 @@ def _build_error_macro_definition(od_error: OdError) -> str:
     else:
         error_expansion = f"?ERROR({error_type_macro})"
 
-    return f"-define({error_macro}, {error_expansion})."
+    return f"-define({match_macro}, {error_expansion})."
+
+
+def _build_error_new_macro_definition(od_error: OdError) -> str:
+    error_type_macro = f"?{od_error.get_type_macro()}"
+    new_macro = od_error.get_new_macro()
+
+    if od_error.args:
+        args = ", ".join(od_error.get_args_as_erlang_variable_names())
+        error_expansion = f"?ERROR({error_type_macro}, {{{args}}}, ?infer_error_ctx())"
+    else:
+        error_expansion = f"?ERROR({error_type_macro}, undefined, ?infer_error_ctx())"
+
+    return f"-define({new_macro}, {error_expansion})."

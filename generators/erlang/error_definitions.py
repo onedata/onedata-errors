@@ -79,13 +79,17 @@ class OdError(NamedTuple):
         """Returns list of Erlang variable names for error arguments."""
         return [arg.get_erlang_variable_name() for arg in self.args]
 
-    def get_error_macro(self) -> str:
-        """Returns the main error macro definition."""
+    def get_match_macro(self) -> str:
+        """Returns the macro name for pattern matching."""
         if not self.args:
-            return f"ERROR_{self.name.upper()}"
-
+            return f"ERROR_{self.name.upper()}_MATCH"
         args = ", ".join(self.get_args_as_erlang_variable_names())
-        return f"ERROR_{self.name.upper()}({args})"
+        return f"ERROR_{self.name.upper()}_MATCH({args})"
+
+    def get_new_macro(self) -> str:
+        """Returns the macro name for creating new error."""
+        args = ", ".join(self.get_args_as_erlang_variable_names()) if self.args else ""
+        return f"new_ERROR_{self.name.upper()}({args})"
 
 
 class OdErrorGroup(NamedTuple):

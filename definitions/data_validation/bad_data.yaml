@@ -4,7 +4,7 @@ args:
   - name: specificErrorOrHint
 description: null
 x-erl-to_json: |
-  to_json(?ERROR_BAD_DATA(Key, ?ERROR = SpecificError)) ->
+  to_json(?ERROR_BAD_DATA_MATCH(Key, ?ERROR = SpecificError)) ->
       #{
           <<"id">> => ?ERROR_BAD_DATA_ID,
           <<"details">> => #{
@@ -13,7 +13,7 @@ x-erl-to_json: |
           },
           <<"description">> => od_error:format_description("Bad value provided for \"~ts\" (see details).", [Key])
       };
-  to_json(?ERROR_BAD_DATA(Key, HumanReadableHint)) ->
+  to_json(?ERROR_BAD_DATA_MATCH(Key, HumanReadableHint)) ->
       HumanReadableHintJson = utils:undefined_to_null(HumanReadableHint),
 
       #{
@@ -29,12 +29,12 @@ x-erl-from_json: |
       <<"key">> := Key,
       <<"specificError">> := SpecificError
   }}) ->
-      ?ERROR_BAD_DATA(Key, errors:from_json(SpecificError));
+      ?new_ERROR_BAD_DATA(Key, errors:from_json(SpecificError));
 
   from_json(#{<<"id">> := ?ERROR_BAD_DATA_ID, <<"details">> := DetailsJson}) ->
       Key = maps:get(<<"key">>, DetailsJson),
       HumanReadableHint = utils:null_to_undefined(maps:get(<<"hint">>, DetailsJson, null)),
 
-      ?ERROR_BAD_DATA(Key, HumanReadableHint).
+      ?new_ERROR_BAD_DATA(Key, HumanReadableHint).
 http_code: 400
 errno: EINVAL

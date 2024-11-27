@@ -57,7 +57,7 @@ def _generate_to_json_callback(od_error: OdError) -> str:
 
     return "".join(
         [
-            f"to_json(?{od_error.get_error_macro()}) ->\n",
+            f"to_json(?{od_error.get_match_macro()}) ->\n",
             *encoding_tokens,
             f"{INDENT}#{{\n",
             f'{2*INDENT}<<"id">> => ?{od_error.get_id_macro()},\n',
@@ -151,13 +151,17 @@ def _generate_from_json_callback(od_error: OdError) -> str:
 
 
 def _generate_default_from_json(od_error: OdError) -> str:
-    tokens = ["from_json(", f'#{{<<"id">> := ?{od_error.get_id_macro()}}}', ") ->\n"]
+    tokens = [
+        "from_json(",
+        f'#{{<<"id">> := ?{od_error.get_id_macro()}}}',
+        ") ->\n"
+    ]
 
     if od_error.args:
         tokens.insert(1, "OdErrorJson = ")
         tokens.extend(_generate_args_decoding(od_error))
 
-    tokens.append(f"{INDENT}?{od_error.get_error_macro()}.")
+    tokens.append(f"{INDENT}?{od_error.get_new_macro()}.")
 
     return "".join(tokens)
 

@@ -34,26 +34,13 @@
     ?EPROTO | ?EPROTONOSUPPORT | ?EPROTOTYPE | ?ERANGE | ?EROFS | ?ESPIPE |
     ?ESRCH | ?ETIME | ?ETIMEDOUT | ?ETXTBSY | ?EWOULDBLOCK | ?EXDEV.
 
--type t() :: #od_error{}.
+-type ctx() :: #od_error_ctx{{}}.
 
--export_type([http_code/0, errno/0, t/0]).
+-type t() :: #od_error{{}}.
 
--export([format_description/2, format_csv/1]).
+-export_type([http_code/0, errno/0, ctx/0, t/0]).
 
-
-%%%===================================================================
-%%% API
-%%%===================================================================
-
-
--spec format_description(string(), [term()]) -> string().
-format_description(Format, Args) ->
-    str_utils:ensure_suffix(str_utils:format_bin(Format, Args), <<".">>).
-
-
--spec format_csv([string()]) -> string().
-format_csv(Values) ->
-    str_utils:join_as_binaries(Values, <<", ">>).
+-export([format_description/2, format_csv/1, iso8601_now/0, version/0]).
 
 
 %%%===================================================================
@@ -83,3 +70,40 @@ format_csv(Values) ->
 %% @end
 %%--------------------------------------------------------------------
 -callback to_http_code(t()) -> http_code().
+
+
+%%%===================================================================
+%%% API
+%%%===================================================================
+
+
+-spec format_description(string(), [term()]) -> binary().
+format_description(Format, Args) ->
+    str_utils:ensure_suffix(str_utils:format_bin(Format, Args), <<".">>).
+
+
+-spec format_csv([term()]) -> binary().
+format_csv(Values) ->
+    str_utils:join_as_binaries(Values, <<", ">>).
+
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Returns current timestamp in ISO8601 format.
+%% @end
+%%--------------------------------------------------------------------
+-spec iso8601_now() -> time:iso8601().
+iso8601_now() ->
+    Seconds = native_node_clock:system_time_millis() div 1000,
+    DateTime = time:seconds_to_datetime(Seconds),
+    time:datetime_to_iso8601(DateTime).
+
+
+%%--------------------------------------------------------------------
+%% @doc
+%% Returns version of error definitions.
+%% @end
+%%--------------------------------------------------------------------
+-spec version() -> string().
+version() ->
+    "{version}".
