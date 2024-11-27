@@ -9,7 +9,7 @@ from typing import Dict, List
 
 import yaml
 
-from ..constants import ERROR_DEFINITIONS_ROOT_DIR
+from ..constants import ERROR_DEFINITIONS_ROOT_DIR, VALID_ERRNO
 from ..error_args.loader import create_error_arg
 from ..error_definitions import MacroRef, OdError, OdErrorCtx, OdErrorGroup
 
@@ -40,6 +40,14 @@ def _load_error_definition(yaml_definition_path: str) -> OdError:
     error_name = _extract_error_name(yaml_definition_path)
     args = [create_error_arg(arg) for arg in yaml_data.get("args", [])]
 
+    # Validate errno if present
+    errno = yaml_data.get("errno")
+    if errno is not None and errno not in VALID_ERRNO:
+        raise ValueError(
+            f"Invalid errno '{errno}' in {yaml_definition_path}. "
+            f"Must be one of: {', '.join(sorted(VALID_ERRNO))}"
+        )
+
     return OdError(
         name=error_name,
         type=f"od_error_{error_name}",
@@ -48,8 +56,10 @@ def _load_error_definition(yaml_definition_path: str) -> OdError:
         http_code=yaml_data["http_code"],
         args=args,
         ctx=_load_error_ctx(yaml_data),
-        to_json=yaml_data.get("x-erl-to_json"),
-        from_json=yaml_data.get("x-erl-from_json"),
+        to_json_impl=yaml_data.get("x-erl-to_json"),
+        from_json_impl=yaml_data.get("x-erl-from_json"),
+        errno=errno,
+        to_errno_impl=yaml_data.get("x-erl-to_errno"),
     )
 
 

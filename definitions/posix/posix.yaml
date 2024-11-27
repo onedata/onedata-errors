@@ -5,7 +5,7 @@ args:
 description: >-
   Operation failed with POSIX error: {errno}.
 http_code: 400
-errno: |
-  -spec to_errno(t()) -> od_error:errno().
+x-erl-to_errno: |
+  -spec to_errno(t()) -> {true, od_error:errno()}.
   to_errno(?POSIX(Errno)) ->
-      Errno.
+      {true, Errno}.

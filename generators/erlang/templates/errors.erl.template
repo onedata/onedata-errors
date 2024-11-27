@@ -107,6 +107,9 @@ to_http_code(Error = #od_error{{type = Type}}) ->
     Type:to_http_code(Error).
 
 
--spec to_errno(error()) -> errno().
+-spec to_errno(error()) -> false | {{true, errno()}}.
+to_errno(?ERROR_UNRECOGNIZED_ERROR_MATCH(_)) -> 
+    {{true, ?EAGAIN}};
+
 to_errno(Error = #od_error{{type = Type}}) ->
     Type:to_errno(Error).

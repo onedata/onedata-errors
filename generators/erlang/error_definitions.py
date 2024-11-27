@@ -53,8 +53,10 @@ class OdError(NamedTuple):
         http_code: HTTP status code to return for this error
         args: List of error arguments
         ctx: Generation context with includes and macros
-        to_json: Custom to_json implementation (if provided)
-        from_json: Custom from_json implementation (if provided)
+        to_json_impl: Custom to_json implementation (if provided)
+        from_json_impl: Custom from_json implementation (if provided)
+        errno: Optional POSIX errno (if provided)
+        to_errno_impl: Custom to_errno implementation (if provided)
     """
 
     name: str
@@ -64,8 +66,10 @@ class OdError(NamedTuple):
     http_code: Union[str, int]
     args: List[ErrorArgType]
     ctx: OdErrorCtx
-    to_json: Optional[str]
-    from_json: Optional[str]
+    to_json_impl: Optional[str]
+    from_json_impl: Optional[str]
+    errno: Optional[str]
+    to_errno_impl: Optional[str]
 
     def get_id_macro(self) -> str:
         """Returns the macro name for error ID."""

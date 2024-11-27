@@ -40,6 +40,7 @@ def _generate_error_type(od_error: OdError, output_dir: str, template: str) -> N
         to_json=_generate_to_json_callback(od_error),
         from_json=_generate_from_json_callback(od_error),
         to_http_code=_generate_to_http_code_callback(od_error),
+        to_errno=_generate_to_errno_callback(od_error),
     )
 
     file_path = os.path.join(output_dir, f"{od_error.type}.erl")
@@ -47,8 +48,8 @@ def _generate_error_type(od_error: OdError, output_dir: str, template: str) -> N
 
 
 def _generate_to_json_callback(od_error: OdError) -> str:
-    if od_error.to_json:
-        return od_error.to_json.strip()
+    if od_error.to_json_impl:
+        return od_error.to_json_impl.strip()
 
     fmt_info = _collect_format_placeholders(od_error)
     encoding_tokens, details_tokens = _generate_encoding_and_details(od_error, fmt_info)
@@ -144,8 +145,8 @@ def _generate_description_tokens(
 
 
 def _generate_from_json_callback(od_error: OdError) -> str:
-    if od_error.from_json:
-        return od_error.from_json.strip()
+    if od_error.from_json_impl:
+        return od_error.from_json_impl.strip()
 
     return _generate_default_from_json(od_error)
 
@@ -192,3 +193,21 @@ def _generate_to_http_code_callback(od_error: OdError) -> str:
         )
 
     return http_code
+
+
+def _generate_to_errno_callback(od_error: OdError) -> str:
+    if od_error.to_errno_impl:
+        return od_error.to_errno_impl.strip()
+
+    if od_error.errno:
+        return "".join(
+            [
+                "-spec to_errno(t()) -> {true, od_error:errno()}.\n",
+                "to_errno(_) ->\n",
+                f"{INDENT}{{true, ?{od_error.errno}}}.",
+            ]
+        )
+
+    return "".join(
+        ["-spec to_errno(t()) -> false.\n", "to_errno(_) ->\n", f"{INDENT}false."]
+    )
