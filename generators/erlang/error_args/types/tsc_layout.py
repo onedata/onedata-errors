@@ -19,11 +19,11 @@ class TscLayout(ErrorArgType):
         CodeLines(
             [
                 CodeLine(
-                    "od_error_utils:format_csv(maps:fold(fun(TimeSeriesName, MetricNames, Acc) ->"
+                    "od_error:format_csv(maps:fold(fun(TimeSeriesName, MetricNames, Acc) ->"
                 ),
                 CodeLine(
                     'Acc ++ [str_utils:format_bin("~ts -> [~ts]", '
-                    "[TimeSeriesName, od_error_utils:format_csv(MetricNames)])]",
+                    "[TimeSeriesName, od_error:format_csv(MetricNames)])]",
                     extra_indent=1,
                 ),
                 CodeLine("end, [], {erl_var}))", ending=","),

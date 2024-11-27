@@ -23,7 +23,7 @@
 -export_type([t/0]).
 
 %% od_error callbacks
--export([to_json/1, from_json/1, to_http_code/1]).
+-export([to_json/1, from_json/1, to_http_code/1, to_errno/1]).
 
 
 %%%===================================================================
