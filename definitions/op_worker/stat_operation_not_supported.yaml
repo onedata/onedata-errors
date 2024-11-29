@@ -2,7 +2,7 @@ id: statOperationNotSupported
 args:
   - name: storageId
 description: >-
-  Storage {storageId} does not support the `stat` operation or equivalent
-  used for acquiring files metadata.
+  Storage "{storageId}" does not support the "stat" operation or equivalent
+  necessary to acquire file metadata.
 http_code: 400
 errno: ENOTSUP

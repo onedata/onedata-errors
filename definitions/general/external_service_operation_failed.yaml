@@ -3,7 +3,7 @@ args:
   - name: serviceName
 description: >-
   Your request could not be fulfilled due to problems with the external service
-  '{serviceName}'. This might be a temporary problem or a misconfiguration.
+  "{serviceName}". This might be a temporary problem or a misconfiguration.
   Please try again later or contact the site administrators if the problem persists.
 http_code: 503
 errno: EAGAIN

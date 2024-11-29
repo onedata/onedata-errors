@@ -2,6 +2,8 @@ id: guiPackageUnverified
 args:
   - name: shaSum
 description: >-
-  Provided GUI package could not be verified - unknown SHA sum '{shaSum}'.
+  The uploaded GUI package could not be verified: unknown SHA sum "{shaSum}".
+  If this is a harvester GUI plugin package, contact the Onezone service administrator
+  and ask for whitelisting it.
 http_code: 400
 errno: EINVAL

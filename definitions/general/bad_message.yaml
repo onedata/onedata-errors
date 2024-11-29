@@ -2,6 +2,6 @@ id: badMessage
 args:
   - name: message
 description: >-
-  This message could not be understood by the server.
+  Received a message that could not be understood by the server.
 http_code: 400
 errno: EINVAL

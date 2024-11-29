@@ -1,5 +1,5 @@
 id: tokenInvalid
 description: >-
-  Provided token is not valid.
+  Provided token was correctly decoded, but it is not (or no longer) valid.
 http_code: 400
 errno: EINVAL

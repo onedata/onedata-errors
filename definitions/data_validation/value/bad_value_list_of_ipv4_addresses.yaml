@@ -2,6 +2,6 @@ id: badValueListOfIPv4Addresses
 args:
   - name: key
 description: >-
-  Bad value: provided "{key}" is not a valid list of IPv4 addresses.
+  Bad value: provided "{key}" must be a list of valid IPv4 addresses.
 http_code: 400
 errno: EINVAL

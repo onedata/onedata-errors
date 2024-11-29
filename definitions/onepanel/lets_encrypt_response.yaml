@@ -4,5 +4,5 @@ args:
     nullable: true
   - name: errorMessage
 description: >-
-  Bad Let's Encrypt response: {errorMessage}.
+  Bad Let's Encrypt response for document "{problemDocument}": {errorMessage}.
 http_code: 400

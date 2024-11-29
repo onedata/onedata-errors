@@ -1,5 +1,9 @@
 id: noConnectionToPeerOneprovider
+args:
+  - name: providerId      # fixme sugeruje dodac to nowe pole
+  - name: providerDomain  # fixme sugeruje dodac to nowe pole
 description: >-
-  No connection to peer Oneprovider.
+  Operation failed because the service could not connect 
+  to its peer Oneprovider service (id: "{providerId}", url: "https://{providerDomain}").
 http_code: 503
 errno: ENETUNREACH

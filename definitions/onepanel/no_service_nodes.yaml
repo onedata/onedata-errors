@@ -2,5 +2,5 @@ id: noServiceNodes
 args:
   - name: service
 description: >-
-  Service {service} is not deployed on any node.
+  Service "{service}" is not deployed on any node.
 http_code: 400

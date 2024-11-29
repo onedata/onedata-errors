@@ -1,5 +1,5 @@
 id: serviceUnavailable
 description: >-
-  Service required for this operation is offline.
+  The service required for this operation is offline or unreachable.
 http_code: 503
 errno: EAGAIN

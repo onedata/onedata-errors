@@ -3,6 +3,6 @@ args:
   - name: supportedVersions
     type: ErlangTerm
 description: >-
-  Bad version - supported versions: {supportedVersions}.
+  GraphSync error: bad protocol version; supported versions: {supportedVersions}.
 http_code: 400
 errno: EINVAL

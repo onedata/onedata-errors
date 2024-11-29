@@ -2,6 +2,7 @@ id: requiresImportedStorage
 args:
   - name: storageId
 description: >-
-  Cannot apply for storage {storageId} - this operation requires an imported storage.
+  Cannot apply for the storage backend "{storageId}".
+  This operation requires an imported storage backend.
 http_code: 400
 errno: EINVAL

@@ -5,6 +5,6 @@ args:
 description: >-
   The server has encountered an error while processing this request.
   If the problem persists, please contact the site's administrators,
-  citing the following reference: {reference}
+  citing the following reference: "{reference}".
 http_code: 500
 errno: EAGAIN

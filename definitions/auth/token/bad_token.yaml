@@ -1,5 +1,6 @@
 id: badToken
 description: >-
-  Provided token could not be understood by the server.
+  Provided token could not be decoded by the server.
+  Make sure there are no missing or superfluous characters in the token string.
 http_code: 400
 errno: EINVAL

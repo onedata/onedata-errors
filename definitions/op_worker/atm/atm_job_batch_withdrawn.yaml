@@ -2,5 +2,5 @@ id: atmJobBatchWithdrawn
 args:
   - name: reason
 description: >-
-  Previously scheduled job batch has been withdrawn.
+  Previously scheduled job batch has been withdrawn: {reason}.
 http_code: 404

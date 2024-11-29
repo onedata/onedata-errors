@@ -4,5 +4,5 @@ args:
   - name: specificError
     type: OnedataError
 description: >-
-  Failed to create automation store (schema id: "{atmStoreSchemaId}"). {specificError}
+  Failed to create an automation store (schema ID: "{atmStoreSchemaId}"): {specificError}
 http_code: 400

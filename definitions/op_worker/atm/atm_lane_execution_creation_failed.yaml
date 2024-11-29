@@ -4,5 +4,5 @@ args:
   - name: specificError
     type: OnedataError
 description: >-
-  Failed to create automation lane execution (id: "{atmLaneSchemaId}"). {specificError}
+  Failed to create automation lane execution (ID: "{atmLaneSchemaId}"): {specificError}
 http_code: 400

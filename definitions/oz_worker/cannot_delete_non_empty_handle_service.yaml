@@ -2,5 +2,5 @@ id: cannotDeleteNonEmptyHandleService
 description: >-
   This handle service cannot be deleted as it still has some handles registered.
   All the handles would have to be deleted first, but proceed with caution as
-  Open Data records should be persistent.
+  Public Data records should be persistent.
 http_code: 400

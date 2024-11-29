@@ -3,6 +3,7 @@ args:
   - name: maxTtl
     type: Integer
 description: >-
-  You must specify a time caveat with maximum TTL of {maxTtl} seconds.
+  You must specify a time caveat with maximum TTL of {maxTtl} seconds
+  (a time caveat is required for temporary tokens for security reasons).
 http_code: 400
 errno: EINVAL

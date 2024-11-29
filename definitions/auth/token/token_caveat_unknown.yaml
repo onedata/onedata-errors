@@ -2,6 +2,6 @@ id: tokenCaveatUnknown
 args:
   - name: caveat
 description: >-
-  Unknown caveat - '{caveat}'.
+  Unknown caveat: "{caveat}".
 http_code: 400
 errno: EINVAL

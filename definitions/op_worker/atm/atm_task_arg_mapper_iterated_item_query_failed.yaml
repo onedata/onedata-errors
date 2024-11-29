@@ -3,5 +3,5 @@ args:
   - name: value
   - name: query
 description: >-
-  Failed to perform query on iterated item (see details).
+  Failed to perform a query on the iterated item: "{query}".
 http_code: 400

@@ -3,6 +3,6 @@ args:
   - name: spaceId
   - name: providerId
 description: >-
-  Specified space: {spaceId} is not supported by provider {providerId}.
+  Specified space: "{spaceId}" is not supported by provider "{providerId}".
 http_code: 400
 errno: EINVAL

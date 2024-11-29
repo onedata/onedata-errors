@@ -3,6 +3,6 @@ args:
   - name: hint
     nullable: true
 description: >-
-  You are not authorized to perform this operation: {hint}
+  You have been correctly authenticated, but you are not authorized to perform this operation: {hint}
 http_code: 403
 errno: EACCES

@@ -3,6 +3,6 @@ args:
   - name: caveat
     type: Json
 description: >-
-  Provided caveat is invalid: '{caveat}'.
+  Bad value: provided caveat is invalid: "{caveat}".
 http_code: 400
 errno: EINVAL

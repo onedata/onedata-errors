@@ -1,5 +1,5 @@
 id: expectedHandshakeMessage
 description: >-
-  Handshake must be performed prior to any requests.
+  GraphSync error: handshake must be performed prior to any requests.
 http_code: 400
 errno: EPROTO

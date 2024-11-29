@@ -1,4 +1,5 @@
 id: basicAuthNotSupported
 description: >-
-  Basic auth is not supported by this Onezone.
+  Basic auth (username & password authentication) is not supported 
+  by this Onezone service.
 http_code: 400

@@ -2,6 +2,6 @@ id: missingRequiredValue
 args:
   - name: key
 description: >-
-  Missing required value: {key}.
+  The request data was missing a required value for "{key}".
 http_code: 400
 errno: EINVAL
