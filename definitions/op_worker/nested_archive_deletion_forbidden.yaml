@@ -3,5 +3,5 @@ args:
   - name: parentArchiveId
 description: >-
   This archive cannot be deleted since it is nested in another archive
-  (ID: "parentArchiveId").
+  (ID: "{parentArchiveId}").
 http_code: 400
