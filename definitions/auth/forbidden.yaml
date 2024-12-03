@@ -2,7 +2,12 @@ id: forbidden
 args:
   - name: hint
     nullable: true
+    # fixme placeholder value if it's null:
+    # "possible causes include:
+    #   - you don't have access to the resource,"
+    #   - you don't have the required privileges,"
+    #   - this operation is not valid or not allowed for this resource."
 description: >-
-  You have been correctly authenticated, but you are not authorized to perform this operation: {hint}
+  You are not authorized to perform this operation: {hint}
 http_code: 403
 errno: EACCES

@@ -3,6 +3,6 @@ args:
   - name: spaceId
   - name: storageId
 description: >-
-  Space "{spaceId}" is already supported with an imported storage ("{storageId}").
-  A space can be supported by no more than one imported storage.
+  Space "{spaceId}" is already supported with an imported storage backend ("{storageId}").
+  A space can be supported by no more than one imported storage backend.
 http_code: 409
