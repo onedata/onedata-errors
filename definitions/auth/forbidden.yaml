@@ -2,11 +2,8 @@ id: forbidden
 args:
   - name: hint
     nullable: true
-    # fixme placeholder value if it's null:
-    # "possible causes include:
-    #   - you don't have access to the resource,"
-    #   - you don't have the required privileges,"
-    #   - this operation is not valid or not allowed for this resource."
+    # fixme print_if_null: no details available.
+    # TODO VFS-4985 split ERROR_FORBIDDEN into specific errors
 description: >-
   You are not authorized to perform this operation: {hint}
 http_code: 403
