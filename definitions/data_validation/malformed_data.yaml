@@ -1,5 +1,5 @@
 id: malformedData
 description: >-
-  Provided data could not be understood by the server.
+  Malformed data; the request data could not be understood by the server.
 http_code: 400
 errno: EINVAL

@@ -5,5 +5,5 @@ args:
   - name: newStatus
     type: Atom
 description: >-
-  Invalid status transition (see details).
+  Invalid status transition from "{prevStatus}" to "{newStatus}".
 http_code: 400

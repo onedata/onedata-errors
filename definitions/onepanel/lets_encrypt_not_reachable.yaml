@@ -1,4 +1,4 @@
 id: letsEncryptNotReachable
 description: >-
-  Connection to Let's Encrypt server failed.
+  Connection to the Let's Encrypt server failed.
 http_code: 503

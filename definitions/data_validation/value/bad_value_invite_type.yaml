@@ -2,6 +2,6 @@ id: badValueInviteType
 args:
   - name: key
 description: >-
-  Bad value: provided "{key}" is not a valid invite type.
+  Bad value: provided "{key}" must be a valid invite type.
 http_code: 400
 errno: EINVAL

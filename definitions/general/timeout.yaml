@@ -1,5 +1,5 @@
 id: timeout
 description: >-
-  Operation timed out.
+  Operation timed out, please try again later.
 http_code: 503
 errno: EAGAIN

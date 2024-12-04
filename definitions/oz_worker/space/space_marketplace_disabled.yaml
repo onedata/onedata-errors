@@ -1,4 +1,4 @@
 id: spaceMarketplaceDisabled
 description: >-
-  Space marketplace is disabled for this Onezone.
+  Space marketplace is disabled in this Onezone service.
 http_code: 400

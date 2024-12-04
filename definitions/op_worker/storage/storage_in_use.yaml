@@ -1,6 +1,7 @@
 id: storageInUse
 description: >-
-  Specified storage supports a space.
+  The specified storage backend already supports a space 
+  (imported storage backends cannot support more than one space).
 http_code: 400
 errno: EBUSY
 

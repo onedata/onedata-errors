@@ -1,5 +1,8 @@
 id: noConnectionToOnezone
+args:
+  - name: zoneDomain  # fixme sugeruje dodac to nowe pole
 description: >-
-  No connection to Onezone.
+  Operation failed because the service could not connect 
+  to the Onezone service (https://{zoneDomain}).
 http_code: 503
 errno: ENETUNREACH

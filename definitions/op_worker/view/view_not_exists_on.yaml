@@ -2,5 +2,5 @@ id: viewNotExistsOn
 args:
   - name: providerId
 description: >-
-  Specified view does not exist on provider {providerId}.
+  Specified database view does not exist on provider "{providerId}".
 http_code: 400

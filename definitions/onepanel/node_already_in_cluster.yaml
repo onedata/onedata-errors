@@ -2,5 +2,5 @@ id: nodeAlreadyInCluster
 args:
   - name: hostname
 description: >-
-  Cannot add "{hostname}", it is already part of a cluster.
+  Refusing to add node "{hostname}", it's already a part of the cluster.
 http_code: 400

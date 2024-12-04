@@ -1,4 +1,4 @@
 id: atmOpenfaasNotConfigured
 description: >-
-  OpenFaaS service is not configured.
+  No OpenFaaS service is configured.
 http_code: 400

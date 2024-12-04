@@ -2,6 +2,6 @@ id: inviteTokenTargetIdInvalid
 args:
   - name: id
 description: >-
-  The target id '{id}' is invalid for this type of invite token.
+  The target ID "{id}" is invalid for this type of invite token.
 http_code: 400
 errno: EINVAL

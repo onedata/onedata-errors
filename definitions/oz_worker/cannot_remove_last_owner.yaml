@@ -4,6 +4,6 @@ args:
     type: Atom
   - name: entityId
 description: >- 
-  Cannot remove the last owner - another owner must be assigned first.
-  Ownership can be granted to any direct or effective member.
+  Cannot remove the last owner; another owner must be assigned first.
+  Ownership can be granted to any direct or effective member user.
 http_code: 400

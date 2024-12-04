@@ -3,6 +3,6 @@ args:
   - name: limit
     type: Integer
 description: >-
-  Provided token exceeds the allowed size ({limit} characters).
+  Provided token exceeds the allowed size of {limit} characters.
 http_code: 400
 errno: EINVAL

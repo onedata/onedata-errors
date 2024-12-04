@@ -4,5 +4,5 @@ args:
   - name: expType
     type: AtmDataType
 description: >-
-  Provided value is not of expected type (see details).
+  Provided value is not of expected type: {expType}.
 http_code: 400

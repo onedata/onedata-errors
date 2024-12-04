@@ -3,6 +3,6 @@ args:
   - name: service
     type: AaiService
 description: >-
-  The service {service} is forbidden for this subject.
+  The service "{service}" is forbidden for the token subject (creator).
 http_code: 400
 errno: EINVAL

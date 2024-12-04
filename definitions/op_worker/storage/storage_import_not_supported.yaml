@@ -4,8 +4,8 @@ args:
   - name: objectStorages
     type: Binaries
 description: >-
-  Cannot configure storage import on storage {storageId} - this operation
-  requires storage with canonical path type and on object storages
-  (any of: {objectStorages}) it requires blockSize = 0.
+  Cannot configure storage import for the storage backend "{storageId}". 
+  This operation requires a storage backend with canonical path type and 
+  for object storage (any of: {objectStorages}), it requires the block size set to 0.
 http_code: 400
 errno: ENOTSUP

@@ -1,4 +1,4 @@
 id: dirStatsNotReady
 description: >-
-  Requested directory statistics are not ready yet - calculation is in progress.
+  Requested directory statistics are not ready yet; calculation is in progress.
 http_code: 400

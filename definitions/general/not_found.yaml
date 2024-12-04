@@ -1,5 +1,5 @@
 id: notFound
 description: >-
-  The resource could not be found.
+  The requested resource could not be found.
 http_code: 404
 errno: EINVAL

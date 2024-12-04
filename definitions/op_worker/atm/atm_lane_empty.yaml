@@ -2,5 +2,5 @@ id: atmLaneEmpty
 args:
   - name: atmLaneSchemaId
 description: >-
-  Bad automation lane: lane (id: "{atmLaneSchemaId}") must not be empty.
+  Bad automation lane: lane (ID: "{atmLaneSchemaId}") must not be empty.
 http_code: 400

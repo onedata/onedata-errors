@@ -1,5 +1,5 @@
 id: badValueDomain
 description: >-
-  Bad value: provided domain is not valid.
+  Bad value: provided domain is invalid.
 http_code: 400
 errno: EINVAL

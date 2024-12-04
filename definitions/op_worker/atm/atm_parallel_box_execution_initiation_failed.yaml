@@ -4,5 +4,5 @@ args:
   - name: specificError
     type: OnedataError
 description: >-
-  Failed to initiate automation parallel box execution (id: "{atmParallelBoxSchemaId}"). {specificError}
+  Failed to initiate automation parallel box execution (ID: "{atmParallelBoxSchemaId}"): {specificError}
 http_code: 400

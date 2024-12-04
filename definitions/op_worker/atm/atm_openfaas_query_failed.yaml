@@ -3,5 +3,5 @@ args:
   - name: reason
     nullable: true
 description: >-
-  Failed to query OpenFaaS service.
+  Failed to query the OpenFaaS service: {reason}.
 http_code: 400

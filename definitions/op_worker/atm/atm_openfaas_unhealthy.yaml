@@ -1,4 +1,4 @@
 id: atmOpenfaasUnhealthy
 description: >-
-  OpenFaaS service is unhealthy.
+  The OpenFaaS service is unhealthy.
 http_code: 503

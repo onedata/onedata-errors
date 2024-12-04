@@ -1,5 +1,5 @@
 id: badValueEmail
 description: >-
-  Bad value: provided e-mail is not valid.
+  Bad value: provided e-mail address is invalid.
 http_code: 400
 errno: EINVAL

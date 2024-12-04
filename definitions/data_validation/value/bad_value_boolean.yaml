@@ -2,6 +2,6 @@ id: badValueBoolean
 args:
   - name: key
 description: >-
-  Bad value: provided "{key}" must be a boolean.
+  Bad value: provided "{key}" must be a boolean value.
 http_code: 400
 errno: EINVAL

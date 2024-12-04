@@ -2,6 +2,6 @@ id: badValueTokenType
 args:
   - name: key
 description: >-
-  Bad value: provided "{key}" is not a valid token type.
+  Bad value: provided "{key}" must be a valid token type.
 http_code: 400
 errno: EINVAL

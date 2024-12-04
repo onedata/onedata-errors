@@ -2,6 +2,6 @@ id: badValueOctal
 args:
   - name: key
 description: >-
-  Bad value: provided "{key}" is not a valid octal number.
+  Bad value: provided "{key}" must be a valid octal number.
 http_code: 400
 errno: EINVAL

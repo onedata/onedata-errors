@@ -1,5 +1,5 @@
 id: unregisteredOneprovider
 description: >-
-  This Oneprovider is not registered.
+  This Oneprovider service is not registered in any Onezone service.
 http_code: 503
 errno: EAGAIN
