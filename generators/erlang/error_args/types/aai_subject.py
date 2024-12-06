@@ -16,8 +16,8 @@ from ..translation_strategies import (
 )
 
 
-class AaiConsumer(ErrorArgType):
-    """AAI consumer type."""
+class AaiSubject(ErrorArgType):
+    """AAI subject type."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(

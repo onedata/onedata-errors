@@ -17,7 +17,7 @@ from ..translation_strategies import (
 
 
 class AtmStoreTypes(ErrorArgType):
-    """List of ATM store schema IDs."""
+    """List of ATM store types."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(

@@ -116,17 +116,17 @@ http_code: 403
 ## Type System
 
 ### Available Types
-- `AaiConsumer` - AAI consumer type
 - `AaiService` - AAI service type  
-- `Atom` - Erlang atom
+- `AaiSubject` - AAI subject type
 - `AtmDataType` - ATM data type
 - `AtmDataTypes` - List of ATM data types
-- `AtmStoreSchemaIds` - List of ATM store schema IDs
+- `AtmStoreTypes` - List of ATM store types
 - `AtmTaskArgumentValueBuilderType` - ATM task argument value builder type
 - `AtmTaskArgumentValueBuilderTypes` - List of ATM task argument value builder types
 - `AtmWorkflowSchemas` - List of ATM workflow schemas
-- `Binary` - Binary string (default)
+- `Atom` - Erlang atom
 - `Binaries` - List of binary strings
+- `Binary` - Binary string (default)
 - `ByteSize` - Size in bytes
 - `DnsServers` - List of DNS servers
 - `ErlangTerm` - Generic Erlang term
