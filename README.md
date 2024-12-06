@@ -128,7 +128,6 @@ http_code: 403
 - `Binary` - Binary string (default)
 - `Binaries` - List of binary strings
 - `ByteSize` - Size in bytes
-- `CaveatUnverified` - Unverified caveat
 - `DnsServers` - List of DNS servers
 - `ErlangTerm` - Generic Erlang term
 - `GriEntityType` - GRI entity type
@@ -142,6 +141,7 @@ http_code: 403
 - `StorageSupportStage` - Storage support stage
 - `TokenType` - Token type
 - `TscLayout` - TSC layout
+- `UnverifiedCaveat` - Unverified caveat
 
 ### Adding New Types
 

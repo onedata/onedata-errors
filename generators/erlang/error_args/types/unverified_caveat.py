@@ -16,8 +16,8 @@ from ..translation_strategies import (
 )
 
 
-class CaveatUnverified(ErrorArgType):
-    """Unverified caveat type."""
+class UnverifiedCaveat(ErrorArgType):
+    """Unverified caveat."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
