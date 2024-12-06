@@ -53,27 +53,26 @@ Example: `definitions/auth/invalid_credentials.yaml`
 
 ### Error Definition Structure
 
-Each error definition requires the following fields:
+Each error definition may include the following fields:
 
 ```yaml
-# Unique identifier of the error (camelCase)
+# (required) Unique identifier of the error (camelCase)
 id: invalidCredentials
 
-# HTTP status code for REST API responses
+# (optional) List of arguments used in description and returned in error details
+args:
+  - name: token          # May be referenced in description
+    type: Token          # Argument type
+    nullable: false      # (optional, defaults to False) Specifies if argument can be null/missing
+
+# (required) Human-readable error description with {argName} placeholders
+description: >-
+  Invalid credentials provided. Token: {token}
+
+# (required) HTTP status code for REST API responses
 http_code: 401
 
-# Human-readable error description with {argName} placeholders
-description: |-
-    Invalid credentials provided.
-    Token: {token}
-
-# List of arguments used in description and returned in error details
-args:
-  - name: token          # Referenced in description
-    type: Token          # Argument type
-    nullable: true       # Can be null/missing
-
-# Optional: POSIX error number
+# (optional, defaults to ?EINVAL) POSIX error number
 errno: ?EACCES
 ```
 
@@ -89,24 +88,25 @@ description: The service is temporarily unavailable. Please try again later.
 #### Complex Error
 ```yaml
 id: tokenCaveatUnverified
-http_code: 403
-description: |-
-    Token verification failed.
-    Unverified caveat: {caveat}
-    Required permissions: {requiredPermission}
 args:
   - name: caveat
-    type: CaveatUnverified
+    type: UnverifiedCaveat
   - name: requiredPermission
     type: Binary
+description: |-
+  Token verification failed.
+  Unverified caveat: {caveat}
+  Required permissions: {requiredPermission}
+http_code: 403
 ```
 
 ### Best Practices
 
 #### Description Formatting
-- Use `|-` for multiline descriptions to preserve formatting
-- Use `{argumentName}` for argument placeholders
-- Consider message readability
+- **Preferred** Use `>-` for folding text block into a single line (newlines are converted to spaces).
+- Use `|-` for multiline descriptions to preserve formatting (newlines are kept).
+- Use `{argumentName}` for argument placeholders in descriptions. The actual values for these arguments will be inserted according to the `print_encoding_strategy`, which can be found in the respective argument type classes.
+- Consider message readability.
 
 #### Argument Handling
 - Place required arguments first
