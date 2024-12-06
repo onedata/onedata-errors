@@ -108,11 +108,6 @@ http_code: 403
 - Use `{argumentName}` for argument placeholders in descriptions. The actual values for these arguments will be inserted according to the `print_encoding_strategy`, which can be found in the respective argument type classes.
 - Consider message readability.
 
-#### Argument Handling
-- Place required arguments first
-- Place nullable arguments last
-- Use appropriate types for arguments
-
 ## Type System
 
 ### Available Types
@@ -134,13 +129,13 @@ http_code: 403
 - `Integer` - Integer number
 - `InviteTokenTypeWithAny` - Invite token type with "any" option
 - `Json` - JSON value
-- `MetricConfig` - Metric configuration
 - `OnedataError` - Onedata error
 - `Path` - File system path
 - `ProviderSupportStage` - Provider support stage
 - `StorageSupportStage` - Storage support stage
 - `TokenType` - Token type
-- `TscLayout` - TSC layout
+- `TscLayout` - Time series collection layout
+- `TscMetricConfig` - Time series collection metric configuration
 - `UnverifiedCaveat` - Unverified caveat
 
 ### Adding New Types
