@@ -31,7 +31,7 @@
     ctx :: od_error:ctx()
 }}).
 
--define(infer_error_ctx(),
+-define(err_ctx(),
     #od_error_ctx{{
         file = ?FILE,
         line = ?LINE,
@@ -40,10 +40,10 @@
     }}
 ).
 
--define(ERROR, #od_error{{}}).
--define(ERROR(Type), #od_error{{type = Type}}).
--define(ERROR(Type, Args), #od_error{{type = Type, args = Args}}).
--define(ERROR(Type, Args, Ctx), #od_error{{type = Type, args = Args, ctx = Ctx}}).
+-define(ERR, {{error, #od_error{{}}}}).
+-define(ERR(Type), {{error, #od_error{{type = Type}}}}).
+-define(ERR(Type, Args), {{error, #od_error{{type = Type, args = Args}}}}).
+-define(ERR(Type, Args, Ctx), {{error, #od_error{{type = Type, args = Args, ctx = Ctx}}}}).
 
 
 %%--------------------------------------------------------------------
@@ -54,12 +54,12 @@
 % server responds with an error to an older client, which does not know the
 % error Id. The original JSON representing the error is retained and returned
 % upon encoding.
--define(ERROR_UNRECOGNIZED_ERROR_TYPE, od_error_unrecognized_error).
--define(ERROR_UNRECOGNIZED_ERROR_MATCH(ErrorAsJson), 
-    ?ERROR(?ERROR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}})
+-define(ERR_UNRECOGNIZED_ERROR_TYPE, od_error_unrecognized_error).
+-define(ERR_UNRECOGNIZED_ERROR(ErrorAsJson), 
+    ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}})
 ).
--define(new_ERROR_UNRECOGNIZED_ERROR(ErrorAsJson), 
-    ?ERROR(?ERROR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}}, ?infer_error_ctx())
+-define(ERR_UNRECOGNIZED_ERROR(ErrCtx, ErrorAsJson), 
+    ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}}, ErrCtx)
 ).
 
 {macros}

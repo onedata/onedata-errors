@@ -7,16 +7,17 @@ args:
   - name: clusterType
     type: Atom
 x-erl-to_json: |
-  to_json(?ERROR_NODE_NOT_COMPATIBLE_MATCH(Hostname, NodeClusterType)) when
+  to_json(Error = ?ERR_NODE_NOT_COMPATIBLE(Hostname, NodeClusterType)) when
       NodeClusterType == ?ONEPROVIDER;
       NodeClusterType == ?ONEZONE
   ->
       #{
-          <<"id">> => ?ERROR_NODE_NOT_COMPATIBLE_ID,
+          <<"id">> => ?ERR_NODE_NOT_COMPATIBLE_ID,
           <<"details">> => #{
               <<"hostname">> => Hostname, <<"clusterType">> => NodeClusterType},
           <<"description">> => od_error:format_description("Cannot add \"~ts\", it is a ~ts node.",
-              [Hostname, NodeClusterType])
+              [Hostname, NodeClusterType]),
+          <<"context">> => od_error:encode_error_ctx(Error)
       }.
 description: >-
   Cannot add "{hostname}", it is a {clusterType} node.

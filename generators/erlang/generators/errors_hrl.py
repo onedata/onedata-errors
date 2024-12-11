@@ -66,9 +66,9 @@ def _build_error_match_macro_definition(od_error: OdError) -> str:
 
     if od_error.args:
         args = ", ".join(od_error.get_args_as_erlang_variable_names())
-        error_expansion = f"?ERROR({error_type_macro}, {{{args}}})"
+        error_expansion = f"?ERR({error_type_macro}, {{{args}}})"
     else:
-        error_expansion = f"?ERROR({error_type_macro})"
+        error_expansion = f"?ERR({error_type_macro})"
 
     return f"-define({match_macro}, {error_expansion})."
 
@@ -79,8 +79,8 @@ def _build_error_new_macro_definition(od_error: OdError) -> str:
 
     if od_error.args:
         args = ", ".join(od_error.get_args_as_erlang_variable_names())
-        error_expansion = f"?ERROR({error_type_macro}, {{{args}}}, ?infer_error_ctx())"
+        error_expansion = f"?ERR({error_type_macro}, {{{args}}}, ErrCtx)"
     else:
-        error_expansion = f"?ERROR({error_type_macro}, undefined, ?infer_error_ctx())"
+        error_expansion = f"?ERR({error_type_macro}, undefined, ErrCtx)"
 
     return f"-define({new_macro}, {error_expansion})."

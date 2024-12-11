@@ -73,11 +73,11 @@ class OdError(NamedTuple):
 
     def get_id_macro(self) -> str:
         """Returns the macro name for error ID."""
-        return f"ERROR_{self.name.upper()}_ID"
+        return f"ERR_{self.name.upper()}_ID"
 
     def get_type_macro(self) -> str:
         """Returns the macro name for error type."""
-        return f"ERROR_{self.name.upper()}_TYPE"
+        return f"ERR_{self.name.upper()}_TYPE"
 
     def get_args_as_erlang_variable_names(self) -> List[str]:
         """Returns list of Erlang variable names for error arguments."""
@@ -86,14 +86,17 @@ class OdError(NamedTuple):
     def get_match_macro(self) -> str:
         """Returns the macro name for pattern matching."""
         if not self.args:
-            return f"ERROR_{self.name.upper()}_MATCH"
+            return f"ERR_{self.name.upper()}"
         args = ", ".join(self.get_args_as_erlang_variable_names())
-        return f"ERROR_{self.name.upper()}_MATCH({args})"
+        return f"ERR_{self.name.upper()}({args})"
 
     def get_new_macro(self) -> str:
         """Returns the macro name for creating new error."""
-        args = ", ".join(self.get_args_as_erlang_variable_names()) if self.args else ""
-        return f"new_ERROR_{self.name.upper()}({args})"
+        if self.args:
+            args = ", ".join(self.get_args_as_erlang_variable_names())
+            return f"ERR_{self.name.upper()}(ErrCtx, {args})"
+
+        return f"ERR_{self.name.upper()}(ErrCtx)"
 
 
 class OdErrorGroup(NamedTuple):

@@ -181,7 +181,7 @@ make erlang
 
 Generated components:
 - `errors.hrl`
-  - Error macros (?ERROR_*)
+  - Error macros (?ERR_*)
   - Record definitions
 - `errors.erl`
   - Error interface module

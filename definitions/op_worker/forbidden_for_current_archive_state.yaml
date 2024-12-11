@@ -4,9 +4,9 @@ args:
     type: Atom
   - name: allowedStates
 x-erl-to_json: |
-  to_json(?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_MATCH(CurrentState, AllowedStates)) ->
+  to_json(Error = ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(CurrentState, AllowedStates)) ->
       #{
-          <<"id">> => ?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
+          <<"id">> => ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
           <<"description">> => od_error:format_description(
               "This operation is forbidden while the archive state is ~ts. Allowed states are: ~ts.",
               [CurrentState, od_error:format_csv(AllowedStates)]
@@ -14,17 +14,19 @@ x-erl-to_json: |
           <<"details">> => #{
               <<"allowedStates">> => json_utils:encode(AllowedStates),
               <<"currentState">> => json_utils:encode(CurrentState)
-          }
+          },
+          <<"context">> => od_error:encode_error_ctx(Error)
       }.
 x-erl-from_json: |
-  from_json(#{
-      <<"id">> := ?ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
+  from_json(ErrorJson = #{
+      <<"id">> := ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
       <<"details">> := #{
           <<"allowedStates">> := AllowedStates,
           <<"currentState">> := CurrentState
       }
   }) ->
-      ?new_ERROR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(
+      ErrorCtx = od_error:decode_error_ctx(ErrorJson),
+      ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(ErrorCtx,
           binary_to_existing_atom(json_utils:decode(CurrentState)),
           [binary_to_existing_atom(StateBin) || StateBin <- json_utils:decode(AllowedStates)]
       ).
