@@ -36,9 +36,10 @@ class ErrorArgType(ABC):
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = DirectStrategy()
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = DirectStrategy()
 
-    def __init__(self, name: str, nullable: bool = False) -> None:
+    def __init__(self, name: str, nullable: bool = False, print_if_null: Optional[str] = None) -> None:
         self.name = name
         self.nullable = nullable
+        self.print_if_null = print_if_null
 
     @classmethod
     def type_name(cls) -> str:
@@ -155,13 +156,62 @@ class ErrorArgType(ABC):
     def _generate_nullable_to_json_encoding(
         self, *, is_printed: bool = False, indent_level: int = 1
     ) -> ErrorArgToJsonEncoding:
-        # TODO: better way to do this?
+        if self.print_if_null and is_printed:
+            return self._generate_nullable_print_if_null_encoding(indent_level=indent_level)
+        
         strategy = (
             type(self.json_encoding_strategy),
             type(self.print_encoding_strategy) if is_printed else None,
         )
         encoding_function = self._nullable_encoding_dispatch[strategy]
         return encoding_function(self, indent_level=indent_level)
+
+    def _generate_nullable_print_if_null_encoding(
+        self, *, indent_level: int = 1
+    ) -> ErrorArgToJsonEncoding:
+        erl_var = self.get_erlang_variable_name()
+        json_var = f"{erl_var}Json"
+        print_var = f"{erl_var}Print"
+        
+        # Prepare variables for the non-undefined case based on strategies
+        if isinstance(self.json_encoding_strategy, CustomStrategy):
+            json_case_var = f"{erl_var}JsonTmp"
+            json_tokens = self._generate_custom_json_encoding(
+                erl_var=erl_var,
+                assign_to=json_case_var,
+                indent_level=indent_level + 2,
+            )
+        else:
+            json_case_var = erl_var
+            json_tokens = []
+
+        if isinstance(self.print_encoding_strategy, CustomStrategy):
+            print_case_var = f"{erl_var}PrintTmp"
+            print_tokens = self._generate_custom_print_encoding(
+                erl_var=erl_var,
+                json_var=json_case_var,
+                assign_to=print_case_var,
+                indent_level=indent_level + 2,
+            )
+        else:
+            print_case_var = json_case_var
+            print_tokens = []
+
+        tokens = self._generate_nullable_case_statement(
+            indent_level=indent_level,
+            json_var=json_var,
+            print_var=print_var,
+            erl_var=erl_var,
+            encoding_tokens=json_tokens + print_tokens,
+            json_case_var=json_case_var,
+            print_case_var=print_case_var,
+        )
+
+        return ErrorArgToJsonEncoding(
+            tokens=tokens,
+            json_var=json_var,
+            print_var=print_var,
+        )
 
     def _generate_nullable_direct_json_encoding(
         self, *, indent_level: int
@@ -322,9 +372,15 @@ class ErrorArgType(ABC):
             tokens.append(f"{indent_0}{json_var}")
 
         tokens.append(f" = case {erl_var} of\n")
-
         tokens.append(f"{indent_1}undefined ->\n")
-        tokens.append(f"{indent_2}{'{null, null}' if print_var else 'null'};\n")
+        
+        if print_var and self.print_if_null:
+            # When we need both JSON and print value, and print_if_null is specified
+            tokens.append(f'{indent_2}{{null, <<"{self.print_if_null}">>}};\n')
+        else:
+            # Default behavior - null for JSON, {null, null} for JSON and print
+            tokens.append(f"{indent_2}{'{null, null}' if print_var else 'null'};\n")
+            
         tokens.append(f"{indent_1}_ ->\n")
         tokens.extend(encoding_tokens)
 

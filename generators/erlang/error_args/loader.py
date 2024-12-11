@@ -57,4 +57,5 @@ def create_error_arg(arg_yaml: dict) -> ErrorArgType:
         type_name=arg_yaml.get("type", "Binary"),
         name=arg_yaml["name"],
         nullable=arg_yaml.get("nullable", False),
+        print_if_null=arg_yaml.get("print_if_null")
     )

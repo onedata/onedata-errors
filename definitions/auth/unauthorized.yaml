@@ -3,6 +3,7 @@ args:
   - name: authError
     type: OnedataError
     nullable: true
+    print_if_null: no details available.
 description: >-
   You must authenticate yourself to perform this operation: {authError}
 http_code: 401
