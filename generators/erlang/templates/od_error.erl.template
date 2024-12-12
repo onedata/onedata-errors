@@ -92,7 +92,9 @@
 
 -spec format_description(string(), [term()]) -> binary().
 format_description(Format, Args) ->
-    str_utils:ensure_suffix(str_utils:format_bin(Format, Args), <<".">>).
+    Desc = str_utils:format_bin(Format, Args),
+    TrimmedDesc = string:trim(Desc, trailing, "."),
+    <<TrimmedDesc/binary, ".">>.
 
 
 -spec format_csv([term()]) -> binary().
