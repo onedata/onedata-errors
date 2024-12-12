@@ -23,8 +23,8 @@ def main():
     error_groups = load_error_definitions()
 
     generate_errors_headers(error_groups, templates)
-    generate_od_error_behaviour(templates.od_error)
-    generate_errors_interface_module(error_groups, templates.errors_erl)
+    generate_od_error_behaviour(templates.od_error, error_groups)
+    generate_errors_interface_module(templates.errors_erl)
     generate_error_types(error_groups, templates.error)
 
 

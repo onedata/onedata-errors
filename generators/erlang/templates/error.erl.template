@@ -18,7 +18,7 @@
 -include("http/codes.hrl").
 {includes}
 
--type t() :: #od_error{{type :: ?MODULE}}.
+-type t() :: {{error, #od_error{{type :: ?MODULE}}}}.
 
 -export_type([t/0]).
 

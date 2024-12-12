@@ -33,7 +33,9 @@ def generate_error_attrs_hrl(error_groups: List[OdErrorGroup], template: str) ->
     write_to_file(ERROR_ATTRS_HRL_FILE_PATH, attrs_content)
 
 
-def _generate_error_attrs_id_and_type_macros(error_groups: List[OdErrorGroup]) -> List[str]:
+def _generate_error_attrs_id_and_type_macros(
+    error_groups: List[OdErrorGroup],
+) -> List[str]:
     lines = []
     for error_group in error_groups:
         lines.extend(_generate_errors_hrl_group_header(error_group))

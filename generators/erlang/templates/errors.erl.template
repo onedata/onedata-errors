@@ -30,9 +30,9 @@
 -type errno() :: od_error:errno().
 
 -type error() ::
-{types} |
+    od_error:error() |
     % unrecognized is a special error and as such does not have its own module
-    #od_error{{type :: od_error_unrecognized_error}}.
+    {{error, #od_error{{type :: od_error_unrecognized_error}}}}.
 
 -export_type([errno/0, error/0]).
 
@@ -67,7 +67,7 @@ to_json(?ERR_UNRECOGNIZED_ERROR(ErrorAsJson)) ->
             ErrorAsJson#{{<<"description">> => <<"No description (unknown error).">>}}
     end;
 
-to_json(Error = #od_error{{type = Type}}) ->
+to_json(Error = {{error, #od_error{{type = Type}}}}) ->
     Type:to_json(Error);
 
 to_json(OtherError) ->
@@ -98,7 +98,7 @@ from_json(ErrorJson) ->
 to_http_code(?ERR_UNRECOGNIZED_ERROR(_)) -> 
     ?HTTP_500_INTERNAL_SERVER_ERROR;
 
-to_http_code(Error = #od_error{{type = Type}}) ->
+to_http_code(Error = {{error, #od_error{{type = Type}}}}) ->
     Type:to_http_code(Error).
 
 
@@ -106,5 +106,5 @@ to_http_code(Error = #od_error{{type = Type}}) ->
 to_errno(?ERR_UNRECOGNIZED_ERROR(_)) -> 
     {{true, ?EAGAIN}};
 
-to_errno(Error = #od_error{{type = Type}}) ->
+to_errno(Error = {{error, #od_error{{type = Type}}}}) ->
     Type:to_errno(Error).
