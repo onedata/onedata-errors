@@ -12,6 +12,7 @@ from ..constants import TEMPLATES_DIR
 
 class Templates(NamedTuple):
     errors_hrl: str
+    error_attrs_hrl: str
     errors_erl: str
     od_error: str
     error: str
@@ -20,6 +21,7 @@ class Templates(NamedTuple):
 def load_templates() -> Templates:
     return Templates(
         errors_hrl=_read_template("errors.hrl.template"),
+        error_attrs_hrl=_read_template("error_attrs.hrl.template"),
         errors_erl=_read_template("errors.erl.template"),
         od_error=_read_template("od_error.erl.template"),
         error=_read_template("error.erl.template"),

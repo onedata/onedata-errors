@@ -14,6 +14,7 @@ TEMPLATES_DIR: Final[str] = os.path.join(os.path.dirname(__file__), "templates")
 # Output file paths
 OUTPUT_DIR: Final[str] = "generated/erlang"
 ERRORS_HRL_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "errors.hrl")
+ERROR_ATTRS_HRL_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "error_attrs.hrl")
 ERRORS_ERL_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "errors.erl")
 OD_ERROR_FILE_PATH: Final[str] = os.path.join(OUTPUT_DIR, "od_error.erl")
 ERROR_TYPES_DIR: Final[str] = os.path.join(OUTPUT_DIR, "types")

@@ -36,7 +36,9 @@ class ErrorArgType(ABC):
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = DirectStrategy()
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = DirectStrategy()
 
-    def __init__(self, name: str, nullable: bool = False, print_if_null: Optional[str] = None) -> None:
+    def __init__(
+        self, name: str, nullable: bool = False, print_if_null: Optional[str] = None
+    ) -> None:
         self.name = name
         self.nullable = nullable
         self.print_if_null = print_if_null
@@ -157,8 +159,10 @@ class ErrorArgType(ABC):
         self, *, is_printed: bool = False, indent_level: int = 1
     ) -> ErrorArgToJsonEncoding:
         if self.print_if_null and is_printed:
-            return self._generate_nullable_print_if_null_encoding(indent_level=indent_level)
-        
+            return self._generate_nullable_print_if_null_encoding(
+                indent_level=indent_level
+            )
+
         strategy = (
             type(self.json_encoding_strategy),
             type(self.print_encoding_strategy) if is_printed else None,
@@ -172,7 +176,7 @@ class ErrorArgType(ABC):
         erl_var = self.get_erlang_variable_name()
         json_var = f"{erl_var}Json"
         print_var = f"{erl_var}Print"
-        
+
         # Prepare variables for the non-undefined case based on strategies
         if isinstance(self.json_encoding_strategy, CustomStrategy):
             json_case_var = f"{erl_var}JsonTmp"
@@ -373,14 +377,14 @@ class ErrorArgType(ABC):
 
         tokens.append(f" = case {erl_var} of\n")
         tokens.append(f"{indent_1}undefined ->\n")
-        
+
         if print_var and self.print_if_null:
             # When we need both JSON and print value, and print_if_null is specified
             tokens.append(f'{indent_2}{{null, <<"{self.print_if_null}">>}};\n')
         else:
             # Default behavior - null for JSON, {null, null} for JSON and print
             tokens.append(f"{indent_2}{'{null, null}' if print_var else 'null'};\n")
-            
+
         tokens.append(f"{indent_1}_ ->\n")
         tokens.extend(encoding_tokens)
 

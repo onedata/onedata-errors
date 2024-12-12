@@ -1,0 +1,26 @@
+%%%-------------------------------------------------------------------
+%%% This file has been automatically generated - DO NOT EDIT!!!
+%%%
+%%% @copyright (C) 2024 ACK CYFRONET AGH
+%%% This software is released under the MIT license
+%%% cited in 'LICENSE.txt'.
+%%% @end
+%%%-------------------------------------------------------------------
+%%% @doc
+%%% Error attributes to be used across all APIs in Onedata products.
+%%% @end
+%%%-------------------------------------------------------------------
+
+-ifndef(ERROR_ATTRS_HRL).
+-define(ERROR_ATTRS_HRL, 1).
+
+
+%%--------------------------------------------------------------------
+%% Unknown / unexpected error
+%%--------------------------------------------------------------------
+-define(ERR_UNRECOGNIZED_ERROR_TYPE, od_error_unrecognized_error).
+
+
+{macros}
+
+-endif.

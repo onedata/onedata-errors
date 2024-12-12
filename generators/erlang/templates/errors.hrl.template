@@ -14,6 +14,7 @@
 -ifndef(ERRORS_HRL).
 -define(ERRORS_HRL, 1).
 
+-include("error_attrs.hrl").
 -include("global_definitions.hrl").
 -include("posix/errno.hrl").
 
@@ -54,7 +55,6 @@
 % server responds with an error to an older client, which does not know the
 % error Id. The original JSON representing the error is retained and returned
 % upon encoding.
--define(ERR_UNRECOGNIZED_ERROR_TYPE, od_error_unrecognized_error).
 -define(ERR_UNRECOGNIZED_ERROR(ErrorAsJson), 
     ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}})
 ).

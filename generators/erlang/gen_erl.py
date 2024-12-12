@@ -9,7 +9,7 @@ import shutil
 
 from .constants import OUTPUT_DIR
 from .generators.error_types import generate_error_types
-from .generators.errors_hrl import generate_errors_hrl
+from .generators.errors_headers import generate_errors_headers
 from .generators.errors_interface import generate_errors_interface_module
 from .generators.od_error import generate_od_error_behaviour
 from .loaders.error_definitions_loader import load_error_definitions
@@ -22,7 +22,7 @@ def main():
     templates = load_templates()
     error_groups = load_error_definitions()
 
-    generate_errors_hrl(error_groups, templates.errors_hrl)
+    generate_errors_headers(error_groups, templates)
     generate_od_error_behaviour(templates.od_error)
     generate_errors_interface_module(error_groups, templates.errors_erl)
     generate_error_types(error_groups, templates.error)
