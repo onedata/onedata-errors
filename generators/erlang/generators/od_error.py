@@ -4,7 +4,7 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from datetime import datetime, timezone
+import subprocess
 from typing import List, Tuple
 
 from ..constants import INDENT, OD_ERROR_FILE_PATH
@@ -87,7 +87,17 @@ def _generate_type_specs_from_tree(
     return specs, exports
 
 
-def generate_version():
-    """Generate version string based on compilation date."""
-    now = datetime.now(timezone.utc)
-    return now.strftime("%Y%m%d%H%M%S")
+def generate_version() -> str:
+    """Generate version string based on git commit hash."""
+    try:
+        # Get the current commit hash
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout.strip()[:8]  # Używamy skróconej wersji hasha (8 znaków)
+    except (subprocess.CalledProcessError, subprocess.SubprocessError):
+        # Fallback w przypadku błędu (np. brak gita lub nie jesteśmy w repo)
+        return "unknown"

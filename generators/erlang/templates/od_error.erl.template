@@ -117,6 +117,6 @@ iso8601_now() ->
 %% Returns version of error definitions.
 %% @end
 %%--------------------------------------------------------------------
--spec version() -> string().
+-spec version() -> binary().
 version() ->
-    "{version}".
+    <<"{version}">>.

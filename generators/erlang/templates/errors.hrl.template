@@ -23,7 +23,7 @@
     file :: string(),
     line :: integer(),
     timestamp :: time:iso8601(),
-    version :: string()
+    version :: binary()
 }}).
 
 -record(od_error, {{
