@@ -10,6 +10,7 @@ from ..constants import (
     ERROR_ATTRS_HRL_FILE_PATH,
     ERRORS_HRL_FILE_PATH,
     HORIZONTAL_COMMENT_LINE,
+    INDENT,
 )
 from ..error_definitions import OdError, OdErrorGroup
 from ..loaders.template_loader import Templates
@@ -24,12 +25,15 @@ def generate_errors_headers(
 
 
 def generate_error_attrs_hrl(error_groups: List[OdErrorGroup], template: str) -> None:
-    lines = _generate_error_attrs_lines(error_groups)
-    attrs_content = template.format(macros="\n".join(lines))
+    macros = _generate_error_attrs_id_and_type_macros(error_groups)
+    id_to_type_mapping = _build_error_attrs_id_to_type_mapping(error_groups)
+    attrs_content = template.format(
+        macros=macros, id_to_type_mapping=id_to_type_mapping
+    )
     write_to_file(ERROR_ATTRS_HRL_FILE_PATH, attrs_content)
 
 
-def _generate_error_attrs_lines(error_groups: List[OdErrorGroup]) -> List[str]:
+def _generate_error_attrs_id_and_type_macros(error_groups: List[OdErrorGroup]) -> List[str]:
     lines = []
     for error_group in error_groups:
         lines.extend(_generate_errors_hrl_group_header(error_group))
@@ -47,7 +51,7 @@ def _generate_error_attrs_lines(error_groups: List[OdErrorGroup]) -> List[str]:
 
     # delete last empty line
     del lines[-1]
-    return lines
+    return "\n".join(lines).strip()
 
 
 def _build_error_id_macro_definition(od_error: OdError) -> str:
@@ -56,6 +60,20 @@ def _build_error_id_macro_definition(od_error: OdError) -> str:
 
 def _build_error_type_macro_definition(od_error: OdError) -> str:
     return f"-define({od_error.get_type_macro()}, {od_error.type})."
+
+
+def _build_error_attrs_id_to_type_mapping(error_groups: List[OdErrorGroup]) -> str:
+    id_to_type_mapping = [
+        _generate_error_id_to_type_mapping(od_error)
+        for group in error_groups
+        for od_error in group.errors
+    ]
+
+    return ",\n".join(id_to_type_mapping)
+
+
+def _generate_error_id_to_type_mapping(od_error: OdError) -> str:
+    return f"{INDENT}?{od_error.get_id_macro()} => ?{od_error.get_type_macro()}"
 
 
 def generate_errors_hrl(error_groups: List[OdErrorGroup], template: str) -> None:

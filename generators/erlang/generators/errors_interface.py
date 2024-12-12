@@ -21,22 +21,10 @@ def generate_errors_interface_module(
         for od_error in group.errors
     ]
 
-    id_to_type_mapping = [
-        _generate_error_id_to_type_mapping(od_error)
-        for group in error_groups
-        for od_error in group.errors
-    ]
-
-    erl_content = template.format(
-        types=" |\n".join(types), id_to_type_mapping=",\n".join(id_to_type_mapping)
-    )
+    erl_content = template.format(types=" |\n".join(types))
 
     write_to_file(ERRORS_ERL_FILE_PATH, erl_content)
 
 
 def _generate_error_dialyzer_type(od_error: OdError) -> str:
     return f"{INDENT}{od_error.type}:t()"
-
-
-def _generate_error_id_to_type_mapping(od_error: OdError) -> str:
-    return f"{INDENT}?{od_error.get_id_macro()} => ?{od_error.get_type_macro()}"
