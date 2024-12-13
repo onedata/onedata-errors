@@ -58,10 +58,11 @@ def _generate_to_json_callback(od_error: OdError) -> str:
 
     return "".join(
         [
-            f"to_json(?{od_error.get_match_macro()}) ->\n",
+            f"to_json(?{od_error.get_new_macro()}) ->\n",
             *encoding_tokens,
             f"{INDENT}#{{\n",
             f'{2*INDENT}<<"id">> => ?{od_error.get_id_macro()},\n',
+            f'{2*INDENT}<<"ctx">> => od_error:ctx_to_json(ErrorCtx),\n',
             *details_tokens,
             f'{2*INDENT}<<"description">> => ',
             *description_tokens,
@@ -140,7 +141,7 @@ def _generate_description_tokens(
             f"{2*INDENT})\n",
         ]
 
-    description = description.replace("\n", "\\n")
+    description = description.replace("\n", "\\n").replace('"', '\\"')
     return [f'<<"{description}">>\n']
 
 
@@ -152,10 +153,16 @@ def _generate_from_json_callback(od_error: OdError) -> str:
 
 
 def _generate_default_from_json(od_error: OdError) -> str:
-    tokens = ["from_json(", f'#{{<<"id">> := ?{od_error.get_id_macro()}}}', ") ->\n"]
+    tokens = [
+        "from_json(OdErrorJson = ",
+        f'#{{<<"id">> := ?{od_error.get_id_macro()}}}',
+        ") ->\n",
+        f'{INDENT}ErrorCtxJson = maps:get(<<"ctx">>, OdErrorJson, #{{}}),\n',
+        f"{INDENT}ErrorCtx = od_error:ctx_from_json(ErrorCtxJson),\n",
+    ]
 
     if od_error.args:
-        tokens.insert(1, "OdErrorJson = ")
+        tokens.append("\n")
         tokens.extend(_generate_args_decoding(od_error))
 
     tokens.append(f"{INDENT}?{od_error.get_new_macro()}.")

@@ -10,8 +10,10 @@ from ..base import ErrorArgType
 from ..expressions import SimpleExpression
 from ..translation_strategies import (
     CustomStrategy,
+    FromJsonStrategy,
     JsonDecodingStrategy,
     JsonEncodingStrategy,
+    PrintEncodingStrategy,
 )
 
 
@@ -22,6 +24,7 @@ class AtmDataType(ErrorArgType):
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
         SimpleExpression("atm_data_type:type_to_json({var})")
     )
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = FromJsonStrategy()
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
         SimpleExpression("atm_data_type:type_from_json({var})")
     )

@@ -3,12 +3,12 @@ args:
   - name: operation
     type: Atom
 x-erl-to_json: |
-  to_json(Error = ?ERR_STORAGE_TEST_FAILED(Operation)) ->
+  to_json(?ERR_STORAGE_TEST_FAILED(ErrorCtx, Operation)) ->
       #{
           <<"id">> => ?ERR_STORAGE_TEST_FAILED_ID,
+          <<"ctx">> => od_error:ctx_to_json(ErrorCtx),
           <<"details">> => #{<<"operation">> => str_utils:to_binary(Operation)},
-          <<"description">> => od_error:format_description("Failed to ~ts test file on storage.", [Operation]),
-          <<"context">> => od_error:encode_error_ctx(Error)
+          <<"description">> => od_error:format_description("Failed to ~ts test file on storage.", [Operation])
       }.
 x-erl-from_json: |
   from_json(ErrorJson = #{<<"id">> := ?ERR_STORAGE_TEST_FAILED_ID, <<"details">> := #{<<"operation">> := Operation}}) when
@@ -16,7 +16,9 @@ x-erl-from_json: |
       Operation == <<"write">>;
       Operation == <<"remove">>
   ->
-      ErrorCtx = od_error:decode_error_ctx(ErrorJson),
+      ErrorCtxJson = maps:get(<<"ctx">>, ErrorJson, #{}),
+      ErrorCtx = od_error:ctx_from_json(ErrorCtxJson),
+
       ?ERR_STORAGE_TEST_FAILED(ErrorCtx, binary_to_atom(Operation, utf8)).
 description: >-
   Failed to {operation} test file on storage.

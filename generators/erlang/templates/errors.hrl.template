@@ -20,10 +20,10 @@
 
 
 -record(od_error_ctx, {{
-    file :: string(),
-    line :: integer(),
-    timestamp :: time:iso8601(),
-    version :: binary()
+    file :: undefined | binary(),
+    line :: undefined | integer(),
+    timestamp :: undefined | time:iso8601(),
+    version :: undefined | binary()
 }}).
 
 -record(od_error, {{
@@ -34,7 +34,7 @@
 
 -define(err_ctx(),
     #od_error_ctx{{
-        file = ?FILE,
+        file = <<?FILE>>,
         line = ?LINE,
         timestamp = od_error:iso8601_now(),
         version = od_error:version()
@@ -58,8 +58,8 @@
 -define(ERR_UNRECOGNIZED_ERROR(ErrorAsJson), 
     ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}})
 ).
--define(ERR_UNRECOGNIZED_ERROR(ErrCtx, ErrorAsJson), 
-    ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}}, ErrCtx)
+-define(ERR_UNRECOGNIZED_ERROR(ErrorCtx, ErrorAsJson), 
+    ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}}, ErrorCtx)
 ).
 
 {macros}

@@ -10,8 +10,10 @@ from ..base import ErrorArgType
 from ..expressions import SimpleExpression
 from ..translation_strategies import (
     CustomStrategy,
+    FromJsonStrategy,
     JsonDecodingStrategy,
     JsonEncodingStrategy,
+    PrintEncodingStrategy,
 )
 
 
@@ -22,6 +24,7 @@ class Atom(ErrorArgType):
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
         SimpleExpression("atom_to_binary({var}, utf8)")
     )
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = FromJsonStrategy()
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
         SimpleExpression("binary_to_existing_atom({var}, utf8)")
     )

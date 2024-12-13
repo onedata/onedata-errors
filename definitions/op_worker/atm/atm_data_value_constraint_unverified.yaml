@@ -4,6 +4,7 @@ args:
   - name: type
     type: AtmDataType
   - name: valueConstraints
+    type: Json
 description: >-
   Provided value of type "{type}" doesn't meet the constraints: "{valueConstraints}".
 http_code: 400

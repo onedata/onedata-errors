@@ -94,9 +94,9 @@ class OdError(NamedTuple):
         """Returns the macro name for creating new error."""
         if self.args:
             args = ", ".join(self.get_args_as_erlang_variable_names())
-            return f"ERR_{self.name.upper()}(ErrCtx, {args})"
+            return f"ERR_{self.name.upper()}(ErrorCtx, {args})"
 
-        return f"ERR_{self.name.upper()}(ErrCtx)"
+        return f"ERR_{self.name.upper()}(ErrorCtx)"
 
 
 class OdErrorGroup(NamedTuple):

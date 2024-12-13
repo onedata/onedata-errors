@@ -7,13 +7,14 @@ args:
     type: GriEntityType
   - name: parentId
 x-erl-to_json: |
-  to_json(Error = ?ERR_RELATION_ALREADY_EXISTS(ChType, ChId, ParType, ParId)) ->
+  to_json(?ERR_RELATION_ALREADY_EXISTS(ErrorCtx, ChType, ChId, ParType, ParId)) ->
       RelationToString = case {ChType, ParType} of
           {od_space, od_provider} -> <<"is already supported by">>;
           {_, _} -> <<"is already a member of">>
       end,
       #{
           <<"id">> => ?ERR_RELATION_ALREADY_EXISTS_ID,
+          <<"ctx">> => od_error:ctx_to_json(ErrorCtx),
           <<"details">> => #{
               <<"childType">> => gri:serialize_type(ChType),
               <<"childId">> => ChId,
@@ -24,8 +25,7 @@ x-erl-to_json: |
               gri:serialize_type(ChType), ChId,
               RelationToString,
               gri:serialize_type(ParType), ParId
-          ]),
-          <<"context">> => od_error:encode_error_ctx(Error)
+          ])
       }.
 description: null
 http_code: 409

@@ -4,20 +4,22 @@ args:
   - name: specificErrorOrHint
 description: null
 x-erl-to_json: |
-  to_json(?ERR_BAD_DATA(Key, ?ERR = SpecificError)) ->
+  to_json(?ERR_BAD_DATA(ErrorCtx, Key, ?ERR = SpecificError)) ->
       #{
           <<"id">> => ?ERR_BAD_DATA_ID,
+          <<"ctx">> => od_error:ctx_to_json(ErrorCtx),
           <<"details">> => #{
               <<"key">> => Key,
               <<"specificError">> => errors:to_json(SpecificError)
           },
           <<"description">> => od_error:format_description("Bad value provided for \"~ts\" (see details).", [Key])
       };
-  to_json(?ERR_BAD_DATA(Key, HumanReadableHint)) ->
+  to_json(?ERR_BAD_DATA(ErrorCtx, Key, HumanReadableHint)) ->
       HumanReadableHintJson = utils:undefined_to_null(HumanReadableHint),
 
       #{
-          <<"id">> => <<"badData">>,
+          <<"id">> => ?ERR_BAD_DATA_ID,
+          <<"ctx">> => od_error:ctx_to_json(ErrorCtx),
           <<"details">> => #{
               <<"key">> => Key,
               <<"hint">> => HumanReadableHintJson
@@ -29,11 +31,15 @@ x-erl-from_json: |
       <<"key">> := Key,
       <<"specificError">> := SpecificError
   }}) ->
-      ErrorCtx = od_error:decode_error_ctx(ErrorJson),
+      ErrorCtxJson = maps:get(<<"ctx">>, ErrorJson, #{}),
+      ErrorCtx = od_error:ctx_from_json(ErrorCtxJson),
+
       ?ERR_BAD_DATA(ErrorCtx, Key, errors:from_json(SpecificError));
 
   from_json(ErrorJson = #{<<"id">> := ?ERR_BAD_DATA_ID, <<"details">> := DetailsJson}) ->
-      ErrorCtx = od_error:decode_error_ctx(ErrorJson),
+      ErrorCtxJson = maps:get(<<"ctx">>, ErrorJson, #{}),
+      ErrorCtx = od_error:ctx_from_json(ErrorCtxJson),
+
       Key = maps:get(<<"key">>, DetailsJson),
       HumanReadableHint = utils:null_to_undefined(maps:get(<<"hint">>, DetailsJson, null)),
 
