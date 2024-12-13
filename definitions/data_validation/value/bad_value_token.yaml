@@ -1,6 +1,7 @@
 id: badValueToken
 args:
   - name: key
+    type: Binary
   - name: tokenError
     type: OnedataError
 description: >-

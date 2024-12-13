@@ -1,6 +1,7 @@
 id: badValueAmbiguousId
 args:
   - name: key
+    type: Binary
 description: >-
   Bad value: provided ID ("{key}") is ambiguous.
 http_code: 400

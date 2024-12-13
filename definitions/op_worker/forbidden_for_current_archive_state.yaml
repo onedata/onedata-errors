@@ -3,6 +3,7 @@ args:
   - name: currentState
     type: Atom
   - name: allowedStates
+    type: Binaries
 x-erl-to_json: |
   to_json(?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(ErrorCtx, CurrentState, AllowedStates)) ->
       #{

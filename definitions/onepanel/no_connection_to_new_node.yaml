@@ -1,6 +1,7 @@
 id: noConnectionToNewNode
 args:
   - name: hostname
+    type: Binary
 description: >-
   Cannot add node "{hostname}", connection failed.
 http_code: 400

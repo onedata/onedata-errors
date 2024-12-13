@@ -1,6 +1,7 @@
 id: badValueInteger
 args:
   - name: key
+    type: Binary
 description: >-
   Bad value: provided "{key}" must be an integer.
 http_code: 400

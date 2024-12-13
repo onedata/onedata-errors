@@ -1,6 +1,7 @@
 id: badValueListOfIPv4Addresses
 args:
   - name: key
+    type: Binary
 description: >-
   Bad value: provided "{key}" must be a list of valid IPv4 addresses.
 http_code: 400

@@ -1,6 +1,7 @@
 id: guiPackageUnverified
 args:
   - name: shaSum
+    type: Binary
 description: >-
   The uploaded GUI package could not be verified: unknown SHA sum "{shaSum}".
   If this is a harvester GUI plugin package, contact the Onezone service administrator

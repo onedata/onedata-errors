@@ -1,6 +1,7 @@
 id: atmOpenfaasQueryFailed
 args:
   - name: reason
+    type: Binary
     nullable: true
     print_if_null: no details available.
 description: >-

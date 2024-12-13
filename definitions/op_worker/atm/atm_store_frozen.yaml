@@ -1,6 +1,7 @@
 id: atmStoreFrozen
 args:
   - name: atmStoreSchemaId
+    type: Binary
 description: >-
   Failed to perform operation on an automation store (schema ID: "{atmStoreSchemaId}")
   as any modification is forbidden (frozen state).

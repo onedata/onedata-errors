@@ -1,6 +1,7 @@
 id: atmParallelBoxExecutionCreationFailed
 args:
   - name: atmParallelBoxSchemaId
+    type: Binary
   - name: specificError
     type: OnedataError
 description: >-

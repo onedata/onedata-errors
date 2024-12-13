@@ -1,6 +1,7 @@
 id: storageImportNotSupported
 args:
   - name: storageId
+    type: Binary
   - name: objectStorages
     type: Binaries
 description: >-

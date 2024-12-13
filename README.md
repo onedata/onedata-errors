@@ -118,7 +118,7 @@ http_code: 403
 - `AtmStoreTypes` - List of ATM store types
 - `AtmTaskArgumentValueBuilderType` - ATM task argument value builder type
 - `AtmTaskArgumentValueBuilderTypes` - List of ATM task argument value builder types
-- `AtmWorkflowSchemas` - List of ATM workflow schemas
+- `AtmWorkflowSchemaIds` - List of ATM workflow schema IDs
 - `Atom` - Erlang atom
 - `Binaries` - List of binary strings
 - `Binary` - Binary string (default)

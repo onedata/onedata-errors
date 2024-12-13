@@ -1,6 +1,7 @@
 id: atmLambdaConfigBadValue
 args:
   - name: parameterName
+    type: Binary
   - name: specificError
     type: OnedataError
 description: >-

@@ -1,6 +1,7 @@
 id: badValueTextTooLarge
 args:
   - name: key
+    type: Binary
   - name: limit
     type: Integer
 description: >-

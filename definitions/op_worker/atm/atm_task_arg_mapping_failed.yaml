@@ -1,6 +1,7 @@
 id: atmTaskArgMappingFailed
 args:
   - name: argument
+    type: Binary
   - name: specificError
     type: OnedataError
 description: >-

@@ -1,6 +1,7 @@
 id: badValueIdNotFound
 args:
   - name: key
+    type: Binary
 description: >-
   Bad value: provided ID ("{key}") does not exist.
 http_code: 400

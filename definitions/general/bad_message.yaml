@@ -1,6 +1,7 @@
 id: badMessage
 args:
   - name: message
+    type: Binary
 description: >-
   Received a message that could not be understood by the server.
 http_code: 400

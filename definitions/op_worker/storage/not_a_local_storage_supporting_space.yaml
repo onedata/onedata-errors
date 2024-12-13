@@ -1,8 +1,11 @@
 id: notALocalStorageSupportingSpace
 args:
   - name: providerId
+    type: Binary
   - name: storageId
+    type: Binary
   - name: spaceId
+    type: Binary
 description: >-
   The storage backend "{storageId}" does not belong to this Oneprovider ("{providerId}")
   and/or does not support the space "{spaceId}".

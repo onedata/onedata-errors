@@ -1,6 +1,7 @@
 id: externalServiceOperationFailed
 args:
   - name: serviceName
+    type: Binary
 description: >-
   Your request could not be fulfilled due to problems with the external service
   "{serviceName}". This might be a temporary problem or a misconfiguration.

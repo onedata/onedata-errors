@@ -1,7 +1,9 @@
 id: atmTaskArgMapperIteratedItemQueryFailed
 args:
   - name: value
+    type: ErlangTerm
   - name: query
+    type: ErlangTerm
 description: >-
   Failed to perform a query on the iterated item: "{query}".
 http_code: 400

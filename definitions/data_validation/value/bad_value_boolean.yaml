@@ -1,6 +1,7 @@
 id: badValueBoolean
 args:
   - name: key
+    type: Binary
 description: >-
   Bad value: provided "{key}" must be a boolean value.
 http_code: 400

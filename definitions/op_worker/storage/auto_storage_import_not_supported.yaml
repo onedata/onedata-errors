@@ -1,6 +1,7 @@
 id: autoStorageImportNotSupported
 args:
   - name: storageId
+    type: Binary
   - name: supportedStorages
     type: Binaries
   - name: supportedObjectStorages

@@ -3,9 +3,11 @@ args:
   - name: childType
     type: Atom
   - name: childId
+    type: Binary
   - name: parentType
     type: Atom
   - name: parentId
+    type: Binary
 x-erl-to_json: |
   to_json(?ERR_RELATION_DOES_NOT_EXIST(ErrorCtx, ChType, ChId, ParType, ParId)) ->
       RelationToString = case {ChType, ParType} of

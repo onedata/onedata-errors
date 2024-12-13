@@ -1,6 +1,7 @@
 id: atmTaskResultMissing
 args:
   - name: missingResultName
+    type: Binary
   - name: receivedResultNames
     type: Binaries
 description: >-

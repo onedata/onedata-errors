@@ -1,6 +1,7 @@
 id: atmStoreTypeDisallowed
 args:
   - name: atmStoreSchemaId
+    type: Binary
   - name: allowed
     type: AtmStoreTypes
 description: >-

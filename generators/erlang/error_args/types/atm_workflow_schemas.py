@@ -11,8 +11,8 @@ from ..expressions import SimpleExpression
 from ..translation_strategies import CustomStrategy, PrintEncodingStrategy
 
 
-class AtmWorkflowSchemas(ErrorArgType):
-    """List of ATM workflow schemas."""
+class AtmWorkflowSchemaIds(ErrorArgType):
+    """List of ATM workflow schema IDs."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(

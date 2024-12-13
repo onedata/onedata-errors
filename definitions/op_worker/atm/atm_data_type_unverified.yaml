@@ -1,6 +1,7 @@
 id: atmDataTypeUnverified
 args:
   - name: value
+    type: ErlangTerm
   - name: expType
     type: AtmDataType
 description: >-

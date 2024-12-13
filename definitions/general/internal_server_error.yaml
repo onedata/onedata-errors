@@ -1,6 +1,7 @@
 id: internalServerError
 args:
   - name: reference
+    type: Binary
     nullable: true
 description: >-
   The server has encountered an error while processing this request.

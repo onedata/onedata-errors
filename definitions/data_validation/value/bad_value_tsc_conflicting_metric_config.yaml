@@ -1,7 +1,9 @@
 id: badValueTimeSeriesCollectionConflictingMetricConfig
 args:
   - name: timeSeriesName
+    type: Binary
   - name: metricName
+    type: Binary
   - name: existingMetricConfig
     type: MetricConfig
   - name: conflictingMetricConfig

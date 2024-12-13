@@ -1,7 +1,9 @@
 id: spaceNotSupportedBy
 args:
   - name: spaceId
+    type: Binary
   - name: providerId
+    type: Binary
 description: >-
   Specified space: "{spaceId}" is not supported by provider "{providerId}".
 http_code: 400

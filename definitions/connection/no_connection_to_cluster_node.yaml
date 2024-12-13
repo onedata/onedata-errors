@@ -1,6 +1,7 @@
 id: noConnectionToClusterNode
 args:
   - name: nodeName  # fixme sugeruje dodac to nowe pole
+    type: Binary
 description: >-
   Operation failed because the service could not connect to the cluster node "{nodeName}".
 http_code: 503

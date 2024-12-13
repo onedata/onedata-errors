@@ -3,9 +3,11 @@ args:
   - name: childType
     type: GriEntityType
   - name: childId
+    type: Binary
   - name: parentType
     type: GriEntityType
   - name: parentId
+    type: Binary
 x-erl-to_json: |
   to_json(?ERR_RELATION_ALREADY_EXISTS(ErrorCtx, ChType, ChId, ParType, ParId)) ->
       RelationToString = case {ChType, ParType} of

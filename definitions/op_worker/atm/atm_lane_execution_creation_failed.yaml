@@ -1,6 +1,7 @@
 id: atmLaneExecutionCreationFailed
 args:
   - name: atmLaneSchemaId
+    type: Binary
   - name: specificError
     type: OnedataError
 description: >-

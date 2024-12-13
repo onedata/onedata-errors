@@ -4,6 +4,7 @@ x-erl-headers:
     - onedata.hrl
 args:
   - name: hostname
+    type: Binary
   - name: clusterType
     type: Atom
 x-erl-to_json: |

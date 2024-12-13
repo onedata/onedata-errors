@@ -1,6 +1,7 @@
 id: badValueOctal
 args:
   - name: key
+    type: Binary
 description: >-
   Bad value: provided "{key}" must be a valid octal number.
 http_code: 400

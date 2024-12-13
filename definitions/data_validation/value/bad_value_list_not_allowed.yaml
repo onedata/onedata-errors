@@ -1,6 +1,7 @@
 id: badValueListNotAllowed
 args:
   - name: key
+    type: Binary
   - name: allowed
     type: Binaries
 description: >-

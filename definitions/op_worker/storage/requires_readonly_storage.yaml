@@ -1,6 +1,7 @@
 id: requiresReadonlyStorage
 args:
   - name: storageIdOrType
+    type: Binary
 description: >-
   Cannot apply for the storage backend "{storageIdOrType}".
   This operation requires a readonly storage backend.

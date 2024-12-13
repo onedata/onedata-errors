@@ -1,6 +1,7 @@
 id: atmTaskResultDispatchFailed
 args:
   - name: atmStoreSchemaId
+    type: Binary
   - name: specificError
     type: OnedataError
 description: >-

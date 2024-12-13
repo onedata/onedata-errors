@@ -1,6 +1,7 @@
 id: forbidden
 args:
   - name: hint
+    type: Binary
     nullable: true
     print_if_null: no details available.
     # TODO VFS-4985 split ERROR_FORBIDDEN into specific errors

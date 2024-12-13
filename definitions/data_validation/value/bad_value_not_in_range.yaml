@@ -1,6 +1,7 @@
 id: badValueNotInRange
 args:
   - name: key
+    type: Binary
   - name: low
     type: Integer
   - name: high

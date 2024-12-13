@@ -1,6 +1,7 @@
 id: badValueIdentifierOccupied
 args:
   - name: key
+    type: Binary
 description: >-
   Bad value: provided identifier ("{key}") is already occupied.
 http_code: 400

@@ -1,7 +1,9 @@
 id: viewQueryFailed
 args:
   - name: category
+    type: Binary
   - name: description
+    type: Binary
 description: >-
   Query on view failed. Error category: {category}. Description: {description}.
 http_code: 400

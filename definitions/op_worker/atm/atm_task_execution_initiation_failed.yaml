@@ -1,6 +1,7 @@
 id: atmTaskExecutionInitiationFailed
 args:
   - name: atmTaskSchemaId
+    type: Binary
   - name: specificError
     type: OnedataError
 description: >-

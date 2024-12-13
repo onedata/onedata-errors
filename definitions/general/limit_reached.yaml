@@ -3,6 +3,7 @@ args:
   - name: limit
     type: ErlangTerm
   - name: resourceDescription
+    type: Binary
 description: >-
   The limit for {resourceDescription} has been reached: {limit}.
 http_code: 400

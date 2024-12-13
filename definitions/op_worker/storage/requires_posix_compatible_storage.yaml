@@ -1,6 +1,7 @@
 id: requiresPosixCompatibleStorage
 args:
   - name: storageId
+    type: Binary
   - name: posixCompatibleStorages
     type: Binaries
 description: >-
