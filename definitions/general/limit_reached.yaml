@@ -1,7 +1,7 @@
 id: limitReached
 args:
   - name: limit
-    type: ErlangTerm
+    type: Integer
   - name: resourceDescription
     type: Binary
 description: >-

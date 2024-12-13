@@ -106,6 +106,7 @@ http_code: 403
 - **Preferred** Use `>-` for folding text block into a single line (newlines are converted to spaces).
 - Use `|-` for multiline descriptions to preserve formatting (newlines are kept).
 - Use `{argumentName}` for argument placeholders in descriptions. The actual values for these arguments will be inserted according to the `print_encoding_strategy`, which can be found in the respective argument type classes.
+- Use `"` as quotes instead of `'`.
 - Consider message readability.
 
 ## Type System
@@ -122,7 +123,6 @@ http_code: 403
 - `Atom` - Erlang atom
 - `Binaries` - List of binary strings
 - `Binary` - Binary string (default)
-- `ByteSize` - Size in bytes
 - `DnsServers` - List of DNS servers
 - `ErlangTerm` - Generic Erlang term
 - `GriEntityType` - GRI entity type

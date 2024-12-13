@@ -1,7 +1,7 @@
 id: atmDataTypeUnverified
 args:
   - name: value
-    type: ErlangTerm
+    type: Json
   - name: expType
     type: AtmDataType
 description: >-

@@ -1,7 +1,7 @@
 id: atmDataValueConstraintUnverified
 args:
   - name: value
-    type: ErlangTerm
+    type: Json
   - name: type
     type: AtmDataType
   - name: valueConstraints
