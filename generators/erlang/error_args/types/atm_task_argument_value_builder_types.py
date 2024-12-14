@@ -24,7 +24,7 @@ class AtmTaskArgumentValueBuilderTypes(ErrorArgType):
         ListMapFunRefExpression(
             module="atm_task_argument_value_builder",
             function="type_to_json",
-            input_template="{var}",
+            input_template="{erl_var}",
         )
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
@@ -34,6 +34,6 @@ class AtmTaskArgumentValueBuilderTypes(ErrorArgType):
         ListMapFunRefExpression(
             module="atm_task_argument_value_builder",
             function="type_from_json",
-            input_template="{var}",
+            input_template="{json_var}",
         )
     )

@@ -5,19 +5,23 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import subprocess
-from typing import List, Tuple
-
+from typing import Dict, List, Tuple, TypedDict
 from ..constants import INDENT, OD_ERROR_FILE_PATH
-from ..error_definitions import OdErrorGroup
+from ..error_definitions import OdError, OdErrorGroup
 from .utils import write_to_file
+
+
+class GroupTree(TypedDict):
+    errors: List[OdError]
+    subgroups: Dict[str, 'GroupTree']
 
 
 def generate_od_error_behaviour(
     template: str, error_groups: List[OdErrorGroup]
 ) -> None:
     """Generate od_error.erl behaviour file from template."""
-    error_group_type_specs, error_group_type_exports = (
-        _generate_error_group_type_specs(error_groups)
+    error_group_type_specs, error_group_type_exports = _generate_error_group_type_specs(
+        error_groups
     )
 
     content = template.format(
@@ -32,7 +36,7 @@ def _generate_error_group_type_specs(
     error_groups: List[OdErrorGroup],
 ) -> Tuple[List[str], List[str]]:
     """Generate hierarchical type specs for error groups."""
-    group_tree = {"errors": [], "subgroups": {}}
+    group_tree: GroupTree = {"errors": [], "subgroups": {}}
     for group in error_groups:
         path_parts = group.name.split("/")
         current_dict = group_tree
@@ -47,7 +51,7 @@ def _generate_error_group_type_specs(
 
 
 def _generate_type_specs_from_tree(
-    tree: dict, prefix: str = ""
+    tree: Dict[str, GroupTree], prefix: str = ""
 ) -> Tuple[List[str], List[str]]:
     """Recursively generate type specs from group tree."""
     specs = []
@@ -92,12 +96,8 @@ def generate_version() -> str:
     try:
         # Get the current commit hash
         result = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            capture_output=True,
-            text=True,
-            check=True
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
         )
-        return result.stdout.strip()[:8]  # Używamy skróconej wersji hasha (8 znaków)
+        return result.stdout.strip()[:8]
     except (subprocess.CalledProcessError, subprocess.SubprocessError):
-        # Fallback w przypadku błędu (np. brak gita lub nie jesteśmy w repo)
         return "unknown"

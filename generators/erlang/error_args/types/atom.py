@@ -22,9 +22,9 @@ class Atom(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("atom_to_binary({var}, utf8)")
+        SimpleExpression("atom_to_binary({erl_var}, utf8)")
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = FromJsonStrategy()
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("binary_to_existing_atom({var}, utf8)")
+        SimpleExpression("binary_to_existing_atom({json_var}, utf8)")
     )

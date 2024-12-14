@@ -21,6 +21,6 @@ class Path(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("str_utils:to_binary(filename:flatten({var}))")
+        SimpleExpression("str_utils:to_binary(filename:flatten({erl_var}))")
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = FromJsonStrategy()

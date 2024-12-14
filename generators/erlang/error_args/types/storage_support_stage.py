@@ -20,8 +20,8 @@ class StorageSupportStage(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~w"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("support_stage:serialize(storage, {var})")
+        SimpleExpression("support_stage:serialize(storage, {erl_var})")
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("support_stage:deserialize(storage, {var})")
+        SimpleExpression("support_stage:deserialize(storage, {json_var})")
     )

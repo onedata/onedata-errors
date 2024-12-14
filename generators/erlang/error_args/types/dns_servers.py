@@ -31,7 +31,7 @@ class DnsServers(ErrorArgType):
                     SimpleExpression("element(2, {{ok, _}} = ip_utils:to_binary(Ip))"),
                 ),
             ],
-            input_template="{var}",
+            input_template="{erl_var}",
         )
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
@@ -48,6 +48,6 @@ class DnsServers(ErrorArgType):
                     ),
                 ),
             ],
-            input_template="{var}",
+            input_template="{json_var}",
         )
     )

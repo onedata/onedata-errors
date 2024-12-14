@@ -1,12 +1,10 @@
 """Expression models for error argument types."""
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import List, Literal, Tuple, Union
+from dataclasses import dataclass, replace
+from typing import List, Literal, Tuple
 
-from .translation_context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
-
-TranslationContext = Union[JsonEncodingCtx, PrintEncodingCtx, JsonDecodingCtx]
+from .core import TranslationContext
 
 LineEnding = Literal["", ",", ";"]
 
@@ -46,7 +44,7 @@ class SimpleExpression(Expression):
         self.template = template
 
     def build(self, ctx: TranslationContext) -> List[Line]:
-        expr = _format_template(self.template, ctx)
+        expr = ctx.format_template(self.template)
         return [Line(expr, ending=",", indent_level=ctx.indent_level)]
 
 
@@ -66,7 +64,7 @@ class ListMapExpression(Expression):
             ending: LineEnding = ";" if i < len(self.fun_clauses) - 1 else ""
             lines.append(Line(f"({pattern}) ->", indent_level=ctx.indent_level + 1))
 
-            clause_ctx = ctx._replace(assign_to=None, indent_level=ctx.indent_level + 2)
+            clause_ctx = replace(ctx, assign_to=None, indent_level=ctx.indent_level + 2)
             clause_lines = expr.build(clause_ctx)
 
             if clause_lines:
@@ -74,9 +72,8 @@ class ListMapExpression(Expression):
 
             lines.extend(clause_lines)
 
-        input_list = self.input_template.format(
-            var=ctx.erl_var if isinstance(ctx, JsonEncodingCtx) else ctx.json_var
-        )
+        input_list = ctx.format_template(self.input_template)
+
         lines.append(
             Line(f"end, {input_list})", ending=",", indent_level=ctx.indent_level)
         )
@@ -94,9 +91,8 @@ class ListMapFunRefExpression(Expression):
         self.input_template = input_template
 
     def build(self, ctx: TranslationContext) -> List[Line]:
-        input_list = self.input_template.format(
-            var=ctx.erl_var if isinstance(ctx, JsonEncodingCtx) else ctx.json_var
-        )
+        input_list = ctx.format_template(self.input_template)
+
         return [
             Line(
                 f"lists:map(fun {self.module}:{self.function}/1, {input_list})",
@@ -115,9 +111,8 @@ class CaseExpression(Expression):
         self.clauses = clauses
 
     def build(self, ctx: TranslationContext) -> List[Line]:
-        match_var = self.match_template.format(
-            var=ctx.erl_var if isinstance(ctx, JsonEncodingCtx) else ctx.json_var
-        )
+        match_var = ctx.format_template(self.match_template)
+
         lines = [Line(f"case {match_var} of", indent_level=ctx.indent_level)]
 
         for i, (pattern, expr) in enumerate(self.clauses):
@@ -125,7 +120,7 @@ class CaseExpression(Expression):
             ending: LineEnding = ";" if i < len(self.clauses) - 1 else ""
             lines.append(Line(f"{pattern} ->", indent_level=ctx.indent_level + 1))
 
-            clause_ctx = ctx._replace(assign_to=None, indent_level=ctx.indent_level + 2)
+            clause_ctx = replace(ctx, assign_to=None, indent_level=ctx.indent_level + 2)
             clause_lines = expr.build(clause_ctx)
 
             if clause_lines:
@@ -150,24 +145,12 @@ class CodeLines(Expression):
         for code_line in self.lines:
             result.append(
                 Line(
-                    content=_format_template(code_line.template, ctx),
+                    content=ctx.format_template(code_line.template),
                     indent_level=ctx.indent_level + code_line.extra_indent,
                     ending=code_line.ending,
                 )
             )
         return result
-
-
-def _format_template(template: str, ctx: TranslationContext) -> str:
-    """Helper for formatting template string based on context type."""
-    if isinstance(ctx, JsonEncodingCtx):
-        return template.format(var=ctx.erl_var)
-    if isinstance(ctx, JsonDecodingCtx):
-        return template.format(var=ctx.json_var)
-    if isinstance(ctx, PrintEncodingCtx):
-        return template.format(erl_var=ctx.erl_var, json_var=ctx.json_var)
-
-    raise ValueError(f"Unsupported context type: {type(ctx)}")
 
 
 def format_lines(lines: List[Line], ctx: TranslationContext) -> List[str]:

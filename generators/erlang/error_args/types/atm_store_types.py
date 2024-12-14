@@ -22,7 +22,9 @@ class AtmStoreTypes(ErrorArgType):
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
         ListMapFunRefExpression(
-            module="automation", function="store_type_to_json", input_template="{var}"
+            module="automation",
+            function="store_type_to_json",
+            input_template="{erl_var}",
         )
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
@@ -30,6 +32,8 @@ class AtmStoreTypes(ErrorArgType):
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
         ListMapFunRefExpression(
-            module="automation", function="store_type_from_json", input_template="{var}"
+            module="automation",
+            function="store_type_from_json",
+            input_template="{json_var}",
         )
     )

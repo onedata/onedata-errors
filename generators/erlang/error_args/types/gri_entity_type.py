@@ -22,9 +22,9 @@ class GriEntityType(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("gri:serialize_type({var})")
+        SimpleExpression("gri:serialize_type({erl_var})")
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = FromJsonStrategy()
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("gri:deserialize_type({var})")
+        SimpleExpression("gri:deserialize_type({json_var})")
     )

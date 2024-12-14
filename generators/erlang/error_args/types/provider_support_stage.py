@@ -20,8 +20,8 @@ class ProviderSupportStage(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~w"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("support_stage:serialize(provider, {var})")
+        SimpleExpression("support_stage:serialize(provider, {erl_var})")
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("support_stage:deserialize(provider, {var})")
+        SimpleExpression("support_stage:deserialize(provider, {json_var})")
     )

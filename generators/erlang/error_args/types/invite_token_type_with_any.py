@@ -21,19 +21,19 @@ class InviteTokenTypeWithAny(ErrorArgType):
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
         CaseExpression(
-            match_template="{var}",
+            match_template="{erl_var}",
             clauses=[
                 ("any", SimpleExpression('<<"any">>')),
-                ("_", SimpleExpression("token_type:invite_type_to_str({var})")),
+                ("_", SimpleExpression("token_type:invite_type_to_str({erl_var})")),
             ],
         )
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
         CaseExpression(
-            match_template="{var}",
+            match_template="{json_var}",
             clauses=[
                 ('<<"any">>', SimpleExpression("any")),
-                ("_", SimpleExpression("token_type:invite_type_from_str({var})")),
+                ("_", SimpleExpression("token_type:invite_type_from_str({json_var})")),
             ],
         )
     )

@@ -21,11 +21,11 @@ class UnverifiedCaveat(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("caveats:to_json({var})")
+        SimpleExpression("caveats:to_json({erl_var})")
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
         SimpleExpression("caveats:unverified_description({erl_var})")
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("caveats:from_json({var})")
+        SimpleExpression("caveats:from_json({json_var})")
     )
