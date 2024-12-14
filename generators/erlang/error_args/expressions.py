@@ -1,21 +1,14 @@
 """Expression models for error argument types."""
 
-from abc import ABC, abstractmethod
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
 from dataclasses import dataclass, replace
-from typing import List, Literal, Tuple
+from typing import List, Tuple
 
-from .core import TranslationContext
-
-LineEnding = Literal["", ",", ";"]
-
-
-@dataclass
-class Line:
-    """Represents a single line of code with optional indentation level and line ending."""
-
-    content: str
-    indent_level: int = 0
-    ending: LineEnding = ""
+from .abc import Expression, Line, TranslationContext
+from .core import LineEnding
 
 
 @dataclass
@@ -28,12 +21,11 @@ class CodeLine:
 
 
 # pylint: disable=too-few-public-methods
-class Expression(ABC):
-    """Base class for Erlang expressions."""
+class NoopExpression(Expression):
+    """Expression that generates no code."""
 
-    @abstractmethod
-    def build(self, ctx: TranslationContext) -> List[Line]:
-        """Build code lines using provided context."""
+    def build(self, _ctx: TranslationContext) -> List[Line]:
+        return []
 
 
 # pylint: disable=too-few-public-methods

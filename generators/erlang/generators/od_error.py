@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 
 import subprocess
 from typing import Dict, List, Tuple, TypedDict
+
 from ..constants import INDENT, OD_ERROR_FILE_PATH
 from ..error_definitions import OdError, OdErrorGroup
 from .utils import write_to_file
@@ -13,7 +14,7 @@ from .utils import write_to_file
 
 class GroupTree(TypedDict):
     errors: List[OdError]
-    subgroups: Dict[str, 'GroupTree']
+    subgroups: Dict[str, "GroupTree"]
 
 
 def generate_od_error_behaviour(

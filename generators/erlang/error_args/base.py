@@ -117,41 +117,46 @@ class ErrorArgType(ABC):
     def _generate_to_json_encoding(
         self, *, is_printed: bool = False, indent_level: int = 1
     ) -> ErrorArgToJsonEncoding:
+        """Generate code for JSON encoding."""
+
         tokens = []
-
         erl_var = self.get_erlang_variable_name()
-        json_var = erl_var
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
+            erl_var=erl_var,
+            assign_to=(
+                f"{erl_var}Json"
+                if isinstance(self.json_encoding_strategy, CustomStrategy)
+                else None
+            ),
+            indent_level=indent_level,
+        )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        tokens.extend(format_lines(json_result.expression.build(json_ctx), json_ctx))
+
+        # Prepare print encoding if needed
         print_var = None
-
-        if isinstance(self.json_encoding_strategy, CustomStrategy):
-            json_var = f"{erl_var}Json"
-            tokens.extend(
-                self._generate_custom_json_encoding(
-                    erl_var=erl_var,
-                    assign_to=json_var,
-                    indent_level=indent_level,
-                )
-            )
-
         if is_printed:
-            if isinstance(self.print_encoding_strategy, DirectStrategy):
-                print_var = erl_var
-            elif isinstance(self.print_encoding_strategy, FromJsonStrategy):
-                print_var = json_var
-            elif isinstance(self.print_encoding_strategy, CustomStrategy):
-                print_var = f"{erl_var}Print"
-                tokens.extend(
-                    self._generate_custom_print_encoding(
-                        json_var=json_var,
-                        erl_var=erl_var,
-                        assign_to=print_var,
-                        indent_level=indent_level,
-                    )
-                )
+            print_ctx = PrintEncodingCtx(
+                erl_var=erl_var,
+                json_var=json_result.target_var,
+                assign_to=(
+                    f"{erl_var}Print"
+                    if isinstance(self.print_encoding_strategy, CustomStrategy)
+                    else None
+                ),
+                indent_level=indent_level,
+            )
+            print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+            tokens.extend(
+                format_lines(print_result.expression.build(print_ctx), print_ctx)
+            )
+            print_var = print_result.target_var
 
         return ErrorArgToJsonEncoding(
             tokens=tokens,
-            json_var=json_var,
+            json_var=json_result.target_var,
             print_var=print_var,
         )
 
@@ -177,29 +182,34 @@ class ErrorArgType(ABC):
         json_var = f"{erl_var}Json"
         print_var = f"{erl_var}Print"
 
-        # Prepare variables for the non-undefined case based on strategies
-        if isinstance(self.json_encoding_strategy, CustomStrategy):
-            json_case_var = f"{erl_var}JsonTmp"
-            json_tokens = self._generate_custom_json_encoding(
-                erl_var=erl_var,
-                assign_to=json_case_var,
-                indent_level=indent_level + 2,
-            )
-        else:
-            json_case_var = erl_var
-            json_tokens = []
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
+            erl_var=erl_var,
+            assign_to=(
+                f"{erl_var}JsonTmp"
+                if isinstance(self.json_encoding_strategy, CustomStrategy)
+                else None
+            ),
+            indent_level=indent_level + 2,
+        )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_tokens = format_lines(json_result.expression.build(json_ctx), json_ctx)
+        json_case_var = json_result.target_var or erl_var
 
-        if isinstance(self.print_encoding_strategy, CustomStrategy):
-            print_case_var = f"{erl_var}PrintTmp"
-            print_tokens = self._generate_custom_print_encoding(
-                erl_var=erl_var,
-                json_var=json_case_var,
-                assign_to=print_case_var,
-                indent_level=indent_level + 2,
-            )
-        else:
-            print_case_var = json_case_var
-            print_tokens = []
+        # Prepare print encoding
+        print_ctx = PrintEncodingCtx(
+            erl_var=erl_var,
+            json_var=json_case_var,
+            assign_to=(
+                f"{erl_var}PrintTmp"
+                if isinstance(self.print_encoding_strategy, CustomStrategy)
+                else None
+            ),
+            indent_level=indent_level + 2,
+        )
+        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_tokens = format_lines(print_result.expression.build(print_ctx), print_ctx)
+        print_case_var = print_result.target_var or json_case_var
 
         tokens = self._generate_nullable_case_statement(
             indent_level=indent_level,
@@ -237,31 +247,36 @@ class ErrorArgType(ABC):
         return encoding._replace(print_var=encoding.json_var)
 
     def _generate_nullable_direct_json_and_custom_print_encoding(
-        self, *, indent_level: int
+        self, *, indent_level: int = 1
     ) -> ErrorArgToJsonEncoding:
         erl_var = self.get_erlang_variable_name()
         json_var = f"{erl_var}Json"
-
         print_var = f"{erl_var}Print"
-        print_case_var = f"{erl_var}PrintTmp"
-        print_encoding_tokens = self._generate_custom_print_encoding(
-            json_var=erl_var,
+        # Prepare print encoding
+        print_ctx = PrintEncodingCtx(
             erl_var=erl_var,
-            assign_to=print_case_var,
+            json_var=erl_var,  # Direct strategy uses erl_var
+            assign_to=f"{erl_var}PrintTmp",
             indent_level=indent_level + 2,
         )
+        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_tokens = format_lines(print_result.expression.build(print_ctx), print_ctx)
+        print_case_var = print_result.target_var
 
         tokens = self._generate_nullable_case_statement(
             indent_level=indent_level,
             json_var=json_var,
             print_var=print_var,
             erl_var=erl_var,
-            encoding_tokens=print_encoding_tokens,
-            json_case_var=erl_var,
+            encoding_tokens=print_tokens,
+            json_case_var=erl_var,  # Direct strategy uses erl_var
             print_case_var=print_case_var,
         )
+
         return ErrorArgToJsonEncoding(
-            tokens=tokens, json_var=json_var, print_var=print_var
+            tokens=tokens,
+            json_var=json_var,
+            print_var=print_var,
         )
 
     def _generate_nullable_custom_json_encoding(
@@ -269,16 +284,23 @@ class ErrorArgType(ABC):
     ) -> ErrorArgToJsonEncoding:
         erl_var = self.get_erlang_variable_name()
         json_var = f"{erl_var}Json"
-        json_encoding_tokens = self._generate_custom_json_encoding(
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
             erl_var=erl_var,
+            assign_to=None,  # No need for temporary var - we're inside case
             indent_level=indent_level + 2,
         )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_tokens = format_lines(json_result.expression.build(json_ctx), json_ctx)
+
         tokens = self._generate_nullable_case_statement(
             indent_level=indent_level,
             json_var=json_var,
             erl_var=erl_var,
-            encoding_tokens=json_encoding_tokens,
+            encoding_tokens=json_tokens,
         )
+
         return ErrorArgToJsonEncoding(tokens=tokens, json_var=json_var, print_var=None)
 
     def _generate_nullable_custom_json_and_print_from_json_encoding(
@@ -293,63 +315,74 @@ class ErrorArgType(ABC):
         self, *, indent_level: int
     ) -> ErrorArgToJsonEncoding:
         erl_var = self.get_erlang_variable_name()
-
         json_var = f"{erl_var}Json"
-        json_case_var = f"{erl_var}JsonTmp"
-        json_encoding_tokens = self._generate_custom_json_encoding(
+        print_var = f"{erl_var}Print"
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
             erl_var=erl_var,
-            assign_to=json_case_var,
+            assign_to=f"{erl_var}JsonTmp",
             indent_level=indent_level + 2,
         )
-
-        print_var = f"{erl_var}Print"
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_tokens = format_lines(json_result.expression.build(json_ctx), json_ctx)
 
         tokens = self._generate_nullable_case_statement(
             indent_level=indent_level,
             json_var=json_var,
             print_var=print_var,
             erl_var=erl_var,
-            encoding_tokens=json_encoding_tokens,
-            json_case_var=json_case_var,
-            print_case_var=erl_var,
+            encoding_tokens=json_tokens,
+            json_case_var=json_result.target_var,
+            print_case_var=erl_var,  # Direct strategy uses erl_var
         )
+
         return ErrorArgToJsonEncoding(
-            tokens=tokens, json_var=json_var, print_var=print_var
+            tokens=tokens,
+            json_var=json_var,
+            print_var=print_var,
         )
 
     def _generate_nullable_custom_json_and_print_encoding(
         self, *, indent_level: int
     ) -> ErrorArgToJsonEncoding:
         erl_var = self.get_erlang_variable_name()
-
         json_var = f"{erl_var}Json"
-        json_case_var = f"{erl_var}JsonTmp"
-        json_encoding_tokens = self._generate_custom_json_encoding(
-            erl_var=erl_var,
-            assign_to=json_case_var,
-            indent_level=indent_level + 2,
-        )
-
         print_var = f"{erl_var}Print"
-        print_case_var = f"{erl_var}PrintTmp"
-        print_encoding_tokens = self._generate_custom_print_encoding(
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
             erl_var=erl_var,
-            json_var=json_case_var,
-            assign_to=print_case_var,
+            assign_to=f"{erl_var}JsonTmp",
             indent_level=indent_level + 2,
         )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_tokens = format_lines(json_result.expression.build(json_ctx), json_ctx)
+
+        # Prepare print encoding
+        print_ctx = PrintEncodingCtx(
+            erl_var=erl_var,
+            json_var=json_result.target_var,
+            assign_to=f"{erl_var}PrintTmp",
+            indent_level=indent_level + 2,
+        )
+        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_tokens = format_lines(print_result.expression.build(print_ctx), print_ctx)
 
         tokens = self._generate_nullable_case_statement(
             indent_level=indent_level,
             json_var=json_var,
             print_var=print_var,
             erl_var=erl_var,
-            encoding_tokens=json_encoding_tokens + print_encoding_tokens,
-            json_case_var=json_case_var,
-            print_case_var=print_case_var,
+            encoding_tokens=json_tokens + print_tokens,
+            json_case_var=json_result.target_var,
+            print_case_var=print_result.target_var,
         )
+
         return ErrorArgToJsonEncoding(
-            tokens=tokens, json_var=json_var, print_var=print_var
+            tokens=tokens,
+            json_var=json_var,
+            print_var=print_var,
         )
 
     # pylint: disable=too-many-arguments
@@ -423,38 +456,6 @@ class ErrorArgType(ABC):
             CustomStrategy,
         ): _generate_nullable_custom_json_and_print_encoding,
     }
-
-    def _generate_custom_json_encoding(
-        self, *, erl_var: str, assign_to: Optional[str] = None, indent_level: int = 1
-    ) -> List[str]:
-        if not isinstance(self.json_encoding_strategy, CustomStrategy):
-            raise ValueError("This should never happen")
-
-        ctx = JsonEncodingCtx(
-            erl_var=erl_var, assign_to=assign_to, indent_level=indent_level
-        )
-        # pylint: disable=no-member
-        return format_lines(self.json_encoding_strategy.expression.build(ctx), ctx)
-
-    def _generate_custom_print_encoding(
-        self,
-        *,
-        json_var: str,
-        erl_var: str,
-        assign_to: Optional[str] = None,
-        indent_level: int = 1,
-    ) -> List[str]:
-        if not isinstance(self.print_encoding_strategy, CustomStrategy):
-            raise ValueError("This should never happen")
-
-        ctx = PrintEncodingCtx(
-            erl_var=erl_var,
-            json_var=json_var,
-            assign_to=assign_to,
-            indent_level=indent_level,
-        )
-        # pylint: disable=no-member
-        return format_lines(self.print_encoding_strategy.expression.build(ctx), ctx)
 
     def _generate_custom_json_decoding(
         self, *, json_var: str, assign_to: Optional[str] = None, indent_level: int = 1
