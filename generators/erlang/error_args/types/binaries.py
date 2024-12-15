@@ -7,8 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..expressions import SimpleExpression
-from ..translation_strategies import CustomStrategy, PrintEncodingStrategy
+from ..translation.expressions import SimpleExpression
+from ..translation.strategies import CustomStrategy, PrintEncodingStrategy
 
 
 class Binaries(ErrorArgType):

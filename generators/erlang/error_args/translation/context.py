@@ -24,7 +24,7 @@ class JsonEncodingCtx(TranslationContext):
     assign_to: Optional[str] = None
     indent_level: int = 1
 
-    def _format_fields(self) -> Dict[str, str]:
+    def get_template_vars(self) -> Dict[str, str]:
         return {"erl_var": self.erl_var}
 
     def prepare_expression(self, strategy: JsonEncodingStrategy) -> PreparedExpression:
@@ -39,7 +39,7 @@ class JsonDecodingCtx(TranslationContext):
     assign_to: Optional[str] = None
     indent_level: int = 1
 
-    def _format_fields(self) -> Dict[str, str]:
+    def get_template_vars(self) -> Dict[str, str]:
         return {"json_var": self.json_var}
 
     def prepare_expression(self, strategy: JsonDecodingStrategy) -> PreparedExpression:
@@ -55,7 +55,7 @@ class PrintEncodingCtx(TranslationContext):
     assign_to: Optional[str] = None
     indent_level: int = 1
 
-    def _format_fields(self) -> Dict[str, str]:
+    def get_template_vars(self) -> Dict[str, str]:
         return {"erl_var": self.erl_var, "json_var": self.json_var}
 
     def prepare_expression(self, strategy: PrintEncodingStrategy) -> PreparedExpression:

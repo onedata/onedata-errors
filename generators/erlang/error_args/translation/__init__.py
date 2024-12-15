@@ -1,4 +1,4 @@
-"""Error argument types package."""
+"""Error argument types translation package."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"

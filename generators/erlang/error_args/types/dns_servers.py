@@ -7,8 +7,8 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..expressions import ListMapExpression, SimpleExpression
-from ..translation_strategies import (
+from ..translation.expressions import ListMapExpression, SimpleExpression
+from ..translation.strategies import (
     CustomStrategy,
     JsonDecodingStrategy,
     JsonEncodingStrategy,

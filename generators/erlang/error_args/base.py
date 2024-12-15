@@ -7,9 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from abc import ABC
 from typing import ClassVar, List, NamedTuple, Optional
 
-from .expressions import format_lines
-from .translation_context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
-from .translation_strategies import (
+from .translation.context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
+from .translation.core import Line
+from .translation.strategies import (
     CustomStrategy,
     DirectStrategy,
     FromJsonStrategy,
@@ -133,7 +133,7 @@ class ErrorArgType(ABC):
             indent_level=indent_level,
         )
         json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
-        tokens.extend(format_lines(json_result.expression.build(json_ctx), json_ctx))
+        tokens.extend(self._format_lines(json_result.expression.build(json_ctx)))
 
         # Prepare print encoding if needed
         print_var = None
@@ -149,9 +149,7 @@ class ErrorArgType(ABC):
                 indent_level=indent_level,
             )
             print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
-            tokens.extend(
-                format_lines(print_result.expression.build(print_ctx), print_ctx)
-            )
+            tokens.extend(self._format_lines(print_result.expression.build(print_ctx)))
             print_var = print_result.target_var
 
         return ErrorArgToJsonEncoding(
@@ -193,7 +191,7 @@ class ErrorArgType(ABC):
             indent_level=indent_level + 2,
         )
         json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
-        json_tokens = format_lines(json_result.expression.build(json_ctx), json_ctx)
+        json_tokens = self._format_lines(json_result.expression.build(json_ctx))
         json_case_var = json_result.target_var or erl_var
 
         # Prepare print encoding
@@ -208,7 +206,7 @@ class ErrorArgType(ABC):
             indent_level=indent_level + 2,
         )
         print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
-        print_tokens = format_lines(print_result.expression.build(print_ctx), print_ctx)
+        print_tokens = self._format_lines(print_result.expression.build(print_ctx))
         print_case_var = print_result.target_var or json_case_var
 
         tokens = self._generate_nullable_case_statement(
@@ -260,7 +258,7 @@ class ErrorArgType(ABC):
             indent_level=indent_level + 2,
         )
         print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
-        print_tokens = format_lines(print_result.expression.build(print_ctx), print_ctx)
+        print_tokens = self._format_lines(print_result.expression.build(print_ctx))
         print_case_var = print_result.target_var
 
         tokens = self._generate_nullable_case_statement(
@@ -292,7 +290,7 @@ class ErrorArgType(ABC):
             indent_level=indent_level + 2,
         )
         json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
-        json_tokens = format_lines(json_result.expression.build(json_ctx), json_ctx)
+        json_tokens = self._format_lines(json_result.expression.build(json_ctx))
 
         tokens = self._generate_nullable_case_statement(
             indent_level=indent_level,
@@ -325,7 +323,7 @@ class ErrorArgType(ABC):
             indent_level=indent_level + 2,
         )
         json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
-        json_tokens = format_lines(json_result.expression.build(json_ctx), json_ctx)
+        json_tokens = self._format_lines(json_result.expression.build(json_ctx))
 
         tokens = self._generate_nullable_case_statement(
             indent_level=indent_level,
@@ -357,7 +355,7 @@ class ErrorArgType(ABC):
             indent_level=indent_level + 2,
         )
         json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
-        json_tokens = format_lines(json_result.expression.build(json_ctx), json_ctx)
+        json_tokens = self._format_lines(json_result.expression.build(json_ctx))
 
         # Prepare print encoding
         print_ctx = PrintEncodingCtx(
@@ -367,7 +365,7 @@ class ErrorArgType(ABC):
             indent_level=indent_level + 2,
         )
         print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
-        print_tokens = format_lines(print_result.expression.build(print_ctx), print_ctx)
+        print_tokens = self._format_lines(print_result.expression.build(print_ctx))
 
         tokens = self._generate_nullable_case_statement(
             indent_level=indent_level,
@@ -467,4 +465,12 @@ class ErrorArgType(ABC):
             json_var=json_var, assign_to=assign_to, indent_level=indent_level
         )
         # pylint: disable=no-member
-        return format_lines(self.json_decoding_strategy.expression.build(ctx), ctx)
+        return self._format_lines(self.json_decoding_strategy.expression.build(ctx))
+
+    @staticmethod
+    def _format_lines(lines: List[Line]) -> List[str]:
+        """Format lines with proper indentation."""
+        return [
+            f"{INDENT * line.indent_level}{line.content}{line.ending}\n"
+            for line in lines
+        ]
