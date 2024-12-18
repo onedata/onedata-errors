@@ -126,7 +126,7 @@ http_code: 403
 - `DnsServers` - List of DNS servers
 - `GriEntityType` - GRI entity type
 - `Integer` - Integer number
-- `InviteTokenTypeWithAny` - Invite token type with "any" option
+- `InviteTokenType` - Invite token type
 - `Json` - JSON value
 - `OnedataError` - Onedata error
 - `Path` - File system path

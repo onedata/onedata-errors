@@ -1,7 +1,7 @@
 id: notAnInviteToken
 args:
   - name: expectedInviteType
-    type: InviteTokenTypeWithAny
+    type: InviteTokenType
   - name: received
     type: TokenType
 description: >-
