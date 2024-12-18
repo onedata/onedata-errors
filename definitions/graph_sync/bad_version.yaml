@@ -1,7 +1,8 @@
 id: badVersion
 args:
   - name: supportedVersions
-    type: ErlangTerm
+    type: Binaries
+    # note: those are binaries in case of cdmi but ints for graph sync
 description: >-
   GraphSync error: bad protocol version; supported versions: {supportedVersions}.
 http_code: 400

@@ -3,7 +3,8 @@ args:
   - name: value
     type: Json
   - name: query
-    type: ErlangTerm
+    type: Json
+    # example: ["attr1", "[2]"] to point to "a" in {"attr1": [1, null, "a"], "attr2": "val2"}
 description: >-
-  Failed to perform a query on the iterated item: "{query}".
+  Failed to perform a query on the iterated item: {query}.
 http_code: 400

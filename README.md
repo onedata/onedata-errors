@@ -124,7 +124,6 @@ http_code: 403
 - `Binaries` - List of binary strings
 - `Binary` - Binary string (default)
 - `DnsServers` - List of DNS servers
-- `ErlangTerm` - Generic Erlang term
 - `GriEntityType` - GRI entity type
 - `Integer` - Integer number
 - `InviteTokenTypeWithAny` - Invite token type with "any" option

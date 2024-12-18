@@ -5,6 +5,7 @@ args:
   - name: allowedStates
     type: Binaries
 x-erl-to_json: |
+  % TODO VFS-12556 Fix and simplyfy args encoding
   to_json(?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(ErrorCtx, CurrentState, AllowedStates)) ->
       #{
           <<"id">> => ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
@@ -19,6 +20,7 @@ x-erl-to_json: |
           }
       }.
 x-erl-from_json: |
+  % TODO VFS-12556 Fix and simplyfy args decoding
   from_json(ErrorJson = #{
       <<"id">> := ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
       <<"details">> := #{

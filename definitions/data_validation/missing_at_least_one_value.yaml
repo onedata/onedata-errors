@@ -1,7 +1,8 @@
 id: missingAtLeastOneValue
 args:
   - name: keys
-    type: ErlangTerm
+    type: Binaries
+    # note: keys may be atoms
 description: >-
   The request data was missing some values; you must provide at least one of: {keys}.
 http_code: 400
