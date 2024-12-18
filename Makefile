@@ -1,5 +1,6 @@
 .PHONY: format black-check static-analysis type-check lint clean erlang
 
+PYTHON ?= python3
 STATIC_ANALYSER_IMAGE := "docker.onedata.org/python_static_analyser:v8"
 SRC_FILES := generators/
 
@@ -57,4 +58,4 @@ clean:
 	@echo "Cleaned generated files."
 
 erlang:
-	python -m generators.erlang.gen_erl
+	$(PYTHON) -m generators.erlang.gen_erl

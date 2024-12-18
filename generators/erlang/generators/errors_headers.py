@@ -123,9 +123,9 @@ def _build_error_new_macro_definition(od_error: OdError) -> str:
 
     if od_error.args:
         args = ", ".join(od_error.get_args_as_erlang_variable_names())
-        error_expansion = f"?ERR({error_type_macro}, {{{args}}}, ErrCtx)"
+        error_expansion = f"?ERR({error_type_macro}, {{{args}}}, ErrorCtx)"
     else:
-        error_expansion = f"?ERR({error_type_macro}, undefined, ErrCtx)"
+        error_expansion = f"?ERR({error_type_macro}, undefined, ErrorCtx)"
 
     return f"-define({new_macro}, {error_expansion})."
 
