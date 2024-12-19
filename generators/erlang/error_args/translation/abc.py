@@ -83,22 +83,6 @@ class PreparedExpression:
     target_var: str
 
 
-
-@dataclass
-class JsonEncodingCtx(TranslationContext):
-    """Context for JSON encoding."""
-
-    erl_var: str
-    assign_to: Optional[str] = None
-    indent_level: int = 1
-
-    def get_template_vars(self) -> Dict[str, str]:
-        return {"erl_var": self.erl_var}
-
-    def prepare_expression(self, strategy: "JsonEncodingStrategy") -> PreparedExpression:
-        return strategy.prepare_json_encoding(self)
-
-
 class JsonEncodingStrategy(ABC):
     """Strategy for JSON encoding."""
 
