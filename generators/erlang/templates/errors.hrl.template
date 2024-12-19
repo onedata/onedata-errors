@@ -41,6 +41,15 @@
     }}
 ).
 
+-define(UNDEFINED_ERR_CTX,
+    #od_error_ctx{{
+        file = undefined,
+        line = undefined,
+        timestamp = undefined,
+        version = undefined
+    }}
+).
+
 -define(ERR, {{error, #od_error{{}}}}).
 -define(ERR(Type), {{error, #od_error{{type = Type}}}}).
 -define(ERR(Type, Args), {{error, #od_error{{type = Type, args = Args}}}}).
