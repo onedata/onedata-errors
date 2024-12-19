@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import SimpleExpression
+from ..translation.expressions import FunCallExpression
 from ..translation.strategies import (
     CustomStrategy,
     JsonDecodingStrategy,
@@ -20,8 +20,8 @@ class InviteTokenType(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("token_type:invite_type_to_str({erl_var})"),
+        FunCallExpression("token_type", "invite_type_to_str", ["{erl_var}"]),
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("token_type:invite_type_from_str({json_var})"),
+        FunCallExpression("token_type", "invite_type_from_str", ["{json_var}"]),
     )

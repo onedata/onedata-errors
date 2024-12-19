@@ -48,6 +48,24 @@ class NoopExpression(Expression):
         return []
 
 
+class FunCallExpression(Expression):
+    """Expression representing a function call with module, function and arguments."""
+
+    def __init__(self, module: str, function: str, args: List[str]):
+        self.module = module
+        self.function = function
+        self.args = args
+
+    def is_simple_var_call(self) -> bool:
+        """Check if expression is just a function call with single variable."""
+        return len(self.args) == 1
+
+    def _build(self, ctx: TranslationContext) -> List[Line]:
+        formatted_args = [ctx.format_template(arg) for arg in self.args]
+        expr = f"{self.module}:{self.function}({', '.join(formatted_args)})"
+        return [Line(expr, ending=",", indent_level=ctx.indent_level)]
+
+
 # pylint: disable=too-few-public-methods
 class SimpleExpression(Expression):
     """Single line expression."""

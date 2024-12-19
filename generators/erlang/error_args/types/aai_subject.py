@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import SimpleExpression
+from ..translation.expressions import FunCallExpression
 from ..translation.strategies import (
     CustomStrategy,
     JsonDecodingStrategy,
@@ -21,11 +21,11 @@ class AaiSubject(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("aai:subject_to_json({erl_var})")
+        FunCallExpression("aai", "subject_to_json", ["{erl_var}"])
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("aai:subject_to_printable({erl_var})")
+        FunCallExpression("aai", "subject_to_printable", ["{erl_var}"])
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("aai:subject_from_json({json_var})")
+        FunCallExpression("aai", "subject_from_json", ["{json_var}"])
     )

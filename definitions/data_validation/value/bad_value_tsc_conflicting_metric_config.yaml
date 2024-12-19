@@ -8,8 +8,6 @@ args:
     type: MetricConfig
   - name: conflictingMetricConfig
     type: MetricConfig
-    # fixme trzeba dodac printabla dla tego configa, proponuje by wychodzilo cos takiego:
-    # str_utils:format("metric_config{resolution = ~B, retention = ~B, aggregator = ~ts}").
 description: >-
   Bad value: Provided metric config for time series "{timeSeriesName}" and metric "{metricName}"
   conflicts with existing metric config: {conflictingMetricConfig}.

@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import SimpleExpression
+from ..translation.expressions import FunCallExpression
 from ..translation.strategies import (
     CustomStrategy,
     JsonDecodingStrategy,
@@ -20,8 +20,8 @@ class StorageSupportStage(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~w"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("support_stage:serialize(storage, {erl_var})")
+        FunCallExpression("support_stage", "serialize", ["storage", "{erl_var}"])
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("support_stage:deserialize(storage, {json_var})")
+        FunCallExpression("support_stage", "deserialize", ["storage", "{json_var}"])
     )

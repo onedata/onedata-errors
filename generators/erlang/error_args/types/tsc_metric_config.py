@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import SimpleExpression
+from ..translation.expressions import FunCallExpression
 from ..translation.strategies import (
     CustomStrategy,
     JsonDecodingStrategy,
@@ -21,11 +21,11 @@ class MetricConfig(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("jsonable_record:to_json({erl_var}, metric_config)")
+        FunCallExpression("jsonable_record", "to_json", ["{erl_var}", "metric_config"])
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("metric_config:to_binary({erl_var})")
+        FunCallExpression("metric_config", "to_binary", ["{erl_var}"])
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("jsonable_record:from_json({json_var}, metric_config)")
+        FunCallExpression("jsonable_record", "from_json", ["{json_var}", "metric_config"])
     )

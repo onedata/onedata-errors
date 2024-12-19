@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import SimpleExpression
+from ..translation.expressions import FunCallExpression
 from ..translation.strategies import (
     CustomStrategy,
     JsonDecodingStrategy,
@@ -21,11 +21,11 @@ class UnverifiedCaveat(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("caveats:to_json({erl_var})")
+        FunCallExpression("caveats", "to_json", ["{erl_var}"])
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("caveats:unverified_description({erl_var})")
+        FunCallExpression("caveats", "unverified_description", ["{erl_var}"])
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("caveats:from_json({json_var})")
+        FunCallExpression("caveats", "from_json", ["{json_var}"])
     )

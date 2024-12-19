@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import SimpleExpression
+from ..translation.expressions import FunCallExpression
 from ..translation.strategies import (
     CustomStrategy,
     FromJsonStrategy,
@@ -22,9 +22,9 @@ class Atom(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        SimpleExpression("atom_to_binary({erl_var}, utf8)")
+        FunCallExpression("erlang", "atom_to_binary", ["{erl_var}", "utf8"])
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = FromJsonStrategy()
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        SimpleExpression("binary_to_existing_atom({json_var}, utf8)")
+        FunCallExpression("erlang", "binary_to_existing_atom", ["{json_var}", "utf8"])
     )
