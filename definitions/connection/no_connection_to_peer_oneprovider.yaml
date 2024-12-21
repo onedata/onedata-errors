@@ -1,8 +1,8 @@
 id: noConnectionToPeerOneprovider
 args:
-  - name: providerId      # fixme sugeruje dodac to nowe pole
+  - name: providerId
     type: Binary
-  - name: providerDomain  # fixme sugeruje dodac to nowe pole
+  - name: providerDomain
     type: Binary
 description: >-
   Operation failed because the service could not connect 

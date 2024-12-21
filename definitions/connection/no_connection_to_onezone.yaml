@@ -1,6 +1,6 @@
 id: noConnectionToOnezone
 args:
-  - name: zoneDomain  # fixme sugeruje dodac to nowe pole
+  - name: zoneDomain
     type: Binary
 description: >-
   Operation failed because the service could not connect 
