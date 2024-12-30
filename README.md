@@ -115,11 +115,14 @@ http_code: 403
 - `AaiService` - AAI service type  
 - `AaiSubject` - AAI subject type
 - `AtmDataType` - ATM data type
+<!--- TODO VFS-12587 Replace with List<AtmDataType> -->
 - `AtmDataTypes` - List of ATM data types
 - `AtmStoreTypes` - List of ATM store types
 - `AtmTaskArgumentValueBuilderType` - ATM task argument value builder type
+<!--- TODO VFS-12587 Replace with List<AtmTaskArgumentValueBuilderType> -->
 - `AtmTaskArgumentValueBuilderTypes` - List of ATM task argument value builder types
 - `AtmWorkflowSchemaIds` - List of ATM workflow schema IDs
+<!--- TODO VFS-12588 Replace with Enum type with concrete set of values -->
 - `Atom` - Erlang atom
 - `Binaries` - List of binary strings
 - `Binary` - Binary string (default)
@@ -129,6 +132,7 @@ http_code: 403
 - `InviteTokenType` - Invite token type
 - `Json` - JSON value
 - `OnedataError` - Onedata error
+<!--- TODO VFS-12589 Remove this type -->
 - `Path` - File system path
 - `ProviderSupportStage` - Provider support stage
 - `StorageSupportStage` - Storage support stage
