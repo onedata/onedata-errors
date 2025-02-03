@@ -5,7 +5,7 @@ __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import yaml
 
@@ -25,20 +25,25 @@ def load_error_definitions() -> List[OdErrorGroup]:
 
 
 def _create_error_group(parent_dir_path: str, file_names: List[str]) -> OdErrorGroup:
-    od_errors = [
-        _load_error_definition(os.path.join(parent_dir_path, file_name))
-        for file_name in file_names
-    ]
+    od_errors = []
+    for file_name in file_names:
+        od_error = _load_error_definition(os.path.join(parent_dir_path, file_name))
+        if od_error:
+            od_errors.append(od_error)
+
     return OdErrorGroup(
         name=os.path.relpath(parent_dir_path, ERROR_DEFINITIONS_ROOT_DIR),
         errors=od_errors,
     )
 
 
-def _load_error_definition(yaml_definition_path: str) -> OdError:
+def _load_error_definition(yaml_definition_path: str) -> Optional[OdError]:
     yaml_data = _read_yaml_file(yaml_definition_path)
     error_name = _extract_error_name(yaml_definition_path)
     args = [create_error_arg(arg) for arg in yaml_data.get("args", [])]
+
+    if yaml_data.get("deprecated", False):
+        return None
 
     # Validate errno if present
     errno = yaml_data.get("errno")

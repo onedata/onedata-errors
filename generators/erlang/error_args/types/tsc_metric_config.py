@@ -27,5 +27,7 @@ class MetricConfig(ErrorArgType):
         FunCallExpression("metric_config", "to_binary", ["{erl_var}"])
     )
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        FunCallExpression("jsonable_record", "from_json", ["{json_var}", "metric_config"])
+        FunCallExpression(
+            "jsonable_record", "from_json", ["{json_var}", "metric_config"]
+        )
     )

@@ -79,6 +79,9 @@ def _generate_type_specs_from_tree(
             ]
             type_parts.extend(error_types)
 
+        if type_name == "error":
+            type_parts.append(f"{INDENT}deprecated_error()")
+
         # Add types from subgroups
         for subgroup_name in group_data["subgroups"]:
             subgroup_type = f"{current_prefix}{subgroup_name}_error()"

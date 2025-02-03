@@ -1,7 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% This file has been automatically generated - DO NOT EDIT!!!
 %%%
-%%% @copyright (C) 2024 ACK CYFRONET AGH
+%%% @copyright (C) 2025 ACK CYFRONET AGH
 %%% This software is released under the MIT license
 %%% cited in 'LICENSE.txt'.
 %%% @end
@@ -51,6 +51,15 @@
 
 
 %%--------------------------------------------------------------------
+%% deprecated errors
+%%--------------------------------------------------------------------
+-define(ERROR_ALREADY_EXISTS, {{error, already_exists}}).
+-define(ERROR_NOT_FOUND, {{error, not_found}}).
+-define(ERROR_TIMEOUT, {{error, timeout}}).
+-define(ERROR_NOT_SUPPORTED, {{error, not_supported}}).
+
+
+%%--------------------------------------------------------------------
 %% Unknown / unexpected error
 %%--------------------------------------------------------------------
 % Used to carry errors that have the proper JSON error format, but do not match
@@ -64,6 +73,7 @@
 -define(ERR_UNRECOGNIZED_ERROR(ErrorCtx, ErrorAsJson), 
     ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}}, ErrorCtx)
 ).
+
 
 {macros}
 

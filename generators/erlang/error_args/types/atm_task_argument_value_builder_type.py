@@ -22,9 +22,13 @@ class AtmTaskArgumentValueBuilderType(ErrorArgType):
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(
-        FunCallExpression("atm_task_argument_value_builder", "type_to_json", ["{erl_var}"])
+        FunCallExpression(
+            "atm_task_argument_value_builder", "type_to_json", ["{erl_var}"]
+        )
     )
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = FromJsonStrategy()
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
-        FunCallExpression("atm_task_argument_value_builder", "type_from_json", ["{json_var}"])
+        FunCallExpression(
+            "atm_task_argument_value_builder", "type_from_json", ["{json_var}"]
+        )
     )

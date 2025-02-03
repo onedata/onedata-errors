@@ -9,6 +9,7 @@ args:
   - name: key
     type: Binary
     nullable: true
+    print_if_null: name
 description: >-
   Bad value provided for "{key}": {requirements}
 http_code: 400

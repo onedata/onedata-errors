@@ -1,7 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% This file has been automatically generated - DO NOT EDIT!!!
 %%%
-%%% @copyright (C) 2024 ACK CYFRONET AGH
+%%% @copyright (C) 2025 ACK CYFRONET AGH
 %%% This software is released under the MIT license
 %%% cited in 'LICENSE.txt'.
 %%% @end
@@ -50,9 +50,13 @@
 
 -export_type([http_code/0, errno/0, ctx/0]).
 
+-type deprecated_error() ::
+    ?ERROR_ALREADY_EXISTS | ?ERROR_NOT_FOUND | ?ERROR_NOT_SUPPORTED | ?ERROR_TIMEOUT.
+
 {error_group_type_specs}
 
 -export_type([
+    deprecated_error/0,
     {error_group_type_exports}
 ]).
 

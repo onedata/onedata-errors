@@ -1,4 +1,5 @@
 id: notFound
+deprecated: true
 description: >-
   The requested resource could not be found.
 http_code: 404

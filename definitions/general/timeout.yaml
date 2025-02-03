@@ -1,4 +1,5 @@
 id: timeout
+deprecated: true
 description: >-
   Operation timed out, please try again later.
 http_code: 503

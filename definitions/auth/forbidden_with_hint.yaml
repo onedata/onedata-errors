@@ -1,4 +1,4 @@
-id: forbiddenTodo
+id: forbiddenWithHint
 args:
   - name: hint
     type: Binary
