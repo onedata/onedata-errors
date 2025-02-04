@@ -79,6 +79,7 @@ def _generate_type_specs_from_tree(
             ]
             type_parts.extend(error_types)
 
+        # TODO VFS-12637 - remove this case after removing deprecated errors
         if type_name == "error":
             type_parts.append(f"{INDENT}deprecated_error()")
 

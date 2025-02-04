@@ -42,6 +42,7 @@ def _load_error_definition(yaml_definition_path: str) -> Optional[OdError]:
     error_name = _extract_error_name(yaml_definition_path)
     args = [create_error_arg(arg) for arg in yaml_data.get("args", [])]
 
+    # TODO VFS-12637 - remove this case after removing deprecated errors
     if yaml_data.get("deprecated", False):
         return None
 

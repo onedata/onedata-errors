@@ -1,4 +1,5 @@
 id: notFound
+# TODO VFS-12637 - remove deprecation and generate error in new format
 deprecated: true
 description: >-
   The requested resource could not be found.
