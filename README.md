@@ -28,16 +28,7 @@ The workflow:
 
 ## Structure
 
-Error definitions are stored in `definitions/` directory, organized by categories:
-- `auth/` - Authentication and authorization errors
-- `connection/` - Network connectivity errors 
-- `data_validation/` - Data validation errors
-- `general/` - Common system errors
-- `graph_sync/` - Graph sync protocol errors
-- `onepanel/` - Onepanel specific errors
-- `op_worker/` - Oneprovider worker specific errors
-- `oz_worker/` - Onezone worker specific errors
-- `posix/` - POSIX errors
+Error definitions are stored in `definitions/` directory, organized by categories
 
 ## Error Definition Guide
 
@@ -61,9 +52,14 @@ id: invalidCredentials
 
 # (optional) List of arguments used in description and returned in error details
 args:
-  - name: token          # May be referenced in description
-    type: Token          # Argument type
-    nullable: false      # (optional, defaults to False) Specifies if argument can be null/missing
+  # May be referenced in description
+  - name: token
+    # Argument type (see Type System for available types)
+    type: TokenType
+    # (optional, defaults to false) Specifies if argument can be null/missing
+    nullable: false
+    # (optional) Text to show in description when value is null/missing
+    print_if_null: no details available
 
 # (required) Human-readable error description with {argName} placeholders
 description: >-
@@ -72,10 +68,9 @@ description: >-
 # (required) HTTP status code for REST API responses
 http_code: 401
 
-# (optional, defaults to ?EINVAL) POSIX error number
-errno: ?EACCES
+# (optional, defaults to EINVAL) POSIX error number
+errno: EACCES
 ```
-
 ### Examples
 
 #### Simple Error
@@ -111,6 +106,10 @@ http_code: 403
 
 ## Type System
 
+Each type must be implemented for all supported generators to work properly. 
+For example, Erlang generator type implementations can be found in 
+`./generators/erlang/error_args/types/`.
+
 ### Available Types
 - `AaiService` - AAI service type  
 - `AaiSubject` - AAI subject type
@@ -143,7 +142,10 @@ http_code: 403
 
 ### Adding New Types
 
-To add a new argument type:
+Each type must be implemented separately for every supported generator. 
+Below is an example of implementing a new type for the Erlang generator.
+
+To handle a new argument type in Erlang generator:
 
 1. Create file in `generators/erlang/error_args/types/`
 2. Define class inheriting from `ErrorArgType`:
