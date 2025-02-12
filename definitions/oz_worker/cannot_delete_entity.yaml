@@ -1,0 +1,9 @@
+id: cannotDeleteEntity
+args:
+  - name: entityType
+    type: GriEntityType
+  - name: entityId
+    type: Binary
+description: >-
+  Cannot delete {entityType}:{entityId}; failed to delete some dependent relations.
+http_code: 500

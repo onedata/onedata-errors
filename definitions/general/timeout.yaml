@@ -1,0 +1,7 @@
+id: timeout
+# TODO VFS-12637 - remove deprecation and generate error in new format
+deprecated: true
+description: >-
+  Operation timed out, please try again later.
+http_code: 503
+errno: EAGAIN

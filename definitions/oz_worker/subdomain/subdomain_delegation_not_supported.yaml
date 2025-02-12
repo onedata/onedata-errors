@@ -1,0 +1,4 @@
+id: subdomainDelegationNotSupported
+description: >-
+  This operation is not available, since subdomain delegation is not supported by this Onezone service.
+http_code: 400

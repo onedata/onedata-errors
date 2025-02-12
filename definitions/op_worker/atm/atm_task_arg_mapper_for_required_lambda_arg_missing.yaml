@@ -1,0 +1,7 @@
+id: atmTaskArgMapperForRequiredLambdaArgMissing
+args:
+  - name: argument
+    type: Binary
+description: >-
+  Missing argument mapper for required lambda argument: {argument}.
+http_code: 400

@@ -1,0 +1,4 @@
+id: atmStoreMissingRequiredInitialContent
+description: >-
+  Missing initial content required to create an automation store.
+http_code: 400

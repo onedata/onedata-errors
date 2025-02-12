@@ -1,0 +1,7 @@
+id: atmParallelBoxEmpty
+args:
+  - name: atmParallelBoxSchemaId
+    type: Binary
+description: >-
+  Bad automation parallel box: parallel box (ID: "{atmParallelBoxSchemaId}") must not be empty.
+http_code: 400

@@ -1,0 +1,7 @@
+id: notSupported
+# TODO VFS-12637 - remove deprecation and generate error in new format
+deprecated: true
+description: >-
+  This operation is not supported.
+http_code: 400
+errno: ENOTSUP

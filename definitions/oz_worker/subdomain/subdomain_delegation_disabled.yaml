@@ -1,0 +1,4 @@
+id: subdomainDelegationDisabled
+description: >-
+  This operation is not available, since subdomain delegation is disabled for this Oneprovider service.
+http_code: 400

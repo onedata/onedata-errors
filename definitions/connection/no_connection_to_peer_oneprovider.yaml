@@ -1,0 +1,11 @@
+id: noConnectionToPeerOneprovider
+args:
+  - name: providerId
+    type: Binary
+  - name: providerDomain
+    type: Binary
+description: >-
+  Operation failed because the service could not connect 
+  to its peer Oneprovider service (id: "{providerId}", url: "https://{providerDomain}").
+http_code: 503
+errno: ENETUNREACH

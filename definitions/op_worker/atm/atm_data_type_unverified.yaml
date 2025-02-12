@@ -1,0 +1,9 @@
+id: atmDataTypeUnverified
+args:
+  - name: value
+    type: Json
+  - name: expType
+    type: AtmDataType
+description: >-
+  Provided value is not of expected type: {expType}.
+http_code: 400

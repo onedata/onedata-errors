@@ -1,0 +1,81 @@
+%%%-------------------------------------------------------------------
+%%% This file has been automatically generated - DO NOT EDIT!!!
+%%%
+%%% @copyright (C) 2025 ACK CYFRONET AGH
+%%% This software is released under the MIT license
+%%% cited in 'LICENSE.txt'.
+%%% @end
+%%%-------------------------------------------------------------------
+%%% @doc
+%%% Error definitions to be used across all APIs in Onedata products.
+%%% @end
+%%%-------------------------------------------------------------------
+
+-ifndef(ERRORS_HRL).
+-define(ERRORS_HRL, 1).
+
+-include("error_attrs.hrl").
+-include("global_definitions.hrl").
+-include("posix/errno.hrl").
+
+
+-record(od_error_ctx, {{
+    module :: undefined | binary(),
+    line :: undefined | integer(),
+    timestamp :: undefined | time:millis(),
+    version :: undefined | binary(),
+    unknown_fields = #{{}} :: json_utils:json_map()
+}}).
+
+-record(od_error, {{
+    type :: module(),
+    args = undefined :: term(),
+    ctx :: od_error:ctx()
+}}).
+
+-define(err_ctx(), od_error:build_ctx(?MODULE, ?LINE)).
+
+-define(UNDEFINED_ERR_CTX,
+    #od_error_ctx{{
+        module = undefined,
+        line = undefined,
+        timestamp = undefined,
+        version = undefined
+    }}
+).
+
+-define(ERR, {{error, #od_error{{}}}}).
+-define(ERR(Type), {{error, #od_error{{type = Type}}}}).
+-define(ERR(Type, Args), {{error, #od_error{{type = Type, args = Args}}}}).
+-define(ERR(Type, Args, Ctx), {{error, #od_error{{type = Type, args = Args, ctx = Ctx}}}}).
+
+
+% TODO VFS-12637 - remove below section after below errors are generated in new format
+%%--------------------------------------------------------------------
+%% deprecated errors
+%%--------------------------------------------------------------------
+-define(ERROR_ALREADY_EXISTS, {{error, already_exists}}).
+-define(ERROR_NOT_FOUND, {{error, not_found}}).
+-define(ERROR_TIMEOUT, {{error, timeout}}).
+-define(ERROR_NOT_SUPPORTED, {{error, not_supported}}).
+
+
+%%--------------------------------------------------------------------
+%% Unknown / unexpected error
+%%--------------------------------------------------------------------
+% Used to carry errors that have the proper JSON error format, but do not match
+% any error specified in this software version. This can happen if a newer
+% server responds with an error to an older client, which does not know the
+% error Id. The original JSON representing the error is retained and returned
+% upon encoding.
+-define(ERR_UNRECOGNIZED_ERROR(ErrorAsJson), 
+    ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}})
+).
+-define(ERR_UNRECOGNIZED_ERROR(ErrorCtx, ErrorAsJson), 
+    ?ERR(?ERR_UNRECOGNIZED_ERROR_TYPE, {{ErrorAsJson}}, ErrorCtx)
+).
+
+
+{macros}
+
+-endif.

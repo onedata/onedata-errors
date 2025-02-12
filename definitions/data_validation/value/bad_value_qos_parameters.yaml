@@ -1,0 +1,5 @@
+id: badValueQoSParameters
+description: >-
+  Bad value: provided QoS parameters are invalid.
+http_code: 400
+errno: EINVAL

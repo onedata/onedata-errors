@@ -1,0 +1,7 @@
+id: atmTaskArgMapperForNonexistentLambdaArg
+args:
+  - name: argument
+    type: Binary
+description: >-
+  Found an excessive argument mapper for nonexistent lambda argument: {argument}.
+http_code: 400

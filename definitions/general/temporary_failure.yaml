@@ -1,0 +1,5 @@
+id: temporaryFailure
+description: >-
+  The server has encountered a temporary failure, please try again later.
+http_code: 503
+errno: EAGAIN

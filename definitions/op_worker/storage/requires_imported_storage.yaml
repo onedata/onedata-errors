@@ -1,0 +1,9 @@
+id: requiresImportedStorage
+args:
+  - name: storageId
+    type: Binary
+description: >-
+  Cannot apply for the storage backend "{storageId}".
+  This operation requires an imported storage backend.
+http_code: 400
+errno: EINVAL

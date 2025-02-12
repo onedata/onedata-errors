@@ -1,0 +1,5 @@
+id: rpcUndefined
+description: >-
+  GraphSync error: requested RPC operation is not defined.
+http_code: 400
+errno: EINVAL

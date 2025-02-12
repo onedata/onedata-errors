@@ -1,0 +1,33 @@
+id: relationDoesNotExist
+args:
+  - name: childType
+    type: Atom
+  - name: childId
+    type: Binary
+  - name: parentType
+    type: Atom
+  - name: parentId
+    type: Binary
+x-erl-to_json: |
+  to_json(?ERR_RELATION_DOES_NOT_EXIST(ErrorCtx, ChType, ChId, ParType, ParId)) ->
+      RelationToString = case {ChType, ParType} of
+          {od_space, od_provider} -> <<"is not supported by">>;
+          {_, _} -> <<"is not a member of">>
+      end,
+      #{
+          <<"id">> => ?ERR_RELATION_DOES_NOT_EXIST_ID,
+          <<"ctx">> => od_error:ctx_to_json(ErrorCtx),
+          <<"details">> => #{
+              <<"childType">> => ChType,
+              <<"childId">> => ChId,
+              <<"parentType">> => ParType,
+              <<"parentId">> => ParId
+          },
+          <<"description">> => od_error:format_description("Bad value: ~ts:~ts ~ts ~ts:~ts.", [
+              gri:serialize_type(ChType), ChId,
+              RelationToString,
+              gri:serialize_type(ParType), ParId
+          ])
+      }.
+description: null
+http_code: 400

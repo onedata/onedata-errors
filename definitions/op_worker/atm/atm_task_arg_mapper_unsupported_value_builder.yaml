@@ -1,0 +1,10 @@
+id: atmTaskArgMapperUnsupportedValueBuilder
+args:
+  - name: type
+    type: AtmTaskArgumentValueBuilderType
+  - name: supported
+    type: AtmTaskArgumentValueBuilderTypes
+description: >-
+  Bad automation task argument value builder: type "{type}" not supported
+  - must be one of: {supported}.
+http_code: 400

@@ -1,0 +1,8 @@
+id: invalidQosExpression
+args:
+  - name: reason
+    type: Binary
+description: >-
+  Invalid QoS expression: {reason}.
+http_code: 400
+errno: EINVAL

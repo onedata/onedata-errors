@@ -1,0 +1,14 @@
+id: autoStorageImportNotSupported
+args:
+  - name: storageId
+    type: Binary
+  - name: supportedStorages
+    type: Binaries
+  - name: supportedObjectStorages
+    type: Binaries
+description: >-
+  Cannot configure auto storage import on the storage backend "{storageId}". 
+  This operation requires any of: [{supportedStorages}] storage backend with canonical path type and
+  for object storage (any of: {supportedObjectStorages}), it requires the block size set to 0.
+http_code: 400
+errno: EINVAL

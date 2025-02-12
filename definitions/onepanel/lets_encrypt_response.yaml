@@ -1,0 +1,10 @@
+id: letsEncryptResponse
+args:
+  - name: problemDocument
+    type: Json
+    nullable: true
+  - name: errorMessage
+    type: Binary
+description: >-
+  Bad Let's Encrypt response: {errorMessage}. See the details for more information.
+http_code: 400

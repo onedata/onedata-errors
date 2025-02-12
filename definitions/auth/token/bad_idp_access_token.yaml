@@ -1,0 +1,8 @@
+id: badIdpAccessToken
+args:
+  - name: idp
+    type: Atom
+description: >-
+  Provided access token for IdP "{idp}" is not valid.
+http_code: 400
+errno: EINVAL

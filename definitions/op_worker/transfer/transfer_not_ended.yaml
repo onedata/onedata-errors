@@ -1,0 +1,4 @@
+id: transferNotEnded
+description: >-
+  Specified transfer has not ended yet.
+http_code: 400

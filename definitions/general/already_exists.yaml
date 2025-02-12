@@ -1,0 +1,7 @@
+id: alreadyExists
+# TODO VFS-12637 - remove deprecation and generate error in new format
+deprecated: true
+description: >-
+  The resource already exists.
+http_code: 409
+errno: EINVAL

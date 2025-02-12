@@ -1,0 +1,10 @@
+id: atmStoreTypeDisallowed
+args:
+  - name: atmStoreSchemaId
+    type: Binary
+  - name: allowed
+    type: AtmStoreTypes
+description: >-
+  Bad automation store: the type of store (schema ID: "{atmStoreSchemaId}")
+  must be one of: {allowed}.
+http_code: 400

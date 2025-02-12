@@ -1,0 +1,7 @@
+id: viewNotExistsOn
+args:
+  - name: providerId
+    type: Binary
+description: >-
+  Specified database view does not exist on provider "{providerId}".
+http_code: 400

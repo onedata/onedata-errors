@@ -1,0 +1,57 @@
+%%%-------------------------------------------------------------------
+%%% This file has been automatically generated - DO NOT EDIT!!!
+%%%
+%%% @copyright (C) 2025 ACK CYFRONET AGH
+%%% This software is released under the MIT license
+%%% cited in 'LICENSE.txt'.
+%%% @end
+%%%-------------------------------------------------------------------
+%%% @doc
+%%% Error attributes to be used across all APIs in Onedata products.
+%%% @end
+%%%-------------------------------------------------------------------
+
+-ifndef(ERROR_ATTRS_HRL).
+-define(ERROR_ATTRS_HRL, 1).
+
+
+% TODO VFS-12637 - remove this section after below errors are generated in new format
+%%--------------------------------------------------------------------
+%% deprecated errors
+%%--------------------------------------------------------------------
+-define(ERROR_ALREADY_EXISTS_ID, <<"alreadyExists">>).
+-define(ERROR_ALREADY_EXISTS_TYPE, od_error_already_exists).
+
+-define(ERROR_NOT_FOUND_ID, <<"notFound">>).
+-define(ERROR_NOT_FOUND_TYPE, od_error_not_found).
+
+-define(ERROR_NOT_SUPPORTED_ID, <<"notSupported">>).
+-define(ERROR_NOT_SUPPORTED_TYPE, od_error_not_supported).
+
+-define(ERROR_TIMEOUT_ID, <<"timeout">>).
+-define(ERROR_TIMEOUT_TYPE, od_error_timeout).
+
+
+%%--------------------------------------------------------------------
+%% Unknown / unexpected error
+%%--------------------------------------------------------------------
+-define(ERR_UNRECOGNIZED_ERROR_TYPE, od_error_unrecognized_error).
+
+
+{macros}
+
+
+%%--------------------------------------------------------------------
+%% Error ID to type mapping
+%%--------------------------------------------------------------------
+-define(ERROR_ID_TO_TYPE_MAPPING, #{{
+    % TODO VFS-12637 - remove below cases after below errors are generated in new format
+    ?ERROR_ALREADY_EXISTS_ID => ?ERROR_ALREADY_EXISTS_TYPE,
+    ?ERROR_NOT_FOUND_ID => ?ERROR_NOT_FOUND_TYPE,
+    ?ERROR_NOT_SUPPORTED_ID => ?ERROR_NOT_SUPPORTED_TYPE,
+    ?ERROR_TIMEOUT_ID => ?ERROR_TIMEOUT_TYPE,
+{id_to_type_mapping}
+}}).
+
+
+-endif.

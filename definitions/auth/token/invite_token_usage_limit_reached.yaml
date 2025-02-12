@@ -1,0 +1,5 @@
+id: inviteTokenUsageLimitReached
+description: >-
+  The usage limit of this invite token has been reached.
+http_code: 400
+errno: EINVAL

@@ -1,0 +1,476 @@
+"""Base class and common utilities for error argument types."""
+
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from abc import ABC
+from typing import ClassVar, List, NamedTuple, Optional
+
+from .translation.context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
+from .translation.core import Line
+from .translation.strategies import (
+    CustomStrategy,
+    DirectStrategy,
+    FromJsonStrategy,
+    JsonDecodingStrategy,
+    JsonEncodingStrategy,
+    PrintEncodingStrategy,
+)
+
+INDENT: str = 4 * " "
+
+
+class ErrorArgToJsonEncoding(NamedTuple):
+    tokens: List[str]
+    json_var: str
+    print_var: Optional[str]
+
+
+class ErrorArgType(ABC):
+    """Base class for all error argument types."""
+
+    # Default values for class attributes
+    fmt_control_sequence: ClassVar[str] = "~w"
+    json_encoding_strategy: ClassVar[JsonEncodingStrategy] = DirectStrategy()
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = DirectStrategy()
+    json_decoding_strategy: ClassVar[JsonDecodingStrategy] = DirectStrategy()
+
+    def __init__(
+        self, name: str, nullable: bool = False, print_if_null: Optional[str] = None
+    ) -> None:
+        self.name = name
+        self.nullable = nullable
+        self.print_if_null = print_if_null
+
+    @classmethod
+    def type_name(cls) -> str:
+        """Returns the name of this type as used in YAML definitions."""
+        return cls.__name__
+
+    def get_erlang_variable_name(self) -> str:
+        """Returns Erlang variable name for this argument."""
+        return self.name[0].upper() + self.name[1:]
+
+    def generate_to_json_encoding(
+        self, *, is_printed: bool = False, indent_level: int = 1
+    ) -> ErrorArgToJsonEncoding:
+        if self.nullable:
+            return self._generate_nullable_to_json_encoding(
+                is_printed=is_printed, indent_level=indent_level
+            )
+
+        return self._generate_to_json_encoding(
+            is_printed=is_printed, indent_level=indent_level
+        )
+
+    def generate_from_json_decoding(
+        self, *, details_var: str, indent_level: int = 1
+    ) -> List[str]:
+        indent_0 = indent_level * INDENT
+        indent_1 = (indent_level + 1) * INDENT
+        indent_2 = (indent_level + 2) * INDENT
+
+        erl_var = self.get_erlang_variable_name()
+        tokens = []
+
+        maps_get_tokens = ['maps:get(<<"', self.name, '">>, ', details_var, ")"]
+        if self.nullable:
+            maps_get_tokens.insert(-1, ", null")
+
+        if isinstance(self.json_decoding_strategy, DirectStrategy):
+            tokens.extend([indent_0, erl_var, " = "])
+
+            if self.nullable:
+                tokens.extend(["utils:null_to_undefined(", *maps_get_tokens, ")"])
+            else:
+                tokens.extend(maps_get_tokens)
+
+            tokens.append(",\n")
+
+        elif isinstance(self.json_decoding_strategy, CustomStrategy):
+            json_var = f"{erl_var}Json"
+
+            if self.nullable:
+                tokens.extend(
+                    [indent_0, erl_var, " = case ", *maps_get_tokens, " of\n"]
+                )
+                tokens.extend([indent_1, "null ->\n", indent_2, "undefined;\n"])
+                tokens.extend([indent_1, json_var, " ->\n"])
+                tokens.extend(
+                    self._generate_custom_json_decoding(
+                        json_var=json_var, indent_level=indent_level + 2
+                    )
+                )
+                tokens[-1] = tokens[-1].rstrip(",\n")
+                tokens.extend(["\n", indent_0, "end,\n"])
+            else:
+                tokens.extend([indent_0, json_var, " = ", *maps_get_tokens, ",\n"])
+                tokens.extend(
+                    self._generate_custom_json_decoding(
+                        json_var=json_var, assign_to=erl_var, indent_level=indent_level
+                    )
+                )
+
+        return tokens
+
+    def _generate_to_json_encoding(
+        self, *, is_printed: bool = False, indent_level: int = 1
+    ) -> ErrorArgToJsonEncoding:
+        """Generate code for JSON encoding."""
+
+        tokens = []
+        erl_var = self.get_erlang_variable_name()
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
+            erl_var=erl_var,
+            assign_to=(
+                f"{erl_var}Json"
+                if isinstance(self.json_encoding_strategy, CustomStrategy)
+                else None
+            ),
+            indent_level=indent_level,
+        )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        tokens.extend(self._format_lines(json_result.expression.build(json_ctx)))
+
+        # Prepare print encoding if needed
+        print_var = None
+        if is_printed:
+            print_ctx = PrintEncodingCtx(
+                erl_var=erl_var,
+                json_var=json_result.target_var,
+                assign_to=(
+                    f"{erl_var}Print"
+                    if isinstance(self.print_encoding_strategy, CustomStrategy)
+                    else None
+                ),
+                indent_level=indent_level,
+            )
+            print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+            tokens.extend(self._format_lines(print_result.expression.build(print_ctx)))
+            print_var = print_result.target_var
+
+        return ErrorArgToJsonEncoding(
+            tokens=tokens,
+            json_var=json_result.target_var,
+            print_var=print_var,
+        )
+
+    def _generate_nullable_to_json_encoding(
+        self, *, is_printed: bool = False, indent_level: int = 1
+    ) -> ErrorArgToJsonEncoding:
+        if self.print_if_null and is_printed:
+            return self._generate_nullable_print_if_null_encoding(
+                indent_level=indent_level
+            )
+
+        strategy = (
+            type(self.json_encoding_strategy),
+            type(self.print_encoding_strategy) if is_printed else None,
+        )
+        encoding_function = self._nullable_encoding_dispatch[strategy]
+        return encoding_function(self, indent_level=indent_level)
+
+    def _generate_nullable_print_if_null_encoding(
+        self, *, indent_level: int = 1
+    ) -> ErrorArgToJsonEncoding:
+        erl_var = self.get_erlang_variable_name()
+        json_var = f"{erl_var}Json"
+        print_var = f"{erl_var}Print"
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
+            erl_var=erl_var,
+            assign_to=(
+                f"{erl_var}JsonTmp"
+                if isinstance(self.json_encoding_strategy, CustomStrategy)
+                else None
+            ),
+            indent_level=indent_level + 2,
+        )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_tokens = self._format_lines(json_result.expression.build(json_ctx))
+        json_case_var = json_result.target_var or erl_var
+
+        # Prepare print encoding
+        print_ctx = PrintEncodingCtx(
+            erl_var=erl_var,
+            json_var=json_case_var,
+            assign_to=(
+                f"{erl_var}PrintTmp"
+                if isinstance(self.print_encoding_strategy, CustomStrategy)
+                else None
+            ),
+            indent_level=indent_level + 2,
+        )
+        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_tokens = self._format_lines(print_result.expression.build(print_ctx))
+        print_case_var = print_result.target_var or json_case_var
+
+        tokens = self._generate_nullable_case_statement(
+            indent_level=indent_level,
+            json_var=json_var,
+            print_var=print_var,
+            erl_var=erl_var,
+            encoding_tokens=json_tokens + print_tokens,
+            json_case_var=json_case_var,
+            print_case_var=print_case_var,
+        )
+
+        return ErrorArgToJsonEncoding(
+            tokens=tokens,
+            json_var=json_var,
+            print_var=print_var,
+        )
+
+    def _generate_nullable_direct_json_encoding(
+        self, *, indent_level: int
+    ) -> ErrorArgToJsonEncoding:
+        erl_var = self.get_erlang_variable_name()
+        json_var = f"{erl_var}Json"
+
+        indent = indent_level * INDENT
+        tokens = [f"{indent}{json_var} = utils:undefined_to_null({erl_var}),\n"]
+
+        return ErrorArgToJsonEncoding(tokens=tokens, json_var=json_var, print_var=None)
+
+    def _generate_nullable_direct_json_and_print_from_json_encoding(
+        self, *, indent_level: int
+    ) -> ErrorArgToJsonEncoding:
+        encoding = self._generate_nullable_direct_json_encoding(
+            indent_level=indent_level
+        )
+        return encoding._replace(print_var=encoding.json_var)
+
+    def _generate_nullable_direct_json_and_custom_print_encoding(
+        self, *, indent_level: int = 1
+    ) -> ErrorArgToJsonEncoding:
+        erl_var = self.get_erlang_variable_name()
+        json_var = f"{erl_var}Json"
+        print_var = f"{erl_var}Print"
+        # Prepare print encoding
+        print_ctx = PrintEncodingCtx(
+            erl_var=erl_var,
+            json_var=erl_var,  # Direct strategy uses erl_var
+            assign_to=f"{erl_var}PrintTmp",
+            indent_level=indent_level + 2,
+        )
+        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_tokens = self._format_lines(print_result.expression.build(print_ctx))
+        print_case_var = print_result.target_var
+
+        tokens = self._generate_nullable_case_statement(
+            indent_level=indent_level,
+            json_var=json_var,
+            print_var=print_var,
+            erl_var=erl_var,
+            encoding_tokens=print_tokens,
+            json_case_var=erl_var,  # Direct strategy uses erl_var
+            print_case_var=print_case_var,
+        )
+
+        return ErrorArgToJsonEncoding(
+            tokens=tokens,
+            json_var=json_var,
+            print_var=print_var,
+        )
+
+    def _generate_nullable_custom_json_encoding(
+        self, *, indent_level: int
+    ) -> ErrorArgToJsonEncoding:
+        erl_var = self.get_erlang_variable_name()
+        json_var = f"{erl_var}Json"
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
+            erl_var=erl_var,
+            assign_to=None,  # No need for temporary var - we're inside case
+            indent_level=indent_level + 2,
+        )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_tokens = self._format_lines(json_result.expression.build(json_ctx))
+
+        tokens = self._generate_nullable_case_statement(
+            indent_level=indent_level,
+            json_var=json_var,
+            erl_var=erl_var,
+            encoding_tokens=json_tokens,
+        )
+
+        return ErrorArgToJsonEncoding(tokens=tokens, json_var=json_var, print_var=None)
+
+    def _generate_nullable_custom_json_and_print_from_json_encoding(
+        self, *, indent_level: int
+    ) -> ErrorArgToJsonEncoding:
+        encoding = self._generate_nullable_custom_json_encoding(
+            indent_level=indent_level
+        )
+        return encoding._replace(print_var=encoding.json_var)
+
+    def _generate_nullable_custom_json_and_direct_print_encoding(
+        self, *, indent_level: int
+    ) -> ErrorArgToJsonEncoding:
+        erl_var = self.get_erlang_variable_name()
+        json_var = f"{erl_var}Json"
+        print_var = f"{erl_var}Print"
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
+            erl_var=erl_var,
+            assign_to=f"{erl_var}JsonTmp",
+            indent_level=indent_level + 2,
+        )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_tokens = self._format_lines(json_result.expression.build(json_ctx))
+
+        tokens = self._generate_nullable_case_statement(
+            indent_level=indent_level,
+            json_var=json_var,
+            print_var=print_var,
+            erl_var=erl_var,
+            encoding_tokens=json_tokens,
+            json_case_var=json_result.target_var,
+            print_case_var=erl_var,  # Direct strategy uses erl_var
+        )
+
+        return ErrorArgToJsonEncoding(
+            tokens=tokens,
+            json_var=json_var,
+            print_var=print_var,
+        )
+
+    def _generate_nullable_custom_json_and_print_encoding(
+        self, *, indent_level: int
+    ) -> ErrorArgToJsonEncoding:
+        erl_var = self.get_erlang_variable_name()
+        json_var = f"{erl_var}Json"
+        print_var = f"{erl_var}Print"
+
+        # Prepare JSON encoding
+        json_ctx = JsonEncodingCtx(
+            erl_var=erl_var,
+            assign_to=f"{erl_var}JsonTmp",
+            indent_level=indent_level + 2,
+        )
+        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_tokens = self._format_lines(json_result.expression.build(json_ctx))
+
+        # Prepare print encoding
+        print_ctx = PrintEncodingCtx(
+            erl_var=erl_var,
+            json_var=json_result.target_var,
+            assign_to=f"{erl_var}PrintTmp",
+            indent_level=indent_level + 2,
+        )
+        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_tokens = self._format_lines(print_result.expression.build(print_ctx))
+
+        tokens = self._generate_nullable_case_statement(
+            indent_level=indent_level,
+            json_var=json_var,
+            print_var=print_var,
+            erl_var=erl_var,
+            encoding_tokens=json_tokens + print_tokens,
+            json_case_var=json_result.target_var,
+            print_case_var=print_result.target_var,
+        )
+
+        return ErrorArgToJsonEncoding(
+            tokens=tokens,
+            json_var=json_var,
+            print_var=print_var,
+        )
+
+    # pylint: disable=too-many-arguments
+    def _generate_nullable_case_statement(
+        self,
+        *,
+        erl_var: str,
+        json_var: str,
+        print_var: Optional[str] = None,
+        indent_level: int,
+        encoding_tokens: List[str],
+        json_case_var: Optional[str] = None,
+        print_case_var: Optional[str] = None,
+    ) -> List[str]:
+        indent_0 = indent_level * INDENT
+        indent_1 = (indent_level + 1) * INDENT
+        indent_2 = (indent_level + 2) * INDENT
+
+        tokens = []
+
+        if print_var:
+            tokens.append(f"{indent_0}{{{json_var}, {print_var}}}")
+        else:
+            tokens.append(f"{indent_0}{json_var}")
+
+        tokens.append(f" = case {erl_var} of\n")
+        tokens.append(f"{indent_1}undefined ->\n")
+
+        if print_var and self.print_if_null:
+            # When we need both JSON and print value, and print_if_null is specified
+            tokens.append(f'{indent_2}{{null, <<"{self.print_if_null}">>}};\n')
+        else:
+            # Default behavior - null for JSON, {null, null} for JSON and print
+            tokens.append(f"{indent_2}{'{null, null}' if print_var else 'null'};\n")
+
+        tokens.append(f"{indent_1}_ ->\n")
+        tokens.extend(encoding_tokens)
+
+        if json_case_var and print_case_var:
+            tokens.append(f"{indent_2}{{{json_case_var}, {print_case_var}}}\n")
+
+        tokens.append(f"{indent_0}end,\n")
+
+        return tokens
+
+    _nullable_encoding_dispatch = {
+        (DirectStrategy, None): _generate_nullable_direct_json_encoding,
+        (
+            DirectStrategy,
+            DirectStrategy,
+        ): _generate_nullable_direct_json_and_print_from_json_encoding,
+        (
+            DirectStrategy,
+            FromJsonStrategy,
+        ): _generate_nullable_direct_json_and_print_from_json_encoding,
+        (
+            DirectStrategy,
+            CustomStrategy,
+        ): _generate_nullable_direct_json_and_custom_print_encoding,
+        (CustomStrategy, None): _generate_nullable_custom_json_encoding,
+        (
+            CustomStrategy,
+            FromJsonStrategy,
+        ): _generate_nullable_custom_json_and_print_from_json_encoding,
+        (
+            CustomStrategy,
+            DirectStrategy,
+        ): _generate_nullable_custom_json_and_direct_print_encoding,
+        (
+            CustomStrategy,
+            CustomStrategy,
+        ): _generate_nullable_custom_json_and_print_encoding,
+    }
+
+    def _generate_custom_json_decoding(
+        self, *, json_var: str, assign_to: Optional[str] = None, indent_level: int = 1
+    ) -> List[str]:
+        if not isinstance(self.json_decoding_strategy, CustomStrategy):
+            raise ValueError("This should never happen")
+
+        ctx = JsonDecodingCtx(
+            json_var=json_var, assign_to=assign_to, indent_level=indent_level
+        )
+        # pylint: disable=no-member
+        return self._format_lines(self.json_decoding_strategy.expression.build(ctx))
+
+    @staticmethod
+    def _format_lines(lines: List[Line]) -> List[str]:
+        """Format lines with proper indentation."""
+        return [
+            f"{INDENT * line.indent_level}{line.content}{line.ending}\n"
+            for line in lines
+        ]

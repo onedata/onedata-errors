@@ -1,0 +1,9 @@
+id: atmParallelBoxExecutionCreationFailed
+args:
+  - name: atmParallelBoxSchemaId
+    type: Binary
+  - name: specificError
+    type: OnedataError
+description: >-
+  Failed to create automation parallel box execution (ID: "{atmParallelBoxSchemaId}"): {specificError}
+http_code: 400

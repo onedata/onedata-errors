@@ -1,0 +1,11 @@
+id: posix
+args:
+  - name: errno
+    type: Atom
+description: >-
+  Operation failed with POSIX error: {errno}.
+http_code: 400
+x-erl-to_errno: |
+  -spec to_errno(t()) -> {true, od_error:errno()}.
+  to_errno(?ERR_POSIX(Errno)) ->
+      {true, Errno}.

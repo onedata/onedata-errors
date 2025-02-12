@@ -1,0 +1,8 @@
+id: badServiceToken
+args:
+  - name: tokenError
+    type: OnedataError
+description: >-
+  Provided service token is not valid: {tokenError}
+http_code: 400
+errno: EINVAL

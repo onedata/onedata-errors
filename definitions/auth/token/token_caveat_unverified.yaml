@@ -1,0 +1,8 @@
+id: tokenCaveatUnverified
+args:
+  - name: caveat
+    type: UnverifiedCaveat
+description: >-
+  Provided token is not valid: {caveat}.
+http_code: 400
+errno: EINVAL

@@ -1,0 +1,5 @@
+id: notSubscribable
+description: >-
+  GraphSync error: requested resource is not subscribable.
+http_code: 400
+errno: EINVAL

@@ -1,0 +1,5 @@
+id: requiresAutoStorageImportMode
+description: >-
+  This operation requires a space with auto storage import mode.
+http_code: 400
+errno: EINVAL

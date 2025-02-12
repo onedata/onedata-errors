@@ -1,0 +1,4 @@
+id: userNotInCluster
+description: >-
+  Authenticated user is not a member of this cluster.
+http_code: 403

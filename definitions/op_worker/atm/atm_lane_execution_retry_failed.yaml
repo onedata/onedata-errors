@@ -1,0 +1,5 @@
+id: atmLaneExecutionRetryFailed
+description: >-
+  Failed to retry specified lane execution. Lane execution can be retried only
+  if all items have been processed but some of them failed.
+http_code: 400

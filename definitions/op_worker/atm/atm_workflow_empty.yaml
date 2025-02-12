@@ -1,0 +1,4 @@
+id: atmWorkflowEmpty
+description: >-
+  Bad automation workflow: no lanes defined.
+http_code: 400

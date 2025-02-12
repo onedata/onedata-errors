@@ -1,0 +1,4 @@
+id: atmWorkflowExecutionNotResumable
+description: >-
+  Specified automation workflow execution cannot be resumed.
+http_code: 400

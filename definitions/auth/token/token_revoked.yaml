@@ -1,0 +1,5 @@
+id: tokenRevoked
+description: >-
+  Provided token has been revoked by the token subject (creator).
+http_code: 400
+errno: EINVAL

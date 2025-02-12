@@ -1,0 +1,5 @@
+id: tokenSubjectInvalid
+description: >-
+  The token subject (creator) is invalid (does not exist or is different than expected).
+http_code: 400
+errno: EINVAL

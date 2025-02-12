@@ -1,0 +1,7 @@
+id: atmJobBatchWithdrawn
+args:
+  - name: reason
+    type: Binary
+description: >-
+  Previously scheduled job batch has been withdrawn: {reason}.
+http_code: 404

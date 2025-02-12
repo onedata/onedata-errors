@@ -1,0 +1,10 @@
+id: notAnInviteToken
+args:
+  - name: expectedInviteType
+    type: InviteTokenType
+  - name: received
+    type: TokenType
+description: >-
+  Expected an invitation token of type "{expectedInviteType}", but received a(n) {received}.
+http_code: 400
+errno: EINVAL

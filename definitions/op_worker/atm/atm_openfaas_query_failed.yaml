@@ -1,0 +1,9 @@
+id: atmOpenfaasQueryFailed
+args:
+  - name: reason
+    type: Binary
+    nullable: true
+    print_if_null: no details available
+description: >-
+  Failed to query the OpenFaaS service: {reason}.
+http_code: 400

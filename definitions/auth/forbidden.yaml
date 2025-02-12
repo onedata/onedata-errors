@@ -1,0 +1,5 @@
+id: forbidden
+description: >-
+  You are not authorized to perform this operation.
+http_code: 403
+errno: EACCES

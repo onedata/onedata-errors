@@ -1,0 +1,8 @@
+id: badValueFloat
+args:
+  - name: key
+    type: Binary
+description: >-
+  Bad value: provided "{key}" must be a floating point number.
+http_code: 400
+errno: EINVAL

@@ -1,0 +1,8 @@
+id: notAnIdentityToken
+args:
+  - name: received
+    type: TokenType
+description: >-
+  Expected an identity token, but received a(n) {received}.
+http_code: 400
+errno: EINVAL

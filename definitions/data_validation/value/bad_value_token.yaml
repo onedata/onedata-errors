@@ -1,0 +1,10 @@
+id: badValueToken
+args:
+  - name: key
+    type: Binary
+  - name: tokenError
+    type: OnedataError
+description: >-
+  Bad value: provided "{key}" is not a valid token: {tokenError}
+http_code: 400
+errno: EINVAL

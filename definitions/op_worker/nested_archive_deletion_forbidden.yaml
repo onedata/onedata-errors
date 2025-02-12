@@ -1,0 +1,8 @@
+id: nestedArchiveDeletionForbidden
+args:
+  - name: parentArchiveId
+    type: Binary
+description: >-
+  This archive cannot be deleted since it is nested in another archive
+  (ID: "{parentArchiveId}").
+http_code: 400

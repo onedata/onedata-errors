@@ -1,0 +1,29 @@
+id: nodeNotCompatible
+x-erl-headers:
+  include: 
+    - onedata.hrl
+args:
+  - name: hostname
+    type: Binary
+  - name: clusterType
+    type: Atom
+#- TODO VFS-12588 Replace with Enum type with concrete set of values
+x-erl-to_json: |
+  to_json(?ERR_NODE_NOT_COMPATIBLE(ErrorCtx, Hostname, NodeClusterType)) when
+      NodeClusterType == ?ONEPROVIDER;
+      NodeClusterType == ?ONEZONE
+  ->
+      #{
+          <<"id">> => ?ERR_NODE_NOT_COMPATIBLE_ID,
+          <<"ctx">> => od_error:ctx_to_json(ErrorCtx),
+          <<"details">> => #{
+              <<"hostname">> => Hostname, <<"clusterType">> => NodeClusterType
+          },
+          <<"description">> => od_error:format_description(
+              "Cannot add \"~ts\", it is a ~ts node.",
+              [Hostname, NodeClusterType]
+          )
+      }.
+description: >-
+  Cannot add "{hostname}", it is a {clusterType} node.
+http_code: 400

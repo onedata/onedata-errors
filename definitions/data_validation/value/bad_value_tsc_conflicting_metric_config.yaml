@@ -1,0 +1,15 @@
+id: badValueTimeSeriesCollectionConflictingMetricConfig
+args:
+  - name: timeSeriesName
+    type: Binary
+  - name: metricName
+    type: Binary
+  - name: existingMetricConfig
+    type: MetricConfig
+  - name: conflictingMetricConfig
+    type: MetricConfig
+description: >-
+  Bad value: Provided metric config for time series "{timeSeriesName}" and metric "{metricName}"
+  conflicts with existing metric config: {conflictingMetricConfig}.
+http_code: 400
+errno: EINVAL

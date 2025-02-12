@@ -1,0 +1,10 @@
+id: limitReached
+args:
+  - name: limit
+    type: Integer
+  - name: resourceDescription
+    type: Binary
+description: >-
+  The limit for {resourceDescription} has been reached: {limit}.
+http_code: 400
+errno: EINVAL

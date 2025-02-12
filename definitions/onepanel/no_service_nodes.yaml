@@ -1,0 +1,7 @@
+id: noServiceNodes
+args:
+  - name: service
+    type: Binary
+description: >-
+  Service "{service}" is not deployed on any node.
+http_code: 400

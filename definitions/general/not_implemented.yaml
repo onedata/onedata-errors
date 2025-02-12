@@ -1,0 +1,5 @@
+id: notImplemented
+description: >-
+  This operation is not implemented.
+http_code: 501
+errno: ENOSYS

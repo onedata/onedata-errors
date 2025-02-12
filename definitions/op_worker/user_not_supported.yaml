@@ -1,0 +1,6 @@
+id: userNotSupported
+description: >-
+  Authenticated user is not supported by this Oneprovider (none of the user's
+  spaces is supported by the Oneprovider).
+http_code: 403
+errno: EACCES

@@ -1,0 +1,12 @@
+id: badValueNotInRange
+args:
+  - name: key
+    type: Binary
+  - name: low
+    type: Integer
+  - name: high
+    type: Integer
+description: >-
+  Bad value: provided "{key}" must be between <{low}, {high}>.
+http_code: 400
+errno: EINVAL

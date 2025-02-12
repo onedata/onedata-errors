@@ -1,0 +1,8 @@
+id: badValueCaveat
+args:
+  - name: caveat
+    type: Json
+description: >-
+  Bad value: provided caveat is invalid: "{caveat}".
+http_code: 400
+errno: EINVAL

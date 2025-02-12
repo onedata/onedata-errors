@@ -1,0 +1,8 @@
+id: noConnectionToClusterNode
+args:
+  - name: nodeName
+    type: Binary
+description: >-
+  Operation failed because the service could not connect to the cluster node "{nodeName}".
+http_code: 503
+errno: ENETUNREACH

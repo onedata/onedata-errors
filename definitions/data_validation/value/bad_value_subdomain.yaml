@@ -1,0 +1,5 @@
+id: badValueSubdomain
+description: >-
+  Bad value: provided subdomain is invalid.
+http_code: 400
+errno: EINVAL

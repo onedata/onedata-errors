@@ -1,0 +1,8 @@
+id: tokenCaveatUnknown
+args:
+  - name: caveat
+    type: Binary
+description: >-
+  Unknown caveat: "{caveat}".
+http_code: 400
+errno: EINVAL

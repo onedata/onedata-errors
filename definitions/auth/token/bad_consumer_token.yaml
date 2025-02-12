@@ -1,0 +1,8 @@
+id: badConsumerToken
+args:
+  - name: tokenError
+    type: OnedataError
+description: >-
+  Provided consumer token is not valid: {tokenError}
+http_code: 400
+errno: EINVAL

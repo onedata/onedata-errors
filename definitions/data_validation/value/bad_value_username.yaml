@@ -1,0 +1,11 @@
+id: badValueUsername
+x-erl-headers:
+  include: 
+    - validation.hrl
+  macros:
+    - alias: requirements
+      ref: ?USERNAME_REQUIREMENTS_DESCRIPTION
+description: >-
+  Bad value: {requirements}
+http_code: 400
+errno: EINVAL

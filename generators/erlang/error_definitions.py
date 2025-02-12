@@ -1,0 +1,112 @@
+"""
+Structures representing Erlang error definitions that are used in code generation.
+These structures are populated from YAML definitions and used by generators
+to produce Erlang code.
+"""
+
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in LICENSE.txt"
+
+from typing import List, NamedTuple, Optional, Union
+
+from .error_args.base import ErrorArgType
+
+
+class MacroRef(NamedTuple):
+    """
+    Represents a macro reference in Erlang code.
+
+    Attributes:
+        alias: Name used in error description to reference this macro
+        ref: Actual macro reference in Erlang code, e.g. "?NAMES"
+        fmt_control_sequence: Format control sequence used for this macro (default: "~ts")
+    """
+
+    alias: str
+    ref: str
+    fmt_control_sequence: str = "~ts"
+
+
+class OdErrorCtx(NamedTuple):
+    """
+    Context for error generation containing includes and macro definitions.
+
+    Attributes:
+        includes: List of header files to include
+        macros: List of macro references used in error formatting
+    """
+
+    includes: List[str]
+    macros: List[MacroRef]
+
+
+class OdError(NamedTuple):
+    """
+    Represents a single error definition.
+
+    Attributes:
+        name: Error name (used in macro generation)
+        type: Erlang type name for this error
+        id: Unique error identifier
+        description: Human readable error description
+        http_code: HTTP status code to return for this error
+        args: List of error arguments
+        ctx: Generation context with includes and macros
+        to_json_impl: Custom to_json implementation (if provided)
+        from_json_impl: Custom from_json implementation (if provided)
+        errno: Optional POSIX errno (if provided)
+        to_errno_impl: Custom to_errno implementation (if provided)
+    """
+
+    name: str
+    type: str
+    id: str
+    description: str
+    http_code: Union[str, int]
+    args: List[ErrorArgType]
+    ctx: OdErrorCtx
+    to_json_impl: Optional[str]
+    from_json_impl: Optional[str]
+    errno: Optional[str]
+    to_errno_impl: Optional[str]
+
+    def get_id_macro(self) -> str:
+        """Returns the macro name for error ID."""
+        return f"ERR_{self.name.upper()}_ID"
+
+    def get_type_macro(self) -> str:
+        """Returns the macro name for error type."""
+        return f"ERR_{self.name.upper()}_TYPE"
+
+    def get_args_as_erlang_variable_names(self) -> List[str]:
+        """Returns list of Erlang variable names for error arguments."""
+        return [arg.get_erlang_variable_name() for arg in self.args]
+
+    def get_match_macro(self) -> str:
+        """Returns the macro name for pattern matching."""
+        if not self.args:
+            return f"ERR_{self.name.upper()}"
+        args = ", ".join(self.get_args_as_erlang_variable_names())
+        return f"ERR_{self.name.upper()}({args})"
+
+    def get_new_macro(self) -> str:
+        """Returns the macro name for creating new error."""
+        if self.args:
+            args = ", ".join(self.get_args_as_erlang_variable_names())
+            return f"ERR_{self.name.upper()}(ErrorCtx, {args})"
+
+        return f"ERR_{self.name.upper()}(ErrorCtx)"
+
+
+class OdErrorGroup(NamedTuple):
+    """
+    Groups related errors together, typically by their directory location.
+
+    Attributes:
+        name: Group name (derived from directory path)
+        errors: List of errors in this group
+    """
+
+    name: str
+    errors: List[OdError]

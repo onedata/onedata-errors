@@ -1,0 +1,7 @@
+id: atmStoreContentNotSet
+args:
+  - name: atmStoreSchemaId
+    type: Binary
+description: >-
+  No content has been set for this store (schema ID: "{atmStoreSchemaId}").
+http_code: 400

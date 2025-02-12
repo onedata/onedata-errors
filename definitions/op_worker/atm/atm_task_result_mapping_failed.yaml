@@ -1,0 +1,9 @@
+id: atmTaskResultMappingFailed
+args:
+  - name: result
+    type: Binary
+  - name: specificError
+    type: OnedataError
+description: >-
+  Failed to map automation task execution result "{result}": {specificError}
+http_code: 400

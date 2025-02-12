@@ -1,0 +1,5 @@
+id: handshakeAlreadyDone
+description: >-
+  GraphSync error: handshake has already been performed.
+http_code: 400
+errno: EPROTO

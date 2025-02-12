@@ -1,0 +1,41 @@
+id: forbiddenForCurrentArchiveState
+args:
+  - name: currentState
+    type: Atom
+  - name: allowedStates
+    type: Binaries
+x-erl-to_json: |
+  % TODO VFS-12556 Fix and simplify args encoding
+  to_json(?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(ErrorCtx, CurrentState, AllowedStates)) ->
+      #{
+          <<"id">> => ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
+          <<"ctx">> => od_error:ctx_to_json(ErrorCtx),
+          <<"description">> => od_error:format_description(
+              "This operation is forbidden while the archive state is ~ts. Allowed states are: ~ts.",
+              [CurrentState, od_error:format_csv(AllowedStates)]
+          ),
+          <<"details">> => #{
+              <<"allowedStates">> => json_utils:encode(AllowedStates),
+              <<"currentState">> => json_utils:encode(CurrentState)
+          }
+      }.
+x-erl-from_json: |
+  % TODO VFS-12556 Fix and simplify args decoding
+  from_json(ErrorJson = #{
+      <<"id">> := ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE_ID,
+      <<"details">> := #{
+          <<"allowedStates">> := AllowedStates,
+          <<"currentState">> := CurrentState
+      }
+  }) ->
+      ErrorCtxJson = maps:get(<<"ctx">>, ErrorJson, #{}),
+      ErrorCtx = od_error:ctx_from_json(ErrorCtxJson),
+
+      ?ERR_FORBIDDEN_FOR_CURRENT_ARCHIVE_STATE(ErrorCtx,
+          binary_to_existing_atom(json_utils:decode(CurrentState)),
+          [binary_to_existing_atom(StateBin) || StateBin <- json_utils:decode(AllowedStates)]
+      ).
+description: >-
+  This operation is forbidden while the archive state is {currentState}.
+  Allowed states are: {allowedStates}.
+http_code: 400
