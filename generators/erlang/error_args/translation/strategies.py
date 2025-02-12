@@ -14,7 +14,7 @@ from .abc import (
     PrintEncodingStrategy,
 )
 from .context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
-from .expressions import NoopExpression
+from .expressions import NoopExpression, SimpleExpression
 
 
 @dataclass
@@ -53,3 +53,8 @@ class CustomStrategy(JsonEncodingStrategy, JsonDecodingStrategy, PrintEncodingSt
 
     def prepare_print_encoding(self, ctx: PrintEncodingCtx) -> PreparedExpression:
         return PreparedExpression(self.expression, ctx.assign_to)
+
+
+CSVPrintEncodingStrategy = CustomStrategy(
+    SimpleExpression("od_error:format_csv({json_var})")
+)

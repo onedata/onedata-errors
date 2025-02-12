@@ -68,7 +68,8 @@ description: >-
 # (required) HTTP status code for REST API responses
 http_code: 401
 
-# (optional, defaults to EINVAL) POSIX error number
+# (optional, defaults to EINVAL) POSIX error number 
+# (full list available in `generators/erlang/constants.py`)
 errno: EACCES
 ```
 ### Examples

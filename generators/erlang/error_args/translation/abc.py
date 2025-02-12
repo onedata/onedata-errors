@@ -50,6 +50,7 @@ class TranslationContext(ABC):
         return replace(self, indent_level=self.indent_level + diff)
 
 
+# pylint: disable=too-few-public-methods
 class Expression(ABC):
     """Base class for Erlang expressions."""
 
@@ -83,6 +84,7 @@ class PreparedExpression:
     target_var: str
 
 
+# pylint: disable=too-few-public-methods
 class JsonEncodingStrategy(ABC):
     """Strategy for JSON encoding."""
 
@@ -91,6 +93,7 @@ class JsonEncodingStrategy(ABC):
         """Prepare expression for JSON encoding."""
 
 
+# pylint: disable=too-few-public-methods
 class JsonDecodingStrategy(ABC):
     """Strategy for JSON decoding."""
 
@@ -99,6 +102,7 @@ class JsonDecodingStrategy(ABC):
         """Prepare expression for JSON decoding."""
 
 
+# pylint: disable=too-few-public-methods
 class PrintEncodingStrategy(ABC):
     """Strategy for print encoding."""
 

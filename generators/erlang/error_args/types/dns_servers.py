@@ -9,6 +9,7 @@ from typing import ClassVar
 from ..base import ErrorArgType
 from ..translation.expressions import ListMapExpression, SimpleExpression
 from ..translation.strategies import (
+    CSVPrintEncodingStrategy,
     CustomStrategy,
     JsonDecodingStrategy,
     JsonEncodingStrategy,
@@ -34,9 +35,7 @@ class DnsServers(ErrorArgType):
             input_template="{erl_var}",
         )
     )
-    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("od_error:format_csv({json_var})")
-    )
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CSVPrintEncodingStrategy
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
         ListMapExpression(
             fun_clauses=[

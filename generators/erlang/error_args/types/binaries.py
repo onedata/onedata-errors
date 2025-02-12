@@ -7,14 +7,11 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import SimpleExpression
-from ..translation.strategies import CustomStrategy, PrintEncodingStrategy
+from ..translation.strategies import CSVPrintEncodingStrategy, PrintEncodingStrategy
 
 
 class Binaries(ErrorArgType):
     """List of binary strings type."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
-    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("od_error:format_csv({erl_var})")
-    )
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CSVPrintEncodingStrategy

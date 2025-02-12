@@ -43,7 +43,6 @@ HTTP_CODE_TO_MACRO: Final[Dict[int, str]] = {
 
 # All valid POSIX errno values that can be used in error definitions
 VALID_ERRNO = {
-    "OK",
     "E2BIG",
     "EACCES",
     "EADDRINUSE",

@@ -1,4 +1,4 @@
-"""ATM store schema IDs argument type."""
+"""ATM store types argument type."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
@@ -7,8 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import ListMapFunRefExpression, SimpleExpression
+from ..translation.expressions import ListMapFunRefExpression
 from ..translation.strategies import (
+    CSVPrintEncodingStrategy,
     CustomStrategy,
     JsonDecodingStrategy,
     JsonEncodingStrategy,
@@ -27,9 +28,7 @@ class AtmStoreTypes(ErrorArgType):
             input_template="{erl_var}",
         )
     )
-    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("od_error:format_csv({json_var})")
-    )
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CSVPrintEncodingStrategy
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
         ListMapFunRefExpression(
             module="automation",

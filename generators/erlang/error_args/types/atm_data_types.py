@@ -7,8 +7,9 @@ __license__ = "This software is released under the MIT license cited in LICENSE.
 from typing import ClassVar
 
 from ..base import ErrorArgType
-from ..translation.expressions import ListMapFunRefExpression, SimpleExpression
+from ..translation.expressions import ListMapFunRefExpression
 from ..translation.strategies import (
+    CSVPrintEncodingStrategy,
     CustomStrategy,
     JsonDecodingStrategy,
     JsonEncodingStrategy,
@@ -25,9 +26,7 @@ class AtmDataTypes(ErrorArgType):
             module="atm_data_type", function="type_to_json", input_template="{erl_var}"
         )
     )
-    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(
-        SimpleExpression("od_error:format_csv({json_var})")
-    )
+    print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CSVPrintEncodingStrategy
     json_decoding_strategy: ClassVar[JsonDecodingStrategy] = CustomStrategy(
         ListMapFunRefExpression(
             module="atm_data_type",
