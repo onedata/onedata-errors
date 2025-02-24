@@ -4,11 +4,46 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, replace
 from typing import List, Tuple
 
-from .abc import Expression, TranslationContext
-from .core import Line, LineEnding
+from .context import TranslationContext
+from .line import Line, LineEnding
+
+
+# pylint: disable=too-few-public-methods
+class Expression(ABC):
+    """Base class for Erlang expressions."""
+
+    def build(self, ctx: "TranslationContext") -> List[Line]:
+        """Build code lines with optional assignment."""
+        # Save assign_to and clear it before _build
+        nested_ctx = ctx.with_assign_to(None)
+
+        lines = self._build(nested_ctx)
+        if not lines:
+            return lines
+
+        # Add assignment only to the first line
+        if ctx.assign_to:
+            lines[0] = replace(
+                lines[0], content=f"{ctx.assign_to} = {lines[0].content}"
+            )
+
+        return lines
+
+    @abstractmethod
+    def _build(self, ctx: "TranslationContext") -> List[Line]:
+        """Build code lines without assignment handling."""
+
+
+@dataclass
+class PreparedExpression:
+    """Result of expression preparation phase."""
+
+    expression: "Expression"
+    target_var: str
 
 
 @dataclass
