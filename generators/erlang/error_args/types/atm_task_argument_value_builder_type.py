@@ -1,4 +1,4 @@
-"""ATM task argument value builder type argument type."""
+"""Automation task argument value builder type argument type."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
@@ -18,7 +18,7 @@ from ..translation.strategies import (
 
 
 class AtmTaskArgumentValueBuilderType(ErrorArgType):
-    """ATM task argument value builder type."""
+    """Automation task argument value builder type."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(

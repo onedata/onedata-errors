@@ -1,4 +1,4 @@
-"""AAI consumer argument type."""
+"""AAI (Authentication and Authorization Infrastructure) consumer argument type."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
@@ -17,7 +17,7 @@ from ..translation.strategies import (
 
 
 class AaiSubject(ErrorArgType):
-    """AAI subject type."""
+    """AAI (Authentication and Authorization Infrastructure) subject type."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(

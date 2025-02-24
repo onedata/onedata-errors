@@ -172,7 +172,7 @@ class ErrorArgType(ABC):
             type(self.json_encoding_strategy),
             type(self.print_encoding_strategy) if is_printed else None,
         )
-        encoding_function = self._nullable_encoding_dispatch[strategy]
+        encoding_function = self._nullable_encoding_dispatch[strategy]  # type: ignore
         return encoding_function(self, indent_level=indent_level)
 
     def _generate_nullable_print_if_null_encoding(

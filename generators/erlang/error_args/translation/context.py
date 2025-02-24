@@ -42,11 +42,11 @@ class TranslationContext(ABC):
 
     def with_indent(self, diff: int) -> "TranslationContext":
         """Return new context with increased indentation."""
-        return replace(self, indent_level=self.indent_level + diff)
+        return replace(self, indent_level=self.indent_level + diff)  # type: ignore
 
     def with_assign_to(self, assign_to: Optional[str]) -> "TranslationContext":
         """Return new context with a different target variable name."""
-        return replace(self, assign_to=assign_to)
+        return replace(self, assign_to=assign_to)  # type: ignore
 
 
 @dataclass
