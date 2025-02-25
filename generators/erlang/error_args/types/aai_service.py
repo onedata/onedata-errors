@@ -1,4 +1,4 @@
-"""AAI service argument type."""
+"""AAI (Authentication and Authorization Infrastructure) service argument type."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
@@ -17,7 +17,7 @@ from ..translation.strategies import (
 
 
 class AaiService(ErrorArgType):
-    """AAI service type."""
+    """AAI (Authentication and Authorization Infrastructure) service type."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(

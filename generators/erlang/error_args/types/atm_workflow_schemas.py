@@ -1,4 +1,4 @@
-"""ATM workflow schemas argument type."""
+"""Automation workflow schemas argument type."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
@@ -11,7 +11,7 @@ from ..translation.strategies import CSVPrintEncodingStrategy, PrintEncodingStra
 
 
 class AtmWorkflowSchemaIds(ErrorArgType):
-    """List of ATM workflow schema IDs."""
+    """List of Automation workflow schema IDs."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CSVPrintEncodingStrategy

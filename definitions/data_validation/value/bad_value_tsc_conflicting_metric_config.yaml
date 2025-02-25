@@ -9,7 +9,7 @@ args:
   - name: conflictingMetricConfig
     type: MetricConfig
 description: >-
-  Bad value: Provided metric config for time series "{timeSeriesName}" and metric "{metricName}"
-  conflicts with existing metric config: {conflictingMetricConfig}.
+  Bad value: Provided metric config for time series "{timeSeriesName}" and metric "{metricName}":
+  "{conflictingMetricConfig}" conflicts with the existing metric config: "{existingMetricConfig}".
 http_code: 400
 errno: EINVAL

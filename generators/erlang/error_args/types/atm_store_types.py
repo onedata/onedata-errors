@@ -1,4 +1,4 @@
-"""ATM store types argument type."""
+"""Automation store types argument type."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
@@ -18,7 +18,7 @@ from ..translation.strategies import (
 
 
 class AtmStoreTypes(ErrorArgType):
-    """List of ATM store types."""
+    """List of Automation store types."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     json_encoding_strategy: ClassVar[JsonEncodingStrategy] = CustomStrategy(

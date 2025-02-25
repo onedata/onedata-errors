@@ -4,16 +4,49 @@ __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in LICENSE.txt"
 
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, replace
 from typing import Dict, Optional
 
-from .abc import (
-    JsonDecodingStrategy,
-    JsonEncodingStrategy,
-    PreparedExpression,
-    PrintEncodingStrategy,
-    TranslationContext,
-)
+
+class TranslationContext(ABC):
+    """Base class for all translation contexts."""
+
+    @property
+    @abstractmethod
+    def indent_level(self) -> int:
+        """Required indentation level for code generation."""
+
+    @property
+    @abstractmethod
+    def assign_to(self) -> Optional[str]:
+        """Target variable name for assignment."""
+
+    @abstractmethod
+    def get_template_vars(self) -> Dict[str, str]:
+        """Returns variables available for template formatting.
+
+        Should be implemented instead of _format_fields.
+        """
+
+    def format_template(self, template: str) -> str:
+        """Format template using context variables."""
+        try:
+            return template.format(**self.get_template_vars())
+        except KeyError as e:
+            available = list(self.get_template_vars().keys())
+            raise ValueError(
+                f"Invalid template variable {e} in '{template}'. "
+                f"Available variables: {available}"
+            ) from e
+
+    def with_indent(self, diff: int) -> "TranslationContext":
+        """Return new context with increased indentation."""
+        return replace(self, indent_level=self.indent_level + diff)  # type: ignore
+
+    def with_assign_to(self, assign_to: Optional[str]) -> "TranslationContext":
+        """Return new context with a different target variable name."""
+        return replace(self, assign_to=assign_to)  # type: ignore
 
 
 @dataclass
@@ -27,9 +60,6 @@ class JsonEncodingCtx(TranslationContext):
     def get_template_vars(self) -> Dict[str, str]:
         return {"erl_var": self.erl_var}
 
-    def prepare_expression(self, strategy: JsonEncodingStrategy) -> PreparedExpression:
-        return strategy.prepare_json_encoding(self)
-
 
 @dataclass
 class JsonDecodingCtx(TranslationContext):
@@ -41,9 +71,6 @@ class JsonDecodingCtx(TranslationContext):
 
     def get_template_vars(self) -> Dict[str, str]:
         return {"json_var": self.json_var}
-
-    def prepare_expression(self, strategy: JsonDecodingStrategy) -> PreparedExpression:
-        return strategy.prepare_json_decoding(self)
 
 
 @dataclass
@@ -57,6 +84,3 @@ class PrintEncodingCtx(TranslationContext):
 
     def get_template_vars(self) -> Dict[str, str]:
         return {"erl_var": self.erl_var, "json_var": self.json_var}
-
-    def prepare_expression(self, strategy: PrintEncodingStrategy) -> PreparedExpression:
-        return strategy.prepare_print_encoding(self)

@@ -1,4 +1,4 @@
-"""TSC layout argument type."""
+"""Time series collection layout argument type."""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2024 ACK CYFRONET AGH"
@@ -12,7 +12,7 @@ from ..translation.strategies import CustomStrategy, PrintEncodingStrategy
 
 
 class TscLayout(ErrorArgType):
-    """TSC layout type."""
+    """Time series collection layout type."""
 
     fmt_control_sequence: ClassVar[str] = "~ts"
     print_encoding_strategy: ClassVar[PrintEncodingStrategy] = CustomStrategy(

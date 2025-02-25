@@ -8,7 +8,7 @@ from abc import ABC
 from typing import ClassVar, List, NamedTuple, Optional
 
 from .translation.context import JsonDecodingCtx, JsonEncodingCtx, PrintEncodingCtx
-from .translation.core import Line
+from .translation.line import Line
 from .translation.strategies import (
     CustomStrategy,
     DirectStrategy,
@@ -132,7 +132,7 @@ class ErrorArgType(ABC):
             ),
             indent_level=indent_level,
         )
-        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_result = self.json_encoding_strategy.prepare_json_encoding(json_ctx)
         tokens.extend(self._format_lines(json_result.expression.build(json_ctx)))
 
         # Prepare print encoding if needed
@@ -148,7 +148,9 @@ class ErrorArgType(ABC):
                 ),
                 indent_level=indent_level,
             )
-            print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+            print_result = self.print_encoding_strategy.prepare_print_encoding(
+                print_ctx
+            )
             tokens.extend(self._format_lines(print_result.expression.build(print_ctx)))
             print_var = print_result.target_var
 
@@ -170,7 +172,7 @@ class ErrorArgType(ABC):
             type(self.json_encoding_strategy),
             type(self.print_encoding_strategy) if is_printed else None,
         )
-        encoding_function = self._nullable_encoding_dispatch[strategy]
+        encoding_function = self._nullable_encoding_dispatch[strategy]  # type: ignore
         return encoding_function(self, indent_level=indent_level)
 
     def _generate_nullable_print_if_null_encoding(
@@ -190,7 +192,7 @@ class ErrorArgType(ABC):
             ),
             indent_level=indent_level + 2,
         )
-        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_result = self.json_encoding_strategy.prepare_json_encoding(json_ctx)
         json_tokens = self._format_lines(json_result.expression.build(json_ctx))
         json_case_var = json_result.target_var or erl_var
 
@@ -205,7 +207,7 @@ class ErrorArgType(ABC):
             ),
             indent_level=indent_level + 2,
         )
-        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_result = self.print_encoding_strategy.prepare_print_encoding(print_ctx)
         print_tokens = self._format_lines(print_result.expression.build(print_ctx))
         print_case_var = print_result.target_var or json_case_var
 
@@ -257,7 +259,7 @@ class ErrorArgType(ABC):
             assign_to=f"{erl_var}PrintTmp",
             indent_level=indent_level + 2,
         )
-        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_result = self.print_encoding_strategy.prepare_print_encoding(print_ctx)
         print_tokens = self._format_lines(print_result.expression.build(print_ctx))
         print_case_var = print_result.target_var
 
@@ -289,7 +291,7 @@ class ErrorArgType(ABC):
             assign_to=None,  # No need for temporary var - we're inside case
             indent_level=indent_level + 2,
         )
-        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_result = self.json_encoding_strategy.prepare_json_encoding(json_ctx)
         json_tokens = self._format_lines(json_result.expression.build(json_ctx))
 
         tokens = self._generate_nullable_case_statement(
@@ -322,7 +324,7 @@ class ErrorArgType(ABC):
             assign_to=f"{erl_var}JsonTmp",
             indent_level=indent_level + 2,
         )
-        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_result = self.json_encoding_strategy.prepare_json_encoding(json_ctx)
         json_tokens = self._format_lines(json_result.expression.build(json_ctx))
 
         tokens = self._generate_nullable_case_statement(
@@ -354,7 +356,7 @@ class ErrorArgType(ABC):
             assign_to=f"{erl_var}JsonTmp",
             indent_level=indent_level + 2,
         )
-        json_result = json_ctx.prepare_expression(self.json_encoding_strategy)
+        json_result = self.json_encoding_strategy.prepare_json_encoding(json_ctx)
         json_tokens = self._format_lines(json_result.expression.build(json_ctx))
 
         # Prepare print encoding
@@ -364,7 +366,7 @@ class ErrorArgType(ABC):
             assign_to=f"{erl_var}PrintTmp",
             indent_level=indent_level + 2,
         )
-        print_result = print_ctx.prepare_expression(self.print_encoding_strategy)
+        print_result = self.print_encoding_strategy.prepare_print_encoding(print_ctx)
         print_tokens = self._format_lines(print_result.expression.build(print_ctx))
 
         tokens = self._generate_nullable_case_statement(

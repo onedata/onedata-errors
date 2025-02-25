@@ -28,7 +28,7 @@ The workflow:
 
 ## Structure
 
-Error definitions are stored in `definitions/` directory, organized by categories
+Error definitions are stored in `definitions/` directory, organized by categories.
 
 ## Error Definition Guide
 
@@ -72,9 +72,11 @@ http_code: 401
 # (full list available in `generators/erlang/constants.py`)
 errno: EACCES
 ```
+
 ### Examples
 
 #### Simple Error
+
 ```yaml
 id: serviceUnavailable
 http_code: 503
@@ -82,6 +84,7 @@ description: The service is temporarily unavailable. Please try again later.
 ```
 
 #### Complex Error
+
 ```yaml
 id: tokenCaveatUnverified
 args:
@@ -99,6 +102,7 @@ http_code: 403
 ### Best Practices
 
 #### Description Formatting
+
 - **Preferred** Use `>-` for folding text block into a single line (newlines are converted to spaces).
 - Use `|-` for multiline descriptions to preserve formatting (newlines are kept).
 - Use `{argumentName}` for argument placeholders in descriptions. The actual values for these arguments will be inserted according to the `print_encoding_strategy`, which can be found in the respective argument type classes.
@@ -112,16 +116,17 @@ For example, Erlang generator type implementations can be found in
 `./generators/erlang/error_args/types/`.
 
 ### Available Types
-- `AaiService` - AAI service type  
-- `AaiSubject` - AAI subject type
-- `AtmDataType` - ATM data type
+
+- `AaiService` - AAI (Authentication and Authorization Infrastructure) service type  
+- `AaiSubject` - AAI (Authentication and Authorization Infrastructure) subject type
+- `AtmDataType` - Automation data type
 <!--- TODO VFS-12587 Replace with List<AtmDataType> -->
-- `AtmDataTypes` - List of ATM data types
-- `AtmStoreTypes` - List of ATM store types
-- `AtmTaskArgumentValueBuilderType` - ATM task argument value builder type
+- `AtmDataTypes` - List of Automation data types
+- `AtmStoreTypes` - List of Automation store types
+- `AtmTaskArgumentValueBuilderType` - Automation task argument value builder type
 <!--- TODO VFS-12587 Replace with List<AtmTaskArgumentValueBuilderType> -->
-- `AtmTaskArgumentValueBuilderTypes` - List of ATM task argument value builder types
-- `AtmWorkflowSchemaIds` - List of ATM workflow schema IDs
+- `AtmTaskArgumentValueBuilderTypes` - List of Automation task argument value builder types
+- `AtmWorkflowSchemaIds` - List of Automation workflow schema IDs
 <!--- TODO VFS-12588 Replace with Enum type with concrete set of values -->
 - `Atom` - Erlang atom
 - `Binaries` - List of binary strings
