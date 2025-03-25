@@ -4,4 +4,4 @@ deprecated: true
 description: >-
   The resource already exists.
 http_code: 409
-errno: EINVAL
+errno: EEXIST
