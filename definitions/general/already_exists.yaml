@@ -4,4 +4,5 @@ deprecated: true
 description: >-
   The resource already exists.
 http_code: 409
-errno: EINVAL
+# TODO VFS-7208 - use EINVAL/EAGAIN after fslogic consistently returns ERR_POSIX for fs operations
+errno: EEXIST
