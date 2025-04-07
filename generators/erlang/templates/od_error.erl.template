@@ -65,6 +65,9 @@
 ]).
 
 
+-define(APP_NAME, ctool).
+
+
 %%%===================================================================
 %%% od_error behaviour definition
 %%%===================================================================
@@ -107,13 +110,40 @@
 %%%===================================================================
 
 
+%%--------------------------------------------------------------------
+%% @doc
+%% Builds an error context record for error creation.
+%%
+%% ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ 
+%% @warning CRITICAL IMPLEMENTATION REQUIREMENT
+%% This function has strict requirements that MUST be followed to prevent 
+%% system crashes:
+%%
+%% Must only use simple functions that cannot throw onedata errors themselves.
+%% This is critical to prevent infinite recursion scenarios:
+%%   * Error context creation triggers an error
+%%   * Error creation requires new error context
+%%   * New context creation triggers the same error again
+%%   * Process repeats indefinitely
+%%
+%% @attention
+%% Violating these requirements can lead to system instability and crashes.
+%% This is not just a recommendation - it's a hard requirement for system stability.
+%% ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ 
+%% @end
+%%--------------------------------------------------------------------
 -spec build_ctx(module(), integer()) -> ctx().
 build_ctx(Module, Line) ->
     #od_error_ctx{{
+        error_version = version(),
         module = str_utils:to_binary(Module),
         line = Line,
         timestamp = native_node_clock:system_time_millis(),
-        version = version()
+        service = get_env(error_ctx_service),
+        service_id = get_env(error_ctx_service_id),
+        service_domain = get_env(error_ctx_service_domain),
+        service_release_version = get_env(error_ctx_service_release_version),
+        service_build_version = get_env(error_ctx_service_build_version)
     }}.
 
 
@@ -123,17 +153,30 @@ build_ctx(Module, Line) ->
 ctx_to_json(undefined) ->
     null;
 ctx_to_json(#od_error_ctx{{
-    module = Module, 
+    error_version = Version,
+    module = Module,
     line = Line, 
-    timestamp = Timestamp, 
-    version = Version,
+    timestamp = Timestamp,
+    service = Service,
+    service_id = ServiceId,
+    service_domain = ServiceDomain,
+    service_release_version = ServiceReleaseVersion,
+    service_build_version = ServiceBuildVersion,
     unknown_fields = UnknownFields
 }}) ->
     KnownValues = #{{
+        <<"onedataErrorsRevision">> => utils:undefined_to_null(Version),
         <<"module">> => utils:undefined_to_null(Module),
         <<"line">> => utils:undefined_to_null(Line), 
         <<"timestamp">> => utils:undefined_to_null(Timestamp),
-        <<"version">> => utils:undefined_to_null(Version)
+        <<"service">> => case Service of
+            undefined -> null;
+            _ -> onedata:service_shortname(Service)
+        end,
+        <<"serviceId">> => utils:undefined_to_null(ServiceId),
+        <<"serviceDomain">> => utils:undefined_to_null(ServiceDomain),
+        <<"serviceReleaseVersion">> => utils:undefined_to_null(ServiceReleaseVersion),
+        <<"serviceBuildVersion">> => utils:undefined_to_null(ServiceBuildVersion)
     }},
     % Preserve any unknown fields that might be present
     maps:merge(UnknownFields, KnownValues).
@@ -146,16 +189,34 @@ ctx_from_json(null) ->
     undefined;
 ctx_from_json(Json) ->
     % Extract known fields
-    KnownKeys = [<<"module">>, <<"line">>, <<"timestamp">>, <<"version">>],
+    KnownKeys = [
+        <<"onedataErrorsRevision">>, <<"module">>, <<"line">>, <<"timestamp">>,
+        <<"service">>, <<"serviceId">>, <<"serviceDomain">>,
+        <<"serviceReleaseVersion">>, <<"serviceBuildVersion">>
+    ],
     UnknownFields = maps:without(KnownKeys, Json),
 
     #od_error_ctx{{
-        module = utils:null_to_undefined(maps:get(<<"module">>, Json, null)),
-        line = utils:null_to_undefined(maps:get(<<"line">>, Json, null)),
-        timestamp = utils:null_to_undefined(maps:get(<<"timestamp">>, Json, null)),
-        version = utils:null_to_undefined(maps:get(<<"version">>, Json, null)),
+        error_version = get_nullable_value(<<"onedataErrorsRevision">>, Json),
+        module = get_nullable_value(<<"module">>, Json),
+        line = get_nullable_value(<<"line">>, Json),
+        timestamp = get_nullable_value(<<"timestamp">>, Json),
+        service = case maps:get(<<"service">>, Json, null) of
+            null -> undefined;
+            Service -> onedata:service_by_shortname(Service)
+        end,
+        service_id = get_nullable_value(<<"serviceId">>, Json),
+        service_domain = get_nullable_value(<<"serviceDomain">>, Json),
+        service_release_version = get_nullable_value(<<"serviceReleaseVersion">>, Json),
+        service_build_version = get_nullable_value(<<"serviceBuildVersion">>, Json),
         unknown_fields = UnknownFields
     }}.
+
+
+%% @private
+-spec get_nullable_value(binary(), json_utils:json_map()) -> undefined | json_utils:json_term().
+get_nullable_value(Key, JsonMap) ->
+    utils:null_to_undefined(maps:get(Key, JsonMap, null)).
 
 
 -spec format_description(string(), [term()]) -> binary().
@@ -178,3 +239,18 @@ format_csv(Values) ->
 -spec version() -> binary().
 version() ->
     <<"{version}">>.
+
+
+%%%===================================================================
+%%% Internal functions
+%%%===================================================================
+
+
+%% @private
+-spec get_env(atom()) -> term().
+get_env(Key) ->
+    try
+        application:get_env(?APP_NAME, Key, undefined)
+    catch _:_ ->
+        undefined
+    end.
