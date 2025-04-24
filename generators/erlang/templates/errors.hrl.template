@@ -20,7 +20,7 @@
 
 
 -record(od_error_ctx, {{
-    error_version :: undefined | binary(),
+    onedata_errors_revision :: undefined | binary(),
 
     module :: undefined | binary(),
     line :: undefined | integer(),
@@ -45,7 +45,7 @@
 
 -define(UNDEFINED_ERR_CTX,
     #od_error_ctx{{
-        error_version = undefined,
+        onedata_errors_revision = undefined,
         module = undefined,
         line = undefined,
         timestamp = undefined,
