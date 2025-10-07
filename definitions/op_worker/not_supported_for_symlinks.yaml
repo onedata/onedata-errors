@@ -2,3 +2,4 @@ id: notSupportedForSymlinks
 description: >-
   Operation is not supported for symlinks.
 http_code: 400
+errno: EINVAL
